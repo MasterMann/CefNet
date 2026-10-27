@@ -61,7 +61,7 @@ namespace CefGen
 		private static readonly char[] WordSplittres = new char[] { ' ', '\t', '\r', '\n' };
 
 		private readonly static Lazy<string[]> Handlers = new Lazy<string[]>(() => 
-			File.ReadAllLines(Path.Combine("Settings", "Handlers.txt"), Encoding.UTF8)
+			File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "Handlers.txt"), Encoding.UTF8)
 			.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray(), true);
 
 		internal readonly static Dictionary<string, CefSourceKind> StructTypes = new Dictionary<string, CefSourceKind>();
@@ -69,7 +69,7 @@ namespace CefGen
 		private readonly static Lazy<BoolIntInfo[]> BooleanInt = new Lazy<BoolIntInfo[]>(() =>
 		{
 			var info = new List<BoolIntInfo>();
-			foreach(string s in File.ReadAllLines(Path.Combine("Settings", "BooleanIntParams.txt"), Encoding.UTF8)
+			foreach(string s in File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "BooleanIntParams.txt"), Encoding.UTF8)
 				.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)))
 			{
 				int startPos = s.IndexOf('(');
@@ -88,7 +88,7 @@ namespace CefGen
 		}, true);
 
 		private readonly static Lazy<Dictionary<string, string>> Names = new Lazy<Dictionary<string, string>> (() => 
-			File.ReadAllLines(Path.Combine("Settings", "NamesSchema.txt"), Encoding.UTF8).Select(s => s.Trim()).Select(s => s.Split(':'))
+			File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "NamesSchema.txt"), Encoding.UTF8).Select(s => s.Trim()).Select(s => s.Split(':'))
 			.Where(a => a.Length == 2).ToDictionary(a => a[0].Trim(), a => a[1].Trim()), true);
 
 
