@@ -200,6 +200,30 @@ namespace CefNet.CApi
 		public static unsafe extern cef_browser_t* cef_browser_host_get_browser_by_identifier(int browser_id);
 
 		/// <summary>
+		/// Create a new BrowserView. The underlying cef_browser_t will not be created
+		/// until this view is added to the views hierarchy. The optional |extra_info|
+		/// parameter provides an opportunity to specify extra information specific to
+		/// the created browser that will be passed to
+		/// cef_render_process_handler_t::on_browser_created() in the render process.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_browser_view_capi.h as
+		/// cef_browser_view_t * cef_browser_view_create(_cef_client_t * client, cef_string_t const * url, _cef_browser_settings_t const * settings, _cef_dictionary_value_t * extra_info, _cef_request_context_t * request_context, _cef_browser_view_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_browser_view_t* cef_browser_view_create(cef_client_t* client, cef_string_t* url, cef_browser_settings_t* settings, cef_dictionary_value_t* extra_info, cef_request_context_t* request_context, cef_browser_view_delegate_t* @delegate);
+
+		/// <summary>
+		/// Returns the BrowserView associated with |browser|.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_browser_view_capi.h as
+		/// cef_browser_view_t * cef_browser_view_get_for_browser(_cef_browser_t * browser)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_browser_view_t* cef_browser_view_get_for_browser(cef_browser_t* browser);
+
+		/// <summary>
 		/// Remove all entries from the cross-origin access whitelist. Returns false (0)
 		/// if the whitelist cannot be accessed.
 		/// </summary>
@@ -479,6 +503,105 @@ namespace CefNet.CApi
 		public static unsafe extern int cef_directory_exists(cef_string_t* path);
 
 		/// <summary>
+		/// Convert |point| from pixel screen coordinates to DIP screen coordinates.
+		/// This function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_point_t cef_display_convert_screen_point_from_pixels(cef_point_t const * point)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_point_t cef_display_convert_screen_point_from_pixels(cef_point_t* point);
+
+		/// <summary>
+		/// Convert |point| from DIP screen coordinates to pixel screen coordinates.
+		/// This function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_point_t cef_display_convert_screen_point_to_pixels(cef_point_t const * point)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_point_t cef_display_convert_screen_point_to_pixels(cef_point_t* point);
+
+		/// <summary>
+		/// Convert |rect| from pixel screen coordinates to DIP screen coordinates. This
+		/// function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_rect_t cef_display_convert_screen_rect_from_pixels(cef_rect_t const * rect)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_rect_t cef_display_convert_screen_rect_from_pixels(cef_rect_t* rect);
+
+		/// <summary>
+		/// Convert |rect| from DIP screen coordinates to pixel screen coordinates. This
+		/// function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_rect_t cef_display_convert_screen_rect_to_pixels(cef_rect_t const * rect)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_rect_t cef_display_convert_screen_rect_to_pixels(cef_rect_t* rect);
+
+		/// <summary>
+		/// Returns all Displays. Mirrored displays are excluded; this function is
+		/// intended to return distinct, usable displays.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// void cef_display_get_alls(size_t * displaysCount, cef_display_t * * displays)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_display_get_alls(UIntPtr* displaysCount, cef_display_t** displays);
+
+		/// <summary>
+		/// Returns the total number of Displays. Mirrored displays are excluded; this
+		/// function is intended to return the number of distinct, usable displays.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// size_t cef_display_get_count()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern UIntPtr cef_display_get_count();
+
+		/// <summary>
+		/// Returns the Display that most closely intersects |bounds|.  Set
+		/// |input_pixel_coords| to true (1) if |bounds| is in pixel screen coordinates
+		/// instead of DIP screen coordinates.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_matching_bounds(cef_rect_t const * bounds, int input_pixel_coords)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_matching_bounds(cef_rect_t* bounds, int input_pixel_coords);
+
+		/// <summary>
+		/// Returns the Display nearest |point|. Set |input_pixel_coords| to true (1) if
+		/// |point| is in pixel screen coordinates instead of DIP screen coordinates.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_nearest_point(cef_point_t const * point, int input_pixel_coords)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_nearest_point(cef_point_t* point, int input_pixel_coords);
+
+		/// <summary>
+		/// Returns the primary Display.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_primary()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_primary();
+
+		/// <summary>
 		/// Perform a single iteration of CEF message loop processing. This function is
 		/// provided for cases where the CEF message loop must be integrated into an
 		/// existing application message loop. Use of this function is not recommended
@@ -689,6 +812,18 @@ namespace CefNet.CApi
 		public static unsafe extern int cef_is_rtl();
 
 		/// <summary>
+		/// Create a new LabelButton. A |delegate| must be provided to handle the button
+		/// click. |text| will be shown on the LabelButton and used as the default
+		/// accessible name.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_label_button_capi.h as
+		/// cef_label_button_t * cef_label_button_create(_cef_button_delegate_t * delegate, cef_string_t const * text)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_label_button_t* cef_label_button_create(cef_button_delegate_t* @delegate, cef_string_t* text);
+
+		/// <summary>
 		/// Launches the process specified via |command_line|. Returns true (1) upon
 		/// success. Must be called on the browser process TID_PROCESS_LAUNCHER thread.
 		/// Unix-specific notes:
@@ -745,6 +880,22 @@ namespace CefNet.CApi
 		public static unsafe extern cef_media_router_t* cef_media_router_get_global(cef_completion_callback_t* callback);
 
 		/// <summary>
+		/// Create a new MenuButton. A |delegate| must be provided to call show_menu()
+		/// when the button is clicked. |text| will be shown on the MenuButton and used
+		/// as the default accessible name. If |with_frame| is true (1) the button will
+		/// have a visible frame at all times, center alignment, additional padding and
+		/// a default minimum size of 70x33 DIP. If |with_frame| is false (0) the button
+		/// will only have a visible frame on hover/press, left alignment, less padding
+		/// and no default minimum size.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_menu_button_capi.h as
+		/// cef_menu_button_t * cef_menu_button_create(_cef_menu_button_delegate_t * delegate, cef_string_t const * text)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_menu_button_t* cef_menu_button_create(cef_menu_button_delegate_t* @delegate, cef_string_t* text);
+
+		/// <summary>
 		/// Create a new MenuModel with the specified |delegate|.
 		/// </summary>
 		/// <remarks>
@@ -765,6 +916,16 @@ namespace CefNet.CApi
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern long cef_now_from_system_trace_time();
+
+		/// <summary>
+		/// Create a new Panel.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_panel_capi.h as
+		/// cef_panel_t * cef_panel_create(_cef_panel_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_panel_t* cef_panel_create(cef_panel_delegate_t* @delegate);
 
 		/// <summary>
 		/// Parses the specified |json_string| and returns a dictionary or list
@@ -1050,6 +1211,16 @@ namespace CefNet.CApi
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_run_message_loop();
+
+		/// <summary>
+		/// Create a new ScrollView.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_scroll_view_capi.h as
+		/// cef_scroll_view_t * cef_scroll_view_create(_cef_view_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_scroll_view_t* cef_scroll_view_create(cef_view_delegate_t* @delegate);
 
 		/// <summary>
 		/// Create a new server that binds to |address| and |port|. |address| must be a
@@ -1675,6 +1846,16 @@ namespace CefNet.CApi
 		public static unsafe extern cef_task_runner_t* cef_task_runner_get_for_thread(CefThreadId threadId);
 
 		/// <summary>
+		/// Create a new Textfield.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_textfield_capi.h as
+		/// cef_textfield_t * cef_textfield_create(_cef_textfield_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_textfield_t* cef_textfield_create(cef_textfield_delegate_t* @delegate);
+
+		/// <summary>
 		/// Create and start a new thread. This function does not block waiting for the
 		/// thread to run initialization. |display_name| is the name that will be used
 		/// to identify the thread. |priority| is the thread execution priority.
@@ -2132,6 +2313,16 @@ namespace CefNet.CApi
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_waitable_event_t* cef_waitable_event_create(int automatic_reset, int initially_signaled);
+
+		/// <summary>
+		/// Create a new Window.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_window_capi.h as
+		/// cef_window_t * cef_window_create_top_level(_cef_window_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_window_t* cef_window_create_top_level(cef_window_delegate_t* @delegate);
 
 		/// <summary>
 		/// Generates a JSON string from the specified root |node| which should be a

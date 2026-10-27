@@ -15,6 +15,7 @@
   </Folder>
   <Folder Name="/Samples/">
     <Project Path="AvaloniaApp/AvaloniaApp.csproj" />
+    <Project Path="ViewsApp/ViewsApp.csproj" />
     <Project Path="WinFormsCoreApp/WinFormsCoreApp.csproj" />
     <Project Path="WpfCoreApp/WpfCoreApp.csproj" />
   </Folder>

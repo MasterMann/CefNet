@@ -40,15 +40,15 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefRequestContext : CefBaseRefCounted<cef_request_context_t>
+	public unsafe partial class CefRequestContext : CefPreferenceManager
 	{
-		internal static unsafe CefRequestContext Create(IntPtr instance)
+		internal new static unsafe CefRequestContext Create(IntPtr instance)
 		{
 			return new CefRequestContext((cef_request_context_t*)instance);
 		}
 
 		public CefRequestContext(cef_request_context_t* instance)
-			: base((cef_base_ref_counted_t*)instance)
+			: base((cef_preference_manager_t*)instance)
 		{
 		}
 
@@ -362,6 +362,24 @@ namespace CefNet
 		{
 			NativeInstance->ClearHttpCache((callback != null) ? callback.GetNativeInstance() : null);
 			GC.KeepAlive(this);
+		}
+
+		public new unsafe cef_request_context_t* NativeInstance
+		{
+			get
+			{
+				return (cef_request_context_t*)base.NativeInstance;
+			}
+		}
+
+		public new unsafe cef_request_context_t* GetNativeInstance()
+		{
+			return (cef_request_context_t*)base.GetNativeInstance();
+		}
+
+		public static unsafe CefRequestContext Wrap(Func<IntPtr, CefRequestContext> create, cef_request_context_t* instance)
+		{
+			return CefBaseRefCounted<cef_preference_manager_t>.Wrap(create, (cef_preference_manager_t*)instance);
 		}
 	}
 }

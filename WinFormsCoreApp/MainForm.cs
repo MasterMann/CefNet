@@ -300,10 +300,8 @@ namespace WinFormsCoreApp
 			if (this.SelectedView == null)
 				return;
 
-			SelectedView.Navigate("https://cefnet.github.io/winsize.html");
-			//SelectedView.Navigate("http://internet.yandex.ru");
-			//SelectedView.Navigate("http://cefnet.github.io/crossiframe.html");
-			//SelectedView.Navigate("http://cefnet.github.io/iframepage.html");
+			if (Uri.TryCreate(txtAddress.Text, UriKind.Absolute, out Uri url))
+				SelectedView.Navigate(url.AbsoluteUri);
 			//SelectedView.Navigate("http://cefnet.github.io/openpage.html", "http://example.com");
 			//SelectedView.Navigate("http://yandex.ru/");
 

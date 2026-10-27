@@ -221,6 +221,7 @@ namespace CefGen
 		{
 			var options = new CppParserOptions { ParserKind = CppParserKind.C };
 			var files = new List<string>(Directory.GetFiles(Path.Combine(basePath, "include", "capi"), "*.h"));
+			files.AddRange(Directory.GetFiles(Path.Combine(basePath, "include", "capi", "views"), "*.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_version.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_api_hash.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_api_versions.h"));

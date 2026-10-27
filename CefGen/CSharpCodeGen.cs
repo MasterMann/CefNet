@@ -93,6 +93,11 @@ namespace CefGen
 				Output.Write("private ");
 			}
 
+			if (attributes.HasFlag(CodeAttributes.New))
+			{
+				Output.Write("new ");
+			}
+
 			if (attributes.HasFlag(CodeAttributes.Static))
 			{
 				Output.Write("static ");
@@ -352,7 +357,15 @@ namespace CefGen
 			Output.Write("(");
 			Output.Write(string.Join(", ", ctorDecl.Parameters.Select(arg => GetClrTypeName(arg.Type) + " " + arg.Name)));
 			Output.Write(")");
-			if (ctorDecl.BaseArgs.Count > 0)
+			if (ctorDecl.ThisArgs.Count > 0)
+			{
+				Output.WriteLine();
+				WriteIndent(1);
+				Output.Write(": this(");
+				Output.Write(string.Join(", ", ctorDecl.ThisArgs));
+				Output.Write(")");
+			}
+			else if (ctorDecl.BaseArgs.Count > 0)
 			{
 				Output.WriteLine();
 				WriteIndent(1);
@@ -562,6 +575,10 @@ namespace CefGen
 					return "int";
 				case "uint32_t":
 					return "UInt32";
+				case "intptr_t":
+					return "IntPtr";
+				case "uintptr_t":
+					return "UIntPtr";
 				case "int64_t":
 					return "long";
 				case "uint64_t":

@@ -25,5 +25,6 @@ namespace CefGen.CodeDom
 		Overrided = 1 << 10,
 		Protected = 1 << 11,
 		Partial = 1 << 12,
+		New = 1 << 13,
 	}
 }

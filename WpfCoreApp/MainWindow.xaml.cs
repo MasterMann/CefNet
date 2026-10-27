@@ -139,8 +139,10 @@ namespace WpfCoreApp
 
 		private void NavigateButton_Click(object sender, RoutedEventArgs e)
 		{
-			//SelectedView?.Navigate("http://yandex.ru");
-			SelectedView?.Navigate("https://cefnet.github.io/winsize.html");
+			if (Uri.TryCreate(txtAddress.Text, UriKind.Absolute, out Uri url))
+			{
+				SelectedView?.Navigate(url.AbsoluteUri);
+			}
 		}
 
 		private void txtAddress_KeyDown(object sender, KeyEventArgs e)

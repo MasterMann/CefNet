@@ -77,18 +77,14 @@ namespace CefGen
 		{
 			if (symbol.TypeKind != TypeKind.Struct)
 				return false;
-			if(symbol.Name == "cef_request_context_t")
-			{
-				return true;
-			}
 			ImmutableArray<ISymbol> members = symbol.GetMembers();
-			if (members.Length > 0)
+			if (members.Length > 0 && members[0] is IFieldSymbol field)
 			{
-				var field = members[0] as IFieldSymbol;
-				if (field != null)
-				{
-					return field.Type.Name == "cef_base_ref_counted_t";
-				}
+				// A ref-counted structure starts with its base: cef_base_ref_counted_t or another
+				// ref-counted structure (cef_window_t -> cef_panel_t -> cef_view_t).
+				if (field.Type.Name == "cef_base_ref_counted_t")
+					return true;
+				return field.Name == "base" && field.Type is INamedTypeSymbol baseType && IsRefCountedTypeSymbol(baseType);
 			}
 			return false;
 		}

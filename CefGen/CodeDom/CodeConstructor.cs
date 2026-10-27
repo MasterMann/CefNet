@@ -23,5 +23,10 @@ namespace CefGen.CodeDom
 		public string Body { get; internal set; }
 
 		public List<string> BaseArgs { get; set; } = new List<string>(0); 
+
+		/// <summary>
+		/// Gets the arguments of a chained <c>this(...)</c> call; used instead of <see cref="BaseArgs"/> when set.
+		/// </summary>
+		public List<string> ThisArgs { get; set; } = new List<string>(0);
 	}
 }

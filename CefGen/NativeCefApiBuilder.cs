@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -168,8 +168,13 @@ namespace CefGen
 
 			if (sourceFile.EndsWith("_capi.h"))
 			{
+				// include/capi[/views]/name_capi.h is generated from include[/views]/name.h.
 				string fname = Path.GetFileName(sourceFile);
-				fname = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(sourceFile)), fname.Remove(fname.Length - 7) + ".h");
+				string capiDir = Path.GetDirectoryName(sourceFile);
+				string subDir = Path.GetFileName(capiDir) == "capi" ? string.Empty : Path.GetFileName(capiDir);
+				while (Path.GetFileName(capiDir) != "capi")
+					capiDir = Path.GetDirectoryName(capiDir);
+				fname = Path.Combine(Path.GetDirectoryName(capiDir), subDir, fname.Remove(fname.Length - 7) + ".h");
 				if (File.Exists(fname))
 				{
 					string cppClassName = className.EndsWith("_t") ? className.Remove(className.Length - 2).ToUpperCamel() : className.ToUpperCamel();
