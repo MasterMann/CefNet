@@ -96,9 +96,7 @@ namespace CefNet
 		Xhr = 13,
 
 		/// <summary>
-		/// A request for a 
-		/// &lt;ping
-		/// &gt;
+		/// A request for a &quot;&lt;ping&gt;&quot;.
 		/// </summary>
 		Ping = 14,
 
@@ -126,6 +124,11 @@ namespace CefNet
 		/// A sub-frame service worker navigation preload request.
 		/// </summary>
 		NavigationPreloadSubFrame = 20,
+
+		/// <summary>
+		/// A sub-frame service worker navigation preload request.
+		/// </summary>
+		NumValues = 21,
 	}
 }
 

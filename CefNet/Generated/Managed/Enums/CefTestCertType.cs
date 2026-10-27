@@ -40,6 +40,11 @@ namespace CefNet
 		/// Expired certificate. Loads the &quot;expired_cert.pem&quot; file.
 		/// </summary>
 		Expired = 2,
+
+		/// <summary>
+		/// Expired certificate. Loads the &quot;expired_cert.pem&quot; file.
+		/// </summary>
+		NumValues = 3,
 	}
 }
 

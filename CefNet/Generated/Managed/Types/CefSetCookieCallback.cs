@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure to implement to be notified of asynchronous completion via
 	/// cef_cookie_manager_t::set_cookie().
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefSetCookieCallbackPrivate.AvoidOnComplete();
+		bool ICefSetCookieCallbackPrivate.AvoidOnComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefSetCookieCallback), nameof(OnComplete));
+		}
 
 		/// <summary>
 		/// Method that will be called upon completion. |success| will be true (1) if

@@ -90,6 +90,7 @@ namespace CefNet.Windows.Forms
 		/// <summary>
 		/// Gets and sets a value indicating whether the browser using off-screen rendering.
 		/// </summary>
+		[System.ComponentModel.DefaultValue(false)]
 		public bool WindowlessRenderingEnabled
 		{
 			get
@@ -173,12 +174,12 @@ namespace CefNet.Windows.Forms
 		}
 
 
-		bool IChromiumWebViewPrivate.GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		bool IChromiumWebViewPrivate.GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
-			return GetCefScreenInfo(ref screenInfo);
+			return GetCefScreenInfo(screenInfo);
 		}
 
-		protected virtual bool GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		protected virtual bool GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
 			VirtualDevice device = Device;
 			if (device == null)

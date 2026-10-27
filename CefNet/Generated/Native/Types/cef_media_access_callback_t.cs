@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure used for asynchronous continuation of media access
 	/// permission requests.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_access_callback_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_media_access_callback_t* self, uint32 allowed_permissions)*
+		/// void (*)(_cef_media_access_callback_t* self, uint32_t allowed_permissions)*
 		/// </summary>
 		public void* cont;
 
@@ -44,11 +45,11 @@ namespace CefNet.CApi
 		/// OnRequestMediaAccessPermission.
 		/// </summary>
 		[NativeName("cont")]
-		public unsafe void Continue(uint allowed_permissions)
+		public unsafe void Continue(UInt32 allowed_permissions)
 		{
 			fixed (cef_media_access_callback_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_media_access_callback_t*, uint, void>)cont)(self, allowed_permissions);
+				((delegate* unmanaged[Stdcall]<cef_media_access_callback_t*, UInt32, void>)cont)(self, allowed_permissions);
 			}
 		}
 

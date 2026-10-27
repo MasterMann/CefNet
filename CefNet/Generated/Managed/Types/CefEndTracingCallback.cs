@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to receive notification when tracing has completed.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -54,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefEndTracingCallbackPrivate.AvoidOnEndTracingComplete();
+		bool ICefEndTracingCallbackPrivate.AvoidOnEndTracingComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefEndTracingCallback), nameof(OnEndTracingComplete));
+		}
 
 		/// <summary>
 		/// Called after all processes have sent their trace data. |tracing_file| is
@@ -71,7 +74,7 @@ namespace CefNet
 		private unsafe delegate void OnEndTracingCompleteDelegate(cef_end_tracing_callback_t* self, cef_string_t* tracing_file);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_end_tracing_callback_t* self, const cef_string_t* tracing_file)*
+		// void (*)(_cef_end_tracing_callback_t* self, cef_string_t const* tracing_file)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

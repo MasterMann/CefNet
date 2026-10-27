@@ -23,6 +23,7 @@ namespace CefNet.CApi
 	/// command ids that have default implementations. All user-defined command ids
 	/// should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of
 	/// this structure can only be accessed on the browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_menu_model_t
@@ -101,7 +102,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_item;
 
@@ -118,7 +119,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_check_item;
 
@@ -135,7 +136,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label, int group_id)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label, int group_id)*
 		/// </summary>
 		public void* add_radio_item;
 
@@ -153,7 +154,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_sub_menu;
 
@@ -188,7 +189,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_item_at;
 
@@ -206,7 +207,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_check_item_at;
 
@@ -224,7 +225,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label, int group_id)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label, int group_id)*
 		/// </summary>
 		public void* insert_radio_item_at;
 
@@ -243,13 +244,13 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_sub_menu_at;
 
 		/// <summary>
-		/// Insert a sub-menu in the menu at the specified |index|. The new sub-menu is
-		/// returned.
+		/// Insert a sub-menu in the menu at the specified |index|. The new sub-menu
+		/// is returned.
 		/// </summary>
 		[NativeName("insert_sub_menu_at")]
 		public unsafe cef_menu_model_t* InsertSubMenuAt(UIntPtr index, int command_id, [Immutable]cef_string_t* label)
@@ -386,12 +387,13 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* set_label;
 
 		/// <summary>
-		/// Sets the label for the specified |command_id|. Returns true (1) on success.
+		/// Sets the label for the specified |command_id|. Returns true (1) on
+		/// success.
 		/// </summary>
 		[NativeName("set_label")]
 		public unsafe int SetLabel(int command_id, [Immutable]cef_string_t* label)
@@ -403,7 +405,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, cef_string_t const* label)*
 		/// </summary>
 		public void* set_label_at;
 
@@ -720,8 +722,8 @@ namespace CefNet.CApi
 		public void* is_checked_at;
 
 		/// <summary>
-		/// Returns true (1) if the specified |index| is checked. Only applies to check
-		/// and radio items.
+		/// Returns true (1) if the specified |index| is checked. Only applies to
+		/// check and radio items.
 		/// </summary>
 		[NativeName("is_checked_at")]
 		public unsafe int IsCheckedAt(UIntPtr index)
@@ -756,8 +758,8 @@ namespace CefNet.CApi
 		public void* set_checked_at;
 
 		/// <summary>
-		/// Check the specified |index|. Only applies to check and radio items. Returns
-		/// true (1) on success.
+		/// Check the specified |index|. Only applies to check and radio items.
+		/// Returns true (1) on success.
 		/// </summary>
 		[NativeName("set_checked_at")]
 		public unsafe int SetCheckedAt(UIntPtr index, int @checked)
@@ -810,8 +812,8 @@ namespace CefNet.CApi
 		public void* set_accelerator;
 
 		/// <summary>
-		/// Set the keyboard accelerator for the specified |command_id|. |key_code| can
-		/// be any virtual key or character value. Returns true (1) on success.
+		/// Set the keyboard accelerator for the specified |command_id|. |key_code|
+		/// can be any virtual key or character value. Returns true (1) on success.
 		/// </summary>
 		[NativeName("set_accelerator")]
 		public unsafe int SetAccelerator(int command_id, int key_code, int shift_pressed, int ctrl_pressed, int alt_pressed)
@@ -940,9 +942,9 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Set the explicit color for |command_id| and |index| to |color|. Specify a
 		/// |color| value of 0 to remove the explicit color. Specify an |index| value
-		/// of -1 to set the default color for items that do not have an explicit color
-		/// set. If no explicit color or default color is set for |color_type| then the
-		/// system color will be used. Returns true (1) on success.
+		/// of -1 to set the default color for items that do not have an explicit
+		/// color set. If no explicit color or default color is set for |color_type|
+		/// then the system color will be used. Returns true (1) on success.
 		/// </summary>
 		[NativeName("set_color_at")]
 		public unsafe int SetColorAt(int index, CefMenuColorType color_type, cef_color_t color)
@@ -979,9 +981,9 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns in |color| the color that was explicitly set for |command_id| and
-		/// |color_type|. Specify an |index| value of -1 to return the default color in
-		/// |color|. If a color was not set then 0 will be returned in |color|. Returns
-		/// true (1) on success.
+		/// |color_type|. Specify an |index| value of -1 to return the default color
+		/// in |color|. If a color was not set then 0 will be returned in |color|.
+		/// Returns true (1) on success.
 		/// </summary>
 		[NativeName("get_color_at")]
 		public unsafe int GetColorAt(int index, CefMenuColorType color_type, cef_color_t* color)
@@ -993,24 +995,21 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* font_list)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* font_list)*
 		/// </summary>
 		public void* set_font_list;
 
 		/// <summary>
 		/// Sets the font list for the specified |command_id|. If |font_list| is NULL
 		/// the system font will be used. Returns true (1) on success. The format is
-		/// &quot;
-		/// &lt;FONT
-		/// _FAMILY_LIST&gt;,[STYLES] 
-		/// &lt;SIZE
-		/// &gt;&quot;, where: - FONT_FAMILY_LIST is a comma-
-		/// separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names (case-sensitive
-		/// &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where:
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		[NativeName("set_font_list")]
 		public unsafe int SetFontList(int command_id, [Immutable]cef_string_t* font_list)
@@ -1022,25 +1021,20 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int index, const cef_string_t* font_list)*
+		/// int (*)(_cef_menu_model_t* self, int index, cef_string_t const* font_list)*
 		/// </summary>
 		public void* set_font_list_at;
 
 		/// <summary>
 		/// Sets the font list for the specified |index|. Specify an |index| value of
-		/// -1 to set the default font. If |font_list| is NULL the system font will be
-		/// used. Returns true (1) on success. The format is
-		/// &quot;
-		/// &lt;FONT
-		/// _FAMILY_LIST&gt;,[STYLES] 
-		/// &lt;SIZE
-		/// &gt;&quot;, where: - FONT_FAMILY_LIST is a comma-
-		/// separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names (case-sensitive
-		/// &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// - 1 to set the default font. If |font_list| is NULL the system font will
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		[NativeName("set_font_list_at")]
 		public unsafe int SetFontListAt(int index, [Immutable]cef_string_t* font_list)

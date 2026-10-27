@@ -30,6 +30,8 @@ namespace CefNet
 		LaxMode = 2,
 
 		StrictMode = 3,
+
+		NumValues = 4,
 	}
 }
 

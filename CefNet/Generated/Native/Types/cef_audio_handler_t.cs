@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Implement this structure to handle audio events.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_audio_handler_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_audio_parameters_t* params, int channels)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_audio_parameters_t const* params, int channels)*
 		/// </summary>
 		public void* on_audio_stream_started;
 
@@ -71,7 +72,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const float** data, int frames, int64 pts)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, float const** data, int frames, int64_t pts)*
 		/// </summary>
 		public void* on_audio_stream_packet;
 
@@ -80,10 +81,10 @@ namespace CefNet.CApi
 		/// stream. |data| is an array representing the raw PCM data as a floating
 		/// point type, i.e. 4-byte value(s). |frames| is the number of frames in the
 		/// PCM packet. |pts| is the presentation timestamp (in milliseconds since the
-		/// Unix Epoch) and represents the time at which the decompressed packet should
-		/// be presented to the user. Based on |frames| and the |channel_layout| value
-		/// passed to OnAudioStreamStarted you can calculate the size of the |data|
-		/// array in bytes.
+		/// Unix Epoch) and represents the time at which the decompressed packet
+		/// should be presented to the user. Based on |frames| and the
+		/// |channel_layout| value passed to OnAudioStreamStarted you can calculate
+		/// the size of the |data| array in bytes.
 		/// </summary>
 		[NativeName("on_audio_stream_packet")]
 		public unsafe void OnAudioStreamPacket(cef_browser_t* browser, [Immutable]float** data, int frames, long pts)
@@ -114,7 +115,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_string_t* message)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_string_t const* message)*
 		/// </summary>
 		public void* on_audio_stream_error;
 

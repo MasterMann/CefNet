@@ -7,8 +7,10 @@ namespace CefNet.Internal
 {
 	public partial class WebViewGlue
 	{
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOverloadCanSendCookie();
+		internal bool AvoidOverloadCanSendCookie()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.CanSendCookie));
+		}
 
 		internal bool AvoidCanSendCookie()
 		{
@@ -38,8 +40,10 @@ namespace CefNet.Internal
 			return true;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOverloadCanSaveCookie();
+		internal bool AvoidOverloadCanSaveCookie()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.CanSaveCookie));
+		}
 
 		internal bool AvoidCanSaveCookie()
 		{

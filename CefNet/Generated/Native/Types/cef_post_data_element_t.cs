@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a single element in the request post data. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_post_data_element_t
@@ -65,7 +66,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_post_data_element_t* self, const cef_string_t* fileName)*
+		/// void (*)(_cef_post_data_element_t* self, cef_string_t const* fileName)*
 		/// </summary>
 		public void* set_to_file;
 
@@ -82,7 +83,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_post_data_element_t* self, size_t size, const void* bytes)*
+		/// void (*)(_cef_post_data_element_t* self, size_t size, void const* bytes)*
 		/// </summary>
 		public void* set_to_bytes;
 

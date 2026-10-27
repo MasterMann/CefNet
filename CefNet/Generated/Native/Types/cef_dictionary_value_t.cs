@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure representing a dictionary value. Can be used on any process and
 	/// thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_dictionary_value_t
@@ -36,10 +37,10 @@ namespace CefNet.CApi
 		public void* is_valid;
 
 		/// <summary>
-		/// Returns true (1) if this object is valid. This object may become invalid if
-		/// the underlying data is owned by another object (e.g. list or dictionary)
-		/// and that other object is then modified or destroyed. Do not call any other
-		/// functions if this function returns false (0).
+		/// Returns true (1) if this object is valid. This object may become invalid
+		/// if the underlying data is owned by another object (e.g. list or
+		/// dictionary) and that other object is then modified or destroyed. Do not
+		/// call any other functions if this function returns false (0).
 		/// </summary>
 		[NativeName("is_valid")]
 		public unsafe int IsValid()
@@ -175,7 +176,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* has_key;
 
@@ -209,7 +210,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* remove;
 
@@ -227,7 +228,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_value_type_t (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// cef_value_type_t (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_type;
 
@@ -244,16 +245,16 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_value;
 
 		/// <summary>
-		/// Returns the value at the specified key. For simple types the returned value
-		/// will copy existing data and modifications to the value will not modify this
-		/// object. For complex types (binary, dictionary and list) the returned value
-		/// will reference existing data and modifications to the value will modify
-		/// this object.
+		/// Returns the value at the specified key. For simple types the returned
+		/// value will copy existing data and modifications to the value will not
+		/// modify this object. For complex types (binary, dictionary and list) the
+		/// returned value will reference existing data and modifications to the value
+		/// will modify this object.
 		/// </summary>
 		[NativeName("get_value")]
 		public unsafe cef_value_t* GetValue([Immutable]cef_string_t* key)
@@ -265,7 +266,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_bool;
 
@@ -282,7 +283,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_int;
 
@@ -299,7 +300,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// double (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// double (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_double;
 
@@ -316,7 +317,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// cef_string_userfree_t (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_string;
 
@@ -334,7 +335,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_binary_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_binary_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_binary;
 
@@ -352,7 +353,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_dictionary_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_dictionary_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_dictionary;
 
@@ -371,7 +372,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_list_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_list_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_list;
 
@@ -390,17 +391,17 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_value_t* value)*
 		/// </summary>
 		public void* set_value;
 
 		/// <summary>
 		/// Sets the value at the specified key. Returns true (1) if the value was set
 		/// successfully. If |value| represents simple data then the underlying data
-		/// will be copied and modifications to |value| will not modify this object. If
-		/// |value| represents complex data (binary, dictionary or list) then the
-		/// underlying data will be referenced and modifications to |value| will modify
-		/// this object.
+		/// will be copied and modifications to |value| will not modify this object.
+		/// If |value| represents complex data (binary, dictionary or list) then the
+		/// underlying data will be referenced and modifications to |value| will
+		/// modify this object.
 		/// </summary>
 		[NativeName("set_value")]
 		public unsafe int SetValue([Immutable]cef_string_t* key, cef_value_t* value)
@@ -412,7 +413,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* set_null;
 
@@ -430,7 +431,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, int value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, int value)*
 		/// </summary>
 		public void* set_bool;
 
@@ -448,7 +449,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, int value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, int value)*
 		/// </summary>
 		public void* set_int;
 
@@ -466,13 +467,13 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, double value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, double value)*
 		/// </summary>
 		public void* set_double;
 
 		/// <summary>
-		/// Sets the value at the specified key as type double. Returns true (1) if the
-		/// value was set successfully.
+		/// Sets the value at the specified key as type double. Returns true (1) if
+		/// the value was set successfully.
 		/// </summary>
 		[NativeName("set_double")]
 		public unsafe int SetDouble([Immutable]cef_string_t* key, double value)
@@ -484,13 +485,13 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, const cef_string_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 
 		/// <summary>
-		/// Sets the value at the specified key as type string. Returns true (1) if the
-		/// value was set successfully.
+		/// Sets the value at the specified key as type string. Returns true (1) if
+		/// the value was set successfully.
 		/// </summary>
 		[NativeName("set_string")]
 		public unsafe int SetString([Immutable]cef_string_t* key, [Immutable]cef_string_t* value)
@@ -502,16 +503,16 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_binary_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_binary_value_t* value)*
 		/// </summary>
 		public void* set_binary;
 
 		/// <summary>
-		/// Sets the value at the specified key as type binary. Returns true (1) if the
-		/// value was set successfully. If |value| is currently owned by another object
-		/// then the value will be copied and the |value| reference will not change.
-		/// Otherwise, ownership will be transferred to this object and the |value|
-		/// reference will be invalidated.
+		/// Sets the value at the specified key as type binary. Returns true (1) if
+		/// the value was set successfully. If |value| is currently owned by another
+		/// object then the value will be copied and the |value| reference will not
+		/// change. Otherwise, ownership will be transferred to this object and the
+		/// |value| reference will be invalidated.
 		/// </summary>
 		[NativeName("set_binary")]
 		public unsafe int SetBinary([Immutable]cef_string_t* key, cef_binary_value_t* value)
@@ -523,16 +524,16 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_dictionary_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_dictionary_value_t* value)*
 		/// </summary>
 		public void* set_dictionary;
 
 		/// <summary>
 		/// Sets the value at the specified key as type dict. Returns true (1) if the
-		/// value was set successfully. If |value| is currently owned by another object
-		/// then the value will be copied and the |value| reference will not change.
-		/// Otherwise, ownership will be transferred to this object and the |value|
-		/// reference will be invalidated.
+		/// value was set successfully. If |value| is currently owned by another
+		/// object then the value will be copied and the |value| reference will not
+		/// change. Otherwise, ownership will be transferred to this object and the
+		/// |value| reference will be invalidated.
 		/// </summary>
 		[NativeName("set_dictionary")]
 		public unsafe int SetDictionary([Immutable]cef_string_t* key, cef_dictionary_value_t* value)
@@ -544,16 +545,16 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_list_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_list_value_t* value)*
 		/// </summary>
 		public void* set_list;
 
 		/// <summary>
 		/// Sets the value at the specified key as type list. Returns true (1) if the
-		/// value was set successfully. If |value| is currently owned by another object
-		/// then the value will be copied and the |value| reference will not change.
-		/// Otherwise, ownership will be transferred to this object and the |value|
-		/// reference will be invalidated.
+		/// value was set successfully. If |value| is currently owned by another
+		/// object then the value will be copied and the |value| reference will not
+		/// change. Otherwise, ownership will be transferred to this object and the
+		/// |value| reference will be invalidated.
 		/// </summary>
 		[NativeName("set_list")]
 		public unsafe int SetList([Immutable]cef_string_t* key, cef_list_value_t* value)

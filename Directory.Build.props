@@ -16,7 +16,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <PropertyGroup>
-    <CefVersion>105.3</CefVersion>
+    <CefVersion>156.0</CefVersion>
     <VersionBuild>$([System.DateTime]::UtcNow.ToString(yy))$([System.DateTime]::UtcNow.DayOfYear.ToString(000))</VersionBuild>
     <VersionRevision>$([System.DateTime]::UtcNow.ToString(HH))$([System.Convert]::ToUInt16($([MSBuild]::Divide($([System.DateTime]::UtcNow.Minute),5))))</VersionRevision>
     <VersionPrefix>$(CefVersion).$(VersionBuild).$(VersionRevision)</VersionPrefix>
@@ -26,9 +26,9 @@
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>The CefNet Authors</Authors>
-    <PackageProjectUrl>https://github.com/cefnet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/masterMann/cefnet</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/cefnet/cefnet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/masterMann/cefnet</RepositoryUrl>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageReleaseNotes>
       CEF v.$(CefVersion).*.

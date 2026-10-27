@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure that wraps platform-dependent share memory region mapping.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_shared_memory_region_t
@@ -64,7 +65,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// const void* (*)(_cef_shared_memory_region_t* self)*
+		/// void* (*)(_cef_shared_memory_region_t* self)*
 		/// </summary>
 		public void* memory;
 

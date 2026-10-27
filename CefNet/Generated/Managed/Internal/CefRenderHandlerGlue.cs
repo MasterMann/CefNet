@@ -69,9 +69,9 @@ namespace CefNet.Internal
 			return _implementation.AvoidGetScreenInfo();
 		}
 
-		protected internal unsafe override bool GetScreenInfo(CefBrowser browser, ref CefScreenInfo screenInfo)
+		protected internal unsafe override bool GetScreenInfo(CefBrowser browser, CefScreenInfo screenInfo)
 		{
-			return _implementation.GetScreenInfo(browser, ref screenInfo);
+			return _implementation.GetScreenInfo(browser, screenInfo);
 		}
 
 		bool ICefRenderHandlerPrivate.AvoidOnPopupShow()
@@ -109,9 +109,9 @@ namespace CefNet.Internal
 			return _implementation.AvoidOnAcceleratedPaint();
 		}
 
-		protected internal unsafe override void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, IntPtr sharedHandle)
+		protected internal unsafe override void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, CefAcceleratedPaintInfo info)
 		{
-			_implementation.OnAcceleratedPaint(browser, type, dirtyRects, sharedHandle);
+			_implementation.OnAcceleratedPaint(browser, type, dirtyRects, info);
 		}
 
 		bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize()

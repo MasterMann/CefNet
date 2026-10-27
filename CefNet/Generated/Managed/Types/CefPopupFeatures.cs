@@ -26,19 +26,66 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefPopupFeatures
+	public unsafe partial class CefPopupFeatures : IDisposable
 	{
-		private cef_popup_features_t _instance;
+		private cef_popup_features_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefPopupFeatures()
+		{
+			_disposable = true;
+			_instance = (cef_popup_features_t*)CefStructure.Allocate(sizeof(cef_popup_features_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_popup_features_t));
+		}
+
+		internal static unsafe CefPopupFeatures Create(IntPtr instance)
+		{
+			return new CefPopupFeatures((cef_popup_features_t*)instance);
+		}
+
+		public CefPopupFeatures(cef_popup_features_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_popup_features_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_popup_features_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		public int X
 		{
 			get
 			{
-				return _instance.x;
+				return _instance->x;
 			}
 			set
 			{
-				_instance.x = value;
+				_instance->x = value;
 			}
 		}
 
@@ -46,11 +93,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.xSet;
+				return _instance->xSet;
 			}
 			set
 			{
-				_instance.xSet = value;
+				_instance->xSet = value;
 			}
 		}
 
@@ -58,11 +105,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.y;
+				return _instance->y;
 			}
 			set
 			{
-				_instance.y = value;
+				_instance->y = value;
 			}
 		}
 
@@ -70,11 +117,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.ySet;
+				return _instance->ySet;
 			}
 			set
 			{
-				_instance.ySet = value;
+				_instance->ySet = value;
 			}
 		}
 
@@ -82,11 +129,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.width;
+				return _instance->width;
 			}
 			set
 			{
-				_instance.width = value;
+				_instance->width = value;
 			}
 		}
 
@@ -94,11 +141,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.widthSet;
+				return _instance->widthSet;
 			}
 			set
 			{
-				_instance.widthSet = value;
+				_instance->widthSet = value;
 			}
 		}
 
@@ -106,11 +153,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.height;
+				return _instance->height;
 			}
 			set
 			{
-				_instance.height = value;
+				_instance->height = value;
 			}
 		}
 
@@ -118,70 +165,47 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.heightSet;
+				return _instance->heightSet;
 			}
 			set
 			{
-				_instance.heightSet = value;
+				_instance->heightSet = value;
 			}
 		}
 
-		public int MenuBarVisible
+		/// <summary>
+		/// True (1) if browser interface elements should be hidden.
+		/// </summary>
+		public bool IsPopup
 		{
 			get
 			{
-				return _instance.menuBarVisible;
+				return _instance->isPopup != 0;
 			}
 			set
 			{
-				_instance.menuBarVisible = value;
+				_instance->isPopup = value ? 1 : 0;
 			}
 		}
 
-		public int StatusBarVisible
+		public void Dispose()
 		{
-			get
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
 			{
-				return _instance.statusBarVisible;
-			}
-			set
-			{
-				_instance.statusBarVisible = value;
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
 			}
 		}
 
-		public int ToolBarVisible
+		~CefPopupFeatures()
 		{
-			get
-			{
-				return _instance.toolBarVisible;
-			}
-			set
-			{
-				_instance.toolBarVisible = value;
-			}
-		}
-
-		public int ScrollbarsVisible
-		{
-			get
-			{
-				return _instance.scrollbarsVisible;
-			}
-			set
-			{
-				_instance.scrollbarsVisible = value;
-			}
-		}
-
-		public static implicit operator CefPopupFeatures(cef_popup_features_t instance)
-		{
-			return new CefPopupFeatures { _instance = instance };
-		}
-
-		public static implicit operator cef_popup_features_t(CefPopupFeatures instance)
-		{
-			return instance._instance;
+			Dispose(false);
 		}
 	}
 }

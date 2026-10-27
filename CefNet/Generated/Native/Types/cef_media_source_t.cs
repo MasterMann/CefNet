@@ -23,6 +23,7 @@ namespace CefNet.CApi
 	/// are retrieved via cef_media_router_t::GetSource. The functions of this
 	/// structure may be called on any browser process thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_source_t

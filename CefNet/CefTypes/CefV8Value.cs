@@ -1,4 +1,4 @@
-﻿using CefNet.CApi;
+using CefNet.CApi;
 using CefNet.Unsafe;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="value">The value of type <see cref="bool"/>.</param>
 		public CefV8Value(bool value)
-			: this(CefNativeApi.cef_v8value_create_bool(value ? 1 : 0))
+			: this(CefNativeApi.cef_v8_value_create_bool(value ? 1 : 0))
 		{
 
 		}
@@ -26,7 +26,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="value">The value of type <see cref="int"/>.</param>
 		public CefV8Value(int value)
-			: this(CefNativeApi.cef_v8value_create_int(value))
+			: this(CefNativeApi.cef_v8_value_create_int(value))
 		{
 
 		}
@@ -36,7 +36,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="value">The value of type <see cref="uint"/>.</param>
 		public CefV8Value(uint value)
-			: this(CefNativeApi.cef_v8value_create_uint(value))
+			: this(CefNativeApi.cef_v8_value_create_uint(value))
 		{
 
 		}
@@ -46,7 +46,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="value">The value of type <see cref="double"/>.</param>
 		public CefV8Value(double value)
-			: this(CefNativeApi.cef_v8value_create_double(value))
+			: this(CefNativeApi.cef_v8_value_create_double(value))
 		{
 
 		}
@@ -61,7 +61,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="value">The value of type <see cref="DateTime"/>.</param>
 		public CefV8Value(DateTime value)
-			: this(CefNativeApi.cef_v8value_create_date(cef_basetime_t.FromDateTime(value)))
+			: this(CefNativeApi.cef_v8_value_create_date(cef_basetime_t.FromDateTime(value)))
 		{
 
 		}
@@ -76,12 +76,12 @@ namespace CefNet
 
 		}
 
-		private static cef_v8value_t* CreateStringInternal(string value)
+		private static cef_v8_value_t* CreateStringInternal(string value)
 		{
 			fixed (char* s = value)
 			{
 				var cstr = new cef_string_t { Str = s, Length = (value != null ? value.Length : 0) };
-				return CefNativeApi.cef_v8value_create_string(&cstr);
+				return CefNativeApi.cef_v8_value_create_string(&cstr);
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace CefNet
 		/// <param name="accessor">A <see cref="CefV8Accessor"/> instance or null.</param>
 		/// <param name="interceptor">A <see cref="CefV8Interceptor"/> instance or null.</param>
 		public CefV8Value(CefV8Accessor accessor, CefV8Interceptor interceptor)
-			: this(CefNativeApi.cef_v8value_create_object(accessor != null ? accessor.GetNativeInstance() : null, interceptor != null ? interceptor.GetNativeInstance() : null))
+			: this(CefNativeApi.cef_v8_value_create_object(accessor != null ? accessor.GetNativeInstance() : null, interceptor != null ? interceptor.GetNativeInstance() : null))
 		{
 
 		}
@@ -117,7 +117,7 @@ namespace CefNet
 		/// <returns>Returns a new <see cref="CefV8Value"/> object of type array.</returns>
 		public static CefV8Value CreateArray(int length)
 		{
-			return new CefV8Value(CefNativeApi.cef_v8value_create_array(length));
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_array(length));
 		}
 
 		/// <summary>
@@ -144,7 +144,7 @@ namespace CefNet
 				throw new ArgumentNullException(nameof(buffer));
 			if (length < 0)
 				throw new ArgumentOutOfRangeException(nameof(length));
-			return new CefV8Value(CefNativeApi.cef_v8value_create_array_buffer(buffer, unchecked((UIntPtr)length), callback.GetNativeInstance()));
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_array_buffer(buffer, unchecked((UIntPtr)length), callback.GetNativeInstance()));
 		}
 
 		/// <summary>
@@ -161,7 +161,7 @@ namespace CefNet
 		public static CefV8Value CreateArrayBuffer(byte[] buffer)
 		{
 			var instance = new ArrayBuffer(buffer);
-			return new CefV8Value(CefNativeApi.cef_v8value_create_array_buffer(instance.GetBuffer(), instance.Length, instance.GetNativeInstance()));
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_array_buffer(instance.GetBuffer(), instance.Length, instance.GetNativeInstance()));
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace CefNet
 			fixed (char* s = name)
 			{
 				var aName = new cef_string_t { Str = s, Length = (name != null ? name.Length : 0) };
-				return new CefV8Value(CefNativeApi.cef_v8value_create_function(&aName, handler.GetNativeInstance()));
+				return new CefV8Value(CefNativeApi.cef_v8_value_create_function(&aName, handler.GetNativeInstance()));
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace CefNet
 		/// <returns>Returns a new <see cref="CefV8Value"/> object of type undefined.</returns>
 		public static CefV8Value CreateUndefined()
 		{
-			return new CefV8Value(CefNativeApi.cef_v8value_create_undefined());
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_undefined());
 		}
 
 		/// <summary>
@@ -200,7 +200,7 @@ namespace CefNet
 		/// <returns>Returns a new <see cref="CefV8Value"/> object of type null.</returns>
 		public static CefV8Value CreateNull()
 		{
-			return new CefV8Value(CefNativeApi.cef_v8value_create_null());
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_null());
 		}
 
 		/// <summary>
@@ -210,7 +210,7 @@ namespace CefNet
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CefV8Value CreateObject()
 		{
-			return new CefV8Value(CefNativeApi.cef_v8value_create_object(null, null));
+			return new CefV8Value(CefNativeApi.cef_v8_value_create_object(null, null));
 		}
 
 		/// <summary>
@@ -425,10 +425,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Associates a value with the specified identifier. 
+		/// Registers an identifier whose value is provided by the object's <see cref="CefV8Accessor"/>.
 		/// </summary>
 		/// <param name="key">The property name.</param>
-		/// <param name="settings">A V8 access control value.</param>
 		/// <param name="attributes">A V8 property attribute value.</param>
 		/// <returns>
 		/// Returns true on success. Returns false if this function is called incorrectly or an
@@ -436,9 +435,9 @@ namespace CefNet
 		/// assignment failed.
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool SetValue(string key, CefV8AccessControl settings, CefV8PropertyAttribute attributes)
+		public bool SetValue(string key, CefV8PropertyAttribute attributes)
 		{
-			return SetValueByAccessor(key, settings, attributes);
+			return SetValueByAccessor(key, attributes);
 		}
 
 		/// <summary>
@@ -585,8 +584,8 @@ namespace CefNet
 			if (names.Count <= 0)
 				throw new ArgumentOutOfRangeException(nameof(names));
 
-			cef_v8value_t* value = null;
-			cef_v8value_t* self = GetNativeInstance();
+			cef_v8_value_t* value = null;
+			cef_v8_value_t* self = GetNativeInstance();
 			foreach (string name in names)
 			{
 				try
@@ -697,12 +696,12 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Returns a wrapper for the specified pointer to <see cref="cef_v8value_t"/> instance.
+		/// Returns a wrapper for the specified pointer to <see cref="cef_v8_value_t"/> instance.
 		/// </summary>
 		/// <param name="create">Represents a method that create a new wrapper.</param>
-		/// <param name="instance">The pointer to <see cref="cef_v8value_t"/> object.</param>
+		/// <param name="instance">The pointer to <see cref="cef_v8_value_t"/> object.</param>
 		/// <returns>Returns an existing or new wrapper of type <see cref="CefV8Value"/>.</returns>
-		public unsafe static CefV8Value Wrap(Func<IntPtr, CefV8Value> create, cef_v8value_t* instance)
+		public unsafe static CefV8Value Wrap(Func<IntPtr, CefV8Value> create, cef_v8_value_t* instance)
 		{
 			if (instance == null)
 				return null;

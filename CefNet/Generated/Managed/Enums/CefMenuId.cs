@@ -77,12 +77,17 @@ namespace CefNet
 		/// <summary>
 		/// Editing.
 		/// </summary>
-		Delete = 115,
+		PasteMatchStyle = 115,
 
 		/// <summary>
 		/// Editing.
 		/// </summary>
-		SelectAll = 116,
+		Delete = 116,
+
+		/// <summary>
+		/// Editing.
+		/// </summary>
+		SelectAll = 117,
 
 		/// <summary>
 		/// Miscellaneous.

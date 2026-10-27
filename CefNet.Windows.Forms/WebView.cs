@@ -157,6 +157,8 @@ namespace CefNet.Windows.Forms
 						requestContext = value as CefRequestContext;
 					if (propertyBag.TryGetValue(InitialPropertyKeys.ExtraInfo, out value))
 						extraInfo = value as CefDictionaryValue;
+					if (propertyBag.TryGetValue(InitialPropertyKeys.SharedTexture, out value))
+						windowInfo.SharedTextureEnabled = (bool)value && WindowlessRenderingEnabled;
 				}
 
 				if (initialUrl == null)
@@ -176,7 +178,7 @@ namespace CefNet.Windows.Forms
 				SetState(State.Closing, true);
 				if (!this.DesignMode)
 				{
-					ViewGlue.BrowserObject?.Host.CloseBrowser(true);
+					ViewGlue.BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				}
 			}
 		}
@@ -232,9 +234,11 @@ namespace CefNet.Windows.Forms
 		/// <summary>
 		/// Gets or sets the tool-tip object that is displayed for this element in the user interface (UI).
 		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ToolTip ToolTip { get; set; }
 
 		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string StatusText { get; protected set; }
 
 		protected virtual void RaiseCrossThreadEvent<TEventArgs>(Action<TEventArgs> raiseEvent, TEventArgs e, bool synchronous)

@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent a web response. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -181,8 +182,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Set the header |name| to |value|. If |overwrite| is true (1) any existing
-		/// values will be replaced with the new value. If |overwrite| is false (0) any
-		/// existing values will not be overwritten.
+		/// values will be replaced with the new value. If |overwrite| is false (0)
+		/// any existing values will not be overwritten.
 		/// </summary>
 		public unsafe virtual void SetHeaderByName(string name, string value, bool overwrite)
 		{

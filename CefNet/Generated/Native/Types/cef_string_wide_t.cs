@@ -34,7 +34,7 @@ namespace CefNet.CApi
 		public UIntPtr length;
 
 		/// <summary>
-		/// void (*)(wchar* str)*
+		/// void (*)(wchar_t* str)*
 		/// </summary>
 		public void* dtor;
 

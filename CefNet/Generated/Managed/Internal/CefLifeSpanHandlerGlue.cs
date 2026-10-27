@@ -34,9 +34,29 @@ namespace CefNet.Internal
 			return _implementation.AvoidOnBeforePopup();
 		}
 
-		protected internal unsafe override bool OnBeforePopup(CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition, bool userGesture, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref int noJavascriptAccess)
+		protected internal unsafe override bool OnBeforePopup(CefBrowser browser, CefFrame frame, int popupId, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition, bool userGesture, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref int noJavascriptAccess)
 		{
-			return _implementation.OnBeforePopup(browser, frame, targetUrl, targetFrameName, targetDisposition, userGesture, popupFeatures, windowInfo, ref client, settings, ref extraInfo, ref noJavascriptAccess);
+			return _implementation.OnBeforePopup(browser, frame, popupId, targetUrl, targetFrameName, targetDisposition, userGesture, popupFeatures, windowInfo, ref client, settings, ref extraInfo, ref noJavascriptAccess);
+		}
+
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforePopupAborted()
+		{
+			return _implementation.AvoidOnBeforePopupAborted();
+		}
+
+		protected internal unsafe override void OnBeforePopupAborted(CefBrowser browser, int popupId)
+		{
+			_implementation.OnBeforePopupAborted(browser, popupId);
+		}
+
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforeDevToolsPopup()
+		{
+			return _implementation.AvoidOnBeforeDevToolsPopup();
+		}
+
+		protected internal unsafe override void OnBeforeDevToolsPopup(CefBrowser browser, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref int useDefaultWindow)
+		{
+			_implementation.OnBeforeDevToolsPopup(browser, windowInfo, ref client, settings, ref extraInfo, ref useDefaultWindow);
 		}
 
 		bool ICefLifeSpanHandlerPrivate.AvoidOnAfterCreated()

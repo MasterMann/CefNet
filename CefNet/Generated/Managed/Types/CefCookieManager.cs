@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used for managing cookies. The functions of this structure may be
 	/// called on any thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -50,9 +51,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Visit a subset of cookies on the UI thread. The results are filtered by the
-		/// given url scheme, host, domain and path. If |includeHttpOnly| is true (1)
-		/// HTTP-only cookies will also be included in the results. The returned
+		/// Visit a subset of cookies on the UI thread. The results are filtered by
+		/// the given url scheme, host, domain and path. If |includeHttpOnly| is true
+		/// (1) HTTP-only cookies will also be included in the results. The returned
 		/// cookies are ordered by longest path, then by earliest creation date.
 		/// Returns false (0) if cookies cannot be accessed.
 		/// </summary>
@@ -67,8 +68,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Sets a cookie given a valid URL and explicit user-provided cookie
-		/// attributes. This function expects each attribute to be well-formed. It will
-		/// check for disallowed characters (e.g. the &apos;;&apos; character is disallowed
+		/// attributes. This function expects each attribute to be well-formed. It
+		/// will check for disallowed characters (e.g. the &apos;;&apos; character is disallowed
 		/// within the cookie value attribute) and fail without setting the cookie if
 		/// such characters are found. If |callback| is non-NULL it will be executed
 		/// asnychronously on the UI thread after the cookie has been set. Returns
@@ -79,7 +80,7 @@ namespace CefNet
 			fixed (char* s0 = url)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = url != null ? url.Length : 0 };
-				return SafeCall(NativeInstance->SetCookie(&cstr0, (cef_cookie_t*)&cookie, (callback != null) ? callback.GetNativeInstance() : null) != 0);
+				return SafeCall(NativeInstance->SetCookie(&cstr0, cookie.GetNativeInstance(), (callback != null) ? callback.GetNativeInstance() : null) != 0);
 			}
 		}
 
@@ -90,9 +91,9 @@ namespace CefNet
 		/// domain cookies) irrespective of path will be deleted. If |url| is NULL all
 		/// cookies for all hosts and domains will be deleted. If |callback| is non-
 		/// NULL it will be executed asnychronously on the UI thread after the cookies
-		/// have been deleted. Returns false (0) if a non-NULL invalid URL is specified
-		/// or if cookies cannot be accessed. Cookies can alternately be deleted using
-		/// the Visit*Cookies() functions.
+		/// have been deleted. Returns false (0) if a non-NULL invalid URL is
+		/// specified or if cookies cannot be accessed. Cookies can alternately be
+		/// deleted using the Visit*Cookies() functions.
 		/// </summary>
 		public unsafe virtual bool DeleteCookies(string url, string cookieName, CefDeleteCookiesCallback callback)
 		{
@@ -106,9 +107,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Flush the backing store (if any) to disk. If |callback| is non-NULL it will
-		/// be executed asnychronously on the UI thread after the flush is complete.
-		/// Returns false (0) if cookies cannot be accessed.
+		/// Flush the backing store (if any) to disk. If |callback| is non-NULL it
+		/// will be executed asnychronously on the UI thread after the flush is
+		/// complete. Returns false (0) if cookies cannot be accessed.
 		/// </summary>
 		public unsafe virtual bool FlushStore(CefCompletionCallback callback)
 		{

@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -33,16 +33,50 @@ namespace CefGen
 
 		private CodeType Class { get; set; }
 
+		/// <summary>
+		/// Gets the ref-counted structure the current structure extends (its first field <c>base</c>),
+		/// or null when it extends <c>cef_base_ref_counted_t</c> directly.
+		/// </summary>
+		private INamedTypeSymbol BaseTypeSymbol { get; set; }
+
+		private HashSet<string> RefCountedBaseNames { get; set; }
+
+		private static INamedTypeSymbol GetRefCountedBase(INamedTypeSymbol symbol)
+		{
+			if (symbol.GetMembers().FirstOrDefault() is IFieldSymbol field && field.Name == "base"
+				&& field.Type is INamedTypeSymbol baseType && baseType.Name != "cef_base_ref_counted_t")
+			{
+				return baseType;
+			}
+			return null;
+		}
+
+		private static INamedTypeSymbol GetRefCountedRoot(INamedTypeSymbol symbol)
+		{
+			for (INamedTypeSymbol baseType = GetRefCountedBase(symbol); baseType != null; baseType = GetRefCountedBase(symbol))
+				symbol = baseType;
+			return symbol;
+		}
+
+		private static string GetManagedName(INamedTypeSymbol symbol)
+		{
+			return symbol.Name.Remove(symbol.Name.Length - 2).ToUpperCamel();
+		}
+
 		internal void GenerateFrom(NativeCefApiTypes nativeTypes)
 		{
 			NativeTypes = nativeTypes;
+			RefCountedBaseNames = new HashSet<string>(nativeTypes.RefCounted.Values
+				.Select(GetRefCountedBase).Where(baseType => baseType != null).Select(baseType => baseType.Name));
 
 			foreach (INamedTypeSymbol symbol in nativeTypes.RefCounted.Values)
 			{
 				TypeSymbol = symbol;
 				TypeSymbolKind = CefTypeKind.RefCounted;
-				GenerateClass(symbol, "CefBaseRefCounted<" + symbol.Name + ">");
+				BaseTypeSymbol = GetRefCountedBase(symbol);
+				GenerateClass(symbol, BaseTypeSymbol != null ? GetManagedName(BaseTypeSymbol) : "CefBaseRefCounted<" + symbol.Name + ">");
 			}
+			BaseTypeSymbol = null;
 
 			foreach (INamedTypeSymbol symbol in nativeTypes.Scoped.Values)
 			{
@@ -75,6 +109,8 @@ namespace CefGen
 				if (symbol.Name == "cef_main_args_t")
 					continue;
 				if (symbol.Name == "cef_window_info_t")
+					continue;
+				if (symbol.Name == "cef_accelerated_paint_info_t")
 					continue;
 				if (symbol.Name == "CefEventHandle")
 					continue;
@@ -130,9 +166,41 @@ namespace CefGen
 				AddConstructors(constructorLines);
 			}
 
+			if (BaseTypeSymbol != null)
+				AddDerivedTypeMembers();
+
 			ns.Types.Add(Class);
 
 			WriteToFile(fileDecl, Path.Combine(_basePath, "Managed", "Types", Class.Name + ".cs"));
+		}
+
+		/// <summary>
+		/// Re-types the inherited native accessors for a class that derives from another wrapper.
+		/// </summary>
+		private void AddDerivedTypeMembers()
+		{
+			string nativeType = TypeSymbol.Name + "*";
+			string rootType = GetRefCountedRoot(TypeSymbol).Name;
+
+			var nativeInstance = new CodeProperty("NativeInstance");
+			nativeInstance.Attributes = CodeAttributes.Public | CodeAttributes.New | CodeAttributes.Unsafe;
+			nativeInstance.Type = new CodeMethodParameter("value") { Type = nativeType };
+			nativeInstance.GetterBody = string.Format("return ({0})base.NativeInstance;", nativeType);
+			Class.Members.Add(nativeInstance);
+
+			var getNativeInstance = new CodeMethod("GetNativeInstance");
+			getNativeInstance.Attributes = CodeAttributes.Public | CodeAttributes.New | CodeAttributes.Unsafe;
+			getNativeInstance.RetVal = new CodeMethodParameter(null) { Type = nativeType };
+			getNativeInstance.Body = string.Format("return ({0})base.GetNativeInstance();", nativeType);
+			Class.Members.Add(getNativeInstance);
+
+			var wrap = new CodeMethod("Wrap");
+			wrap.Attributes = CodeAttributes.Public | CodeAttributes.Static | CodeAttributes.Unsafe;
+			wrap.RetVal = new CodeMethodParameter(null) { Type = Class.Name };
+			wrap.Parameters.Add(new CodeMethodParameter("create") { Type = "Func<IntPtr, " + Class.Name + ">" });
+			wrap.Parameters.Add(new CodeMethodParameter("instance") { Type = nativeType });
+			wrap.Body = string.Format("return CefBaseRefCounted<{0}>.Wrap(create, ({0}*)instance);", rootType);
+			Class.Members.Add(wrap);
 		}
 
 		private void GenerateSimpleClass(INamedTypeSymbol symbol, string baseType)
@@ -182,31 +250,30 @@ namespace CefGen
 				GenerateSimpleProperty(field);
 			}
 
+			// Instances created by the public constructor own their native structure; strings
+			// inside it are released by assigning null before the structure is freed.
 			CodeProperty[] disposable = Class.Members.OfType<CodeProperty>().Where(prop => prop.Type.Type == "string").ToArray();
-			if (disposable.Length > 0)
-			{
-				Class.BaseType = "IDisposable";
+			Class.BaseType = "IDisposable";
 
-				var dispose = new CodeMethod("Dispose");
-				dispose.Attributes = CodeAttributes.Public;
-				dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
-				dispose.Body = "Dispose(true);\r\nGC.SuppressFinalize(this);";
-				Class.Members.Add(dispose);
+			var dispose = new CodeMethod("Dispose");
+			dispose.Attributes = CodeAttributes.Public;
+			dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
+			dispose.Body = "Dispose(true);\r\nGC.SuppressFinalize(this);";
+			Class.Members.Add(dispose);
 
-				dispose = new CodeMethod("Dispose");
-				dispose.Attributes = CodeAttributes.Protected | CodeAttributes.Virtual;
-				dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
-				dispose.Parameters.Add(new CodeMethodParameter("disposing") { Type = "bool" });
-				dispose.Body = "if (_disposable && _instance != null)\r\n{\r\n\t"
-					+ string.Join("\r\n\t", disposable.Select(prop => prop.Name + " = null;"))
-					+ "\r\n\tMarshal.FreeHGlobal((IntPtr)_instance);\r\n\t_instance = null;"
-					+ "}";
-				Class.Members.Add(dispose);
+			dispose = new CodeMethod("Dispose");
+			dispose.Attributes = CodeAttributes.Protected | CodeAttributes.Virtual;
+			dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
+			dispose.Parameters.Add(new CodeMethodParameter("disposing") { Type = "bool" });
+			dispose.Body = "if (_disposable && _instance != null)\r\n{\r\n\t"
+				+ string.Concat(disposable.Select(prop => prop.Name + " = null;\r\n\t"))
+				+ "CefStructure.Free((IntPtr)_instance);\r\n\t_instance = null;\r\n"
+				+ "}";
+			Class.Members.Add(dispose);
 
-				var dtor = new CodeFinalizer(Class.Name);
-				dtor.Body = "Dispose(false);";
-				Class.Members.Add(dtor);
-			}
+			var dtor = new CodeFinalizer(Class.Name);
+			dtor.Body = "Dispose(false);";
+			Class.Members.Add(dtor);
 
 			ns.Types.Add(Class);
 
@@ -215,6 +282,8 @@ namespace CefGen
 
 		private void GenerateSimpleStruct(INamedTypeSymbol symbol, string baseType)
 		{
+			if (symbol.Name.StartsWith('_')) return;
+
 			string filePath = symbol.Locations[0].SourceTree.FilePath;
 			CodeFile fileDecl = CreateCodeFile(filePath.Substring(filePath.IndexOf("Generated")).Replace('\\', '/'));
 			var ns = new CodeNamespace("CefNet");
@@ -277,8 +346,6 @@ namespace CefGen
 				throw new NotImplementedException();
 			if (symbolInfo.IsPointedType)
 			{
-				if (field.Type.ToString() != "void*")
-					throw new NotImplementedException();
 				prop.Type = new CodeMethodParameter("value") { Type = "IntPtr" };
 			}
 			else
@@ -307,15 +374,29 @@ namespace CefGen
 					prop.SetterBody = "CefString.Replace(&_instance->" + fieldName + ", value);";
 				}
 			}
-			else if (field.Type.ToString() == "void*")
+			else if (symbolInfo.IsPointedType)
 			{
 				prop.GetterBody = "return new IntPtr(_instance" + accessOp + fieldName + ");";
-				prop.SetterBody = string.Format("_instance{0}{1} = (void*)value;", accessOp, fieldName);
+				prop.SetterBody = string.Format("_instance{0}{1} = ({2})value;", accessOp, fieldName, field.Type.ToCefDisplayString());
 			}
 			else if (field.Type.Name == "UIntPtr")
 			{
 				prop.GetterBody = "return (long)(_instance" + accessOp + fieldName + ");";
 				prop.SetterBody = string.Format("_instance{0}{1} = new UIntPtr((ulong)value);", accessOp, fieldName);
+			}
+			else if (typeKind == CefTypeKind.Sized && accessOp == "->")
+			{
+				// An embedded sized structure is exposed as a wrapper over the parent's memory.
+				prop.GetterBody = string.Format("return new {0}(&_instance->{1});", prop.Type.Type, fieldName);
+				prop.SetterBody = string.Format("_instance->{0} = *value.GetNativeInstance();", fieldName);
+			}
+			else if (TryGetInlineArray(field.Type, out IFieldSymbol element, out int length))
+			{
+				string elementType = TypeSymbolInfo.FromSymbol(element.Type).AsClrTypeName();
+				prop.Type.Type = elementType + "[]";
+				prop.GetterBody = string.Format(
+					"var items = new {0}[{1}];\r\nfor (int i = 0; i < items.Length; i++)\r\n{{\r\n\titems[i] = _instance{2}{3}[i];\r\n}}\r\nreturn items;",
+					elementType, length, accessOp, fieldName);
 			}
 			else
 			{
@@ -324,6 +405,20 @@ namespace CefGen
 			}
 
 			Class.Members.Add(prop);
+		}
+
+		private static bool TryGetInlineArray(ITypeSymbol type, out IFieldSymbol element, out int length)
+		{
+			AttributeData attribute = type.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "InlineArrayAttribute");
+			if (attribute == null)
+			{
+				element = null;
+				length = 0;
+				return false;
+			}
+			element = type.GetMembers().OfType<IFieldSymbol>().First(f => !f.IsStatic);
+			length = (int)attribute.ConstructorArguments[0].Value;
+			return true;
 		}
 
 		private void AddConstructors(List<string> constructorLines)
@@ -340,6 +435,8 @@ namespace CefGen
 			var createMethod = new CodeMethod("Create");
 			createMethod.RetVal = new CodeMethodParameter(null) { Type = Class.Name };
 			createMethod.Attributes = CodeAttributes.Internal | CodeAttributes.Static | CodeAttributes.Unsafe;
+			if (BaseTypeSymbol != null)
+				createMethod.Attributes |= CodeAttributes.New;
 			createMethod.Parameters.Add(new CodeMethodParameter("instance") { Type = "IntPtr" });
 			createMethod.Body = string.Format("return new {0}(({1}*)instance);", Class.Name, TypeSymbol.Name);
 
@@ -350,7 +447,7 @@ namespace CefGen
 			ctorDecl.Parameters.Add(new CodeMethodParameter("instance") { Type = TypeSymbol.Name + "*" });
 			if (TypeSymbolKind == CefTypeKind.RefCounted)
 			{
-				ctorDecl.BaseArgs.Add("(cef_base_ref_counted_t*)instance");
+				ctorDecl.BaseArgs.Add(BaseTypeSymbol != null ? "(" + BaseTypeSymbol.Name + "*)instance" : "(cef_base_ref_counted_t*)instance");
 			}
 			else if (TypeSymbolKind == CefTypeKind.Scoped)
 			{
@@ -377,10 +474,30 @@ namespace CefGen
 					nativeRoots.Add(root);
 				}
 
-				ctorDecl = new CodeConstructor(Class.Name);
-				ctorDecl.Attributes = CodeAttributes.Public;
-				ctorDecl.Body = string.Join("\n", constructorLines);
-				Class.Members.Insert(index, ctorDecl);
+				if (BaseTypeSymbol != null || RefCountedBaseNames.Contains(TypeSymbol.Name))
+				{
+					// In a delegate hierarchy every level wires its own callbacks into one native
+					// structure allocated with the size of the most derived type.
+					ctorDecl = new CodeConstructor(Class.Name);
+					ctorDecl.Attributes = CodeAttributes.Protected | CodeAttributes.Unsafe;
+					ctorDecl.Parameters.Add(new CodeMethodParameter("size") { Type = "int" });
+					ctorDecl.BaseArgs.Add("size");
+					ctorDecl.Body = string.Join("\n", constructorLines);
+					Class.Members.Insert(index, ctorDecl);
+
+					ctorDecl = new CodeConstructor(Class.Name);
+					ctorDecl.Attributes = CodeAttributes.Public | CodeAttributes.Unsafe;
+					ctorDecl.ThisArgs.Add("sizeof(" + TypeSymbol.Name + ")");
+					ctorDecl.Body = string.Empty;
+					Class.Members.Insert(index, ctorDecl);
+				}
+				else
+				{
+					ctorDecl = new CodeConstructor(Class.Name);
+					ctorDecl.Attributes = CodeAttributes.Public;
+					ctorDecl.Body = string.Join("\n", constructorLines);
+					Class.Members.Insert(index, ctorDecl);
+				}
 			}
 
 			Class.Members.Insert(index, createMethod);
@@ -427,13 +544,13 @@ namespace CefGen
 
 						var argTypes = new List<string>();
 						argTypes.Add(TypeSymbol.Name + "*");
-						argTypes.AddRange(method.Parameters.Select(arg => arg.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
-						argTypes.Add(method.ReturnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+						argTypes.AddRange(method.Parameters.Select(arg => arg.Type.ToCefDisplayString()));
+						argTypes.Add(method.ReturnType.ToCefDisplayString());
 						string delegateType = "delegate* unmanaged[Stdcall]<" + string.Join(", ", argTypes) + ">";
 						modernCode.Add(string.Format("self->{0} = ({2})&{1}Impl;", field.Name, method.Name, delegateType));
 						
 					}
-					else if (field.Type.Name != "cef_base_ref_counted_t")
+					else if (field.Type.Name != "cef_base_ref_counted_t" && field.Name != "base" && !field.Name.EndsWith("_removed"))
 					{
 						throw new NotImplementedException();
 					}
@@ -504,7 +621,7 @@ namespace CefGen
 								methods.Add(method);
 								continue;
 							}
-							if (TypeSymbol.Name == "cef_v8context_t" && method.Name == "GetGlobal")
+							if (TypeSymbol.Name == "cef_v8_context_t" && method.Name == "GetGlobal")
 							{
 								methods.Add(method);
 								continue;
@@ -522,7 +639,9 @@ namespace CefGen
 						methods.Add(method);
 					}
 					else if (field.Type.Name != "cef_base_ref_counted_t"
-						&& field.Type.Name != "cef_base_scoped_t")
+						&& field.Type.Name != "cef_base_scoped_t"
+						&& field.Name != "base"
+						&& !field.Name.EndsWith("_removed")) // slots kept for functions removed from the API
 					{
 						throw new NotImplementedException();
 					}
@@ -531,7 +650,16 @@ namespace CefGen
 			foreach (string key in props.Keys.ToArray())
 			{
 				property = props[key];
-				if (property.Getter == null)
+				if (methods.Any(method => method.Name == property.Name))
+				{
+					// A method with the property's name exists (e.g. Layout() and GetLayout()); keep accessors as methods.
+					props.Remove(key);
+					if (property.Getter != null)
+						methods.Add(property.Getter);
+					if (property.Setter != null)
+						methods.Add(property.Setter);
+				}
+				else if (property.Getter == null)
 				{
 					props.Remove(key);
 					methods.Add(property.Setter);
@@ -553,7 +681,7 @@ namespace CefGen
 				{
 
 					if (property.GetterType.Name == "cef_string_userfree_t"
-						&& property.SetterType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat) == "cef_string_t*")
+						&& property.SetterType.ToCefDisplayString() == "cef_string_t*")
 					{
 						continue;
 					}
@@ -584,17 +712,17 @@ namespace CefGen
 
 		private void GenerateNativeCallbackDelegate(IMethodSymbol method)
 		{
-			var delegateDecl = new CodeDelegate(method.ReturnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), method.Name + "Delegate");
+			var delegateDecl = new CodeDelegate(method.ReturnType.ToCefDisplayString(), method.Name + "Delegate");
 			delegateDecl.Attributes = CodeAttributes.Private | CodeAttributes.Unsafe;
 			delegateDecl.CustomAttributes.AddUnmanagedFunctionPointerAttribute(System.Runtime.InteropServices.CallingConvention.Winapi);
 			delegateDecl.Parameters.Add(new CodeMethodParameter("self") { Type = TypeSymbol.Name + "*" });
-			delegateDecl.ReturnTypeName = method.ReturnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+			delegateDecl.ReturnTypeName = method.ReturnType.ToCefDisplayString();
 			delegateDecl.LegacyDefine = "NET_LESS_5_0";
 
 			foreach (IParameterSymbol parameter in method.Parameters)
 			{
 				var paramDecl = new CodeMethodParameter(parameter.Name.EscapeName());
-				paramDecl.Type = parameter.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+				paramDecl.Type = parameter.Type.ToCefDisplayString();
 				delegateDecl.Parameters.Add(paramDecl);
 			}
 			Class.Members.Add(delegateDecl);
@@ -606,14 +734,14 @@ namespace CefGen
 			callback.Attributes = CodeAttributes.Private | CodeAttributes.Static | CodeAttributes.Unsafe;
 			callback.CustomAttributes.AddUnmanagedCallesOnlyAttribute();
 			callback.HasThisArg = true;
-			callback.RetVal = new CodeMethodParameter(null) { Type = method.ReturnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat) };
+			callback.RetVal = new CodeMethodParameter(null) { Type = method.ReturnType.ToCefDisplayString() };
 			callback.Parameters.Add(new CodeMethodParameter("self") { Type = TypeSymbol.Name + "*" });
 
 			callback.Comments.AddComment(field.GetComment());
 			foreach (IParameterSymbol parameter in method.Parameters)
 			{
 				var paramDecl = new CodeMethodParameter(parameter.Name.EscapeName());
-				paramDecl.Type = parameter.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+				paramDecl.Type = parameter.Type.ToCefDisplayString();
 				callback.Parameters.Add(paramDecl);
 			}
 			var body = new StringBuilder()
@@ -663,6 +791,13 @@ namespace CefGen
 				else if (typeInfo.Type.Name == "cef_window_info_t")
 				{
 					args.Add("CefWindowInfo.Wrap(" + arg.Name.EscapeName() + ")");
+				}
+				else if (typeInfo.Type.Name == "cef_accelerated_paint_info_t")
+				{
+					// The shared texture is only valid during the callback.
+					wrappers.AppendFormat("var obj_{0} = new CefAcceleratedPaintInfo({1});\r\n", arg.Name, arg.Name.EscapeName());
+					disposers.AppendFormat("obj_{0}.Invalidate();\r\n", arg.Name);
+					args.Add("obj_" + arg.Name);
 				}
 				else if (typeKind == CefTypeKind.RefCounted)
 				{
@@ -774,7 +909,7 @@ namespace CefGen
 					{
 						args.Add(string.Format("ref *({1}*){0}", arg.Name.EscapeName(), managedInfo.Parameter.Type));
 					}
-					else if (arg.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat) == "UIntPtr*")
+					else if (arg.Type.ToCefDisplayString() == "UIntPtr*")
 					{
 						wrappers.AppendFormat("long c{0} = (long)(*{1});\r\n", index, arg.Name.EscapeName());
 						disposers.AppendFormat("*{1} = new UIntPtr((ulong)c{0});\r\n", index, arg.Name.EscapeName());
@@ -817,6 +952,8 @@ namespace CefGen
 					.Append(wrappers.ToString())
 					.Append(callCode)
 					.Append(";");
+				if (disposers.Length != 0)
+					body.Append("\r\n").Append(disposers.ToString());
 			}
 			else
 			{
@@ -967,9 +1104,8 @@ namespace CefGen
 			if (method.Parameters.Length == 0)
 				return null;
 			var decl = new CodeMethod("I" + Class.Name + "Private.Avoid" + method.Name);
-			decl.Attributes = CodeAttributes.External;
-			decl.CustomAttributes.AddMethodImplForwardRefAttribute();
 			decl.RetVal = new CodeMethodParameter(null) { Type = "bool" };
+			decl.Body = string.Format("return !VirtualMethods.IsOverridden(this, typeof({0}), nameof({1}));", Class.Name, method.Name);
 			Class.Members.Add(decl);
 			return decl;
 		}
@@ -1010,15 +1146,10 @@ namespace CefGen
 
 			TypeSymbolInfo returnSymbolInfo = TypeSymbolInfo.FromSymbol(property.Getter.ReturnType);
 			CefTypeKind typeKind = NativeTypes.GetTypeKind(returnSymbolInfo.Type);
-			if (returnSymbolInfo.IsDoublePointedType)
-				throw new NotImplementedException();
-			if (returnSymbolInfo.IsPointedType)
+			if (returnSymbolInfo.IsDoublePointedType
+				|| (returnSymbolInfo.IsPointedType && typeKind != CefTypeKind.RefCounted && typeKind != CefTypeKind.Scoped))
 			{
-				if (typeKind != CefTypeKind.RefCounted && typeKind != CefTypeKind.Scoped
-					&& returnSymbolInfo.AsClrTypeName() != "CefBaseRefCounted")
-				{
-					throw new NotImplementedException();
-				}
+				throw new NotImplementedException($"Unsupported property type '{property.Getter.ReturnType}' for {Class.Name}.{property.Name}.");
 			}
 			decl.Type = new CodeMethodParameter("value") { Type = property.Getter.IsBool() ? "bool" : returnSymbolInfo.AsClrTypeName() };
 
@@ -1110,7 +1241,7 @@ namespace CefGen
 
 				if (symbolInfo.IsPointedType && prev != null
 					&& prev.Name.EndsWith("count", StringComparison.OrdinalIgnoreCase)
-					&& prev.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat).StartsWith("UIntPtr"))
+					&& prev.Type.ToCefDisplayString().StartsWith("UIntPtr"))
 				{
 					paramDecl.Type += "[]";
 					if (args[args.Count - 1].Parameter.Direction != CodeMethodParameterDirection.Ref)
@@ -1254,7 +1385,20 @@ namespace CefGen
 				}
 				else if (typeKind == CefTypeKind.Sized)
 				{
-					args.Add(arg.Parameter.Name + ".GetNativeInstance()");
+					if (arg.IsArray && arg.Parameter.Direction != CodeMethodParameterDirection.Ref)
+					{
+						// Sized structures are heap-allocated wrappers; copy them into a contiguous native array.
+						string elementType = arg.NativeTypeName.Substring(0, arg.NativeTypeName.Length - 1);
+						wrappers.AppendFormat("{3} arr{0} = ({3})Marshal.AllocHGlobal(sizeof({2}) * {1}.Length);\r\n", index, arg.Parameter.Name, elementType, arg.NativeTypeName);
+						wrappers.AppendFormat("for (int i = 0; i < {0}.Length; i++)\r\n{{\r\n", arg.Parameter.Name);
+						wrappers.AppendFormat("\t*(arr{0} + i) = *{1}[i].GetNativeInstance();\r\n}}\r\n", index, arg.Parameter.Name);
+						disposers.AppendFormat("Marshal.FreeHGlobal((IntPtr)arr{0});\r\n", index);
+						args.Add(string.Format("new UIntPtr((uint){1}.Length), arr{0}", index, arg.Parameter.Name));
+					}
+					else
+					{
+						args.Add(arg.Parameter.Name + ".GetNativeInstance()");
+					}
 				}
 				else if (typeKind == CefTypeKind.Simple && symbolInfo.IsPointedType)
 				{

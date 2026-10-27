@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure the client can implement to provide a custom stream reader. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_read_handler_t
@@ -48,13 +49,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_read_handler_t* self, int64 offset, int whence)*
+		/// int (*)(_cef_read_handler_t* self, int64_t offset, int whence)*
 		/// </summary>
 		public void* seek;
 
 		/// <summary>
-		/// Seek to the specified offset position. |whence| may be any one of SEEK_CUR,
-		/// SEEK_END or SEEK_SET. Return zero on success and non-zero on failure.
+		/// Seek to the specified offset position. |whence| may be any one of
+		/// SEEK_CUR, SEEK_END or SEEK_SET. Return zero on success and non-zero on
+		/// failure.
 		/// </summary>
 		[NativeName("seek")]
 		public unsafe int Seek(long offset, int whence)
@@ -66,7 +68,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_read_handler_t* self)*
+		/// int64_t (*)(_cef_read_handler_t* self)*
 		/// </summary>
 		public void* tell;
 
@@ -106,8 +108,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Return true (1) if this handler performs work like accessing the file
-		/// system which may block. Used as a hint for determining the thread to access
-		/// the handler from.
+		/// system which may block. Used as a hint for determining the thread to
+		/// access the handler from.
 		/// </summary>
 		[NativeName("may_block")]
 		public unsafe int MayBlock()

@@ -22,14 +22,15 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure used to create and/or parse command line arguments. Arguments with
-	/// &apos;--&apos;, &apos;-&apos; and, on Windows, &apos;/&apos; prefixes are considered switches. Switches
+	/// &quot;--&quot;, &quot;-&quot; and, on Windows, &quot;/&quot; prefixes are considered switches. Switches
 	/// will always precede any arguments without switch prefixes. Switches can
-	/// optionally have a value specified using the &apos;=&apos; delimiter (e.g.
+	/// optionally have a value specified using the &quot;=&quot; delimiter (e.g.
 	/// &quot;-switch=value&quot;). An argument of &quot;--&quot; will terminate switch parsing with all
 	/// subsequent tokens, regardless of prefix, being interpreted as non-switch
 	/// arguments. Switch names should be lowercase ASCII and will be converted to
 	/// such if necessary. Switch values will retain the original case and UTF8
 	/// encoding. This structure can be used before cef_initialize() is called.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -171,7 +172,7 @@ namespace CefNet
 
 		/// <summary>
 		/// Retrieve the original command line string as a vector of strings. The argv
-		/// array: { program, [(--|-|/)switch[=value]]*, [--], [argument]* }
+		/// array: `{ program, [(--|-|/)switch[=value]]*, [--], [argument]* }`
 		/// </summary>
 		public unsafe virtual void GetArgv(CefStringList argv)
 		{
@@ -216,8 +217,7 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add a switch to the end of the command line. If the switch has no value
-		/// pass an NULL value string.
+		/// Add a switch to the end of the command line.
 		/// </summary>
 		public unsafe virtual void AppendSwitch(string name)
 		{
@@ -230,7 +230,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add a switch with the specified value to the end of the command line.
+		/// Add a switch with the specified value to the end of the command line. If
+		/// the switch has no value pass an NULL value string.
 		/// </summary>
 		public unsafe virtual void AppendSwitchWithValue(string name, string value)
 		{
@@ -276,6 +277,20 @@ namespace CefNet
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = wrapper != null ? wrapper.Length : 0 };
 				NativeInstance->PrependWrapper(&cstr0);
+			}
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Remove a switch from the command line. If no such switch is present, this
+		/// has no effect.
+		/// </summary>
+		public unsafe virtual void RemoveSwitch(string name)
+		{
+			fixed (char* s0 = name)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
+				NativeInstance->RemoveSwitch(&cstr0);
 			}
 			GC.KeepAlive(this);
 		}

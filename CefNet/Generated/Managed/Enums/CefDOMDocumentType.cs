@@ -30,6 +30,8 @@ namespace CefNet
 		Xhtml = 2,
 
 		Plugin = 3,
+
+		NumValues = 4,
 	}
 }
 

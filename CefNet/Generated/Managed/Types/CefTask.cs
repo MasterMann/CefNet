@@ -23,10 +23,11 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure for asynchronous task execution. If the task is
 	/// posted successfully and if the associated message loop is still running then
-	/// the execute() function will be called on the target thread. If the task fails
-	/// to post then the task object may be destroyed on the source thread instead of
-	/// the target thread. For this reason be cautious when performing work in the
-	/// task object destructor.
+	/// the execute() function will be called on the target thread. If the task
+	/// fails to post then the task object may be destroyed on the source thread
+	/// instead of the target thread. For this reason be cautious when performing
+	/// work in the task object destructor.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler

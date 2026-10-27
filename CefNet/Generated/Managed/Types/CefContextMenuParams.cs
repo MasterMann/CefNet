@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Provides information about the context menu state. The functions of this
 	/// structure can only be accessed on browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -103,7 +104,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Gets the source URL, if any, for the element that the context menu was
-		/// invoked on. Example of elements with source URLs are img, audio, and video.
+		/// invoked on. Example of elements with source URLs are img, audio, and
+		/// video.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		public unsafe virtual string SourceUrl
@@ -115,8 +117,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the context menu was invoked on an image which has non-
-		/// NULL contents.
+		/// Gets a value indicating whether the context menu was invoked on an image which has
+		/// non-NULL contents.
 		/// </summary>
 		public unsafe virtual bool HasImageContents
 		{
@@ -140,7 +142,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the URL of the top level page that the context menu was invoked on.
+		/// Gets the URL of the top level page that the context menu was invoked
+		/// on.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		public unsafe virtual string PageUrl
@@ -274,8 +277,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Returns true (1) if suggestions exist, false (0) otherwise. Fills in
-		/// |suggestions| from the spell check service for the misspelled word if there
-		/// is one.
+		/// |suggestions| from the spell check service for the misspelled word if
+		/// there is one.
 		/// </summary>
 		public unsafe virtual bool GetDictionarySuggestions(CefStringList suggestions)
 		{

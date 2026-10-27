@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to receive accessibility notification when
 	/// accessibility events have been registered. The functions of this structure
 	/// will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -58,8 +59,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAccessibilityHandlerPrivate.AvoidOnAccessibilityTreeChange();
+		bool ICefAccessibilityHandlerPrivate.AvoidOnAccessibilityTreeChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAccessibilityHandler), nameof(OnAccessibilityTreeChange));
+		}
 
 		/// <summary>
 		/// Called after renderer process sends accessibility tree changes to the
@@ -89,8 +92,10 @@ namespace CefNet
 			instance.OnAccessibilityTreeChange(CefValue.Wrap(CefValue.Create, value));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAccessibilityHandlerPrivate.AvoidOnAccessibilityLocationChange();
+		bool ICefAccessibilityHandlerPrivate.AvoidOnAccessibilityLocationChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAccessibilityHandler), nameof(OnAccessibilityLocationChange));
+		}
 
 		/// <summary>
 		/// Called after renderer process sends accessibility location changes to the

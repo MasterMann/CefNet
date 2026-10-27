@@ -32,6 +32,8 @@ namespace CefNet
 		DiagonalStrike = 3,
 
 		Underline = 4,
+
+		NumValues = 5,
 	}
 }
 

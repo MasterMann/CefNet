@@ -9,7 +9,7 @@ namespace CefNet
 		/// </summary>
 		/// <param name="from">The inclusive start index of the range.</param>
 		/// <param name="to">The exclusive end index of the range.</param>
-		public CefRange(int from, int to)
+		public CefRange(uint from, uint to)
 		{
 			_instance = new cef_range_t { from = from, to = to };
 		}

@@ -15,12 +15,14 @@ namespace CefNet.JSInterop
 	public class ScriptableObjectProvider : IEquatable<ScriptableObjectProvider>
 	{
 		private readonly CefFrame _frame;
-		private readonly long _frameId;
+		private readonly string _frameId;
+		private readonly long _frameKey;
 
 		public ScriptableObjectProvider(CefFrame frame)
 		{
 			_frame = frame;
 			_frameId = frame.Identifier;
+			_frameKey = XrayHandle.GetFrameKey(_frameId);
 		}
 
 		public override bool Equals(object obj)
@@ -387,7 +389,7 @@ namespace CefNet.JSInterop
 			CefProcessMessage msg = null;
 			try
 			{
-				if (_frameId != handle.frame)
+				if (_frameKey != handle.frame)
 					return;
 				obj = handle.ToCfxBinaryValue();
 
@@ -411,7 +413,7 @@ namespace CefNet.JSInterop
 
 		protected XrayHandle ValidateXrayHandle(XrayHandle handle)
 		{
-			if (_frameId != handle.frame)
+			if (_frameKey != handle.frame)
 				throw new InvalidOperationException();
 			return handle;
 		}

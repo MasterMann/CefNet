@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Callback structure used for asynchronous continuation of permission prompts.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_permission_prompt_callback_t

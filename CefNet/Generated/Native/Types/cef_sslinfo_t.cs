@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure representing SSL information.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_sslinfo_t
@@ -48,19 +49,19 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_x509certificate_t* (*)(_cef_sslinfo_t* self)*
+		/// _cef_x509_certificate_t* (*)(_cef_sslinfo_t* self)*
 		/// </summary>
-		public void* get_x509certificate;
+		public void* get_x509_certificate;
 
 		/// <summary>
 		/// Returns the X.509 certificate.
 		/// </summary>
-		[NativeName("get_x509certificate")]
-		public unsafe cef_x509certificate_t* GetX509Certificate()
+		[NativeName("get_x509_certificate")]
+		public unsafe cef_x509_certificate_t* GetX509Certificate()
 		{
 			fixed (cef_sslinfo_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_sslinfo_t*, cef_x509certificate_t*>)get_x509certificate)(self);
+				return ((delegate* unmanaged[Stdcall]<cef_sslinfo_t*, cef_x509_certificate_t*>)get_x509_certificate)(self);
 			}
 		}
 	}

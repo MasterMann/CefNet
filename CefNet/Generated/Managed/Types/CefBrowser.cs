@@ -25,6 +25,7 @@ namespace CefNet
 	/// functions of this structure may be called on any thread unless otherwise
 	/// indicated in the comments. When used in the render process the functions of
 	/// this structure may only be called on the main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -99,8 +100,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the globally unique identifier for this browser. This value is also
-		/// used as the tabId for extension APIs.
+		/// Gets the globally unique identifier for this browser. This value is
+		/// also used as the tabId for extension APIs.
 		/// </summary>
 		public unsafe virtual int Identifier
 		{
@@ -228,35 +229,33 @@ namespace CefNet
 		/// <summary>
 		/// Returns the frame with the specified identifier, or NULL if not found.
 		/// </summary>
-		public unsafe virtual CefFrame GetFrameByIdent(long identifier)
+		public unsafe virtual CefFrame GetFrameByIdentifier(string identifier)
 		{
-			return SafeCall(CefFrame.Wrap(CefFrame.Create, NativeInstance->GetFrameByIdent(identifier)));
+			fixed (char* s0 = identifier)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = identifier != null ? identifier.Length : 0 };
+				return SafeCall(CefFrame.Wrap(CefFrame.Create, NativeInstance->GetFrameByIdentifier(&cstr0)));
+			}
 		}
 
 		/// <summary>
 		/// Returns the frame with the specified name, or NULL if not found.
 		/// </summary>
-		public unsafe virtual CefFrame GetFrame(string name)
+		public unsafe virtual CefFrame GetFrameByName(string name)
 		{
 			fixed (char* s0 = name)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
-				return SafeCall(CefFrame.Wrap(CefFrame.Create, NativeInstance->GetFrame(&cstr0)));
+				return SafeCall(CefFrame.Wrap(CefFrame.Create, NativeInstance->GetFrameByName(&cstr0)));
 			}
 		}
 
 		/// <summary>
 		/// Returns the identifiers of all existing frames.
 		/// </summary>
-		public unsafe virtual void GetFrameIdentifiers(ref long identifiersCount, ref long[] identifiers)
+		public unsafe virtual void GetFrameIdentifiers(CefStringList identifiers)
 		{
-			fixed (long* p1 = identifiers)
-			{
-				UIntPtr c1 = new UIntPtr((uint)identifiers.Length);
-				NativeInstance->GetFrameIdentifiers(&c1, p1);
-				identifiersCount = (long)c1;
-				Array.Resize(ref identifiers, (int)c1);
-			}
+			NativeInstance->GetFrameIdentifiers(identifiers.GetNativeInstance());
 			GC.KeepAlive(this);
 		}
 

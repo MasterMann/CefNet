@@ -69,16 +69,6 @@ namespace CefNet.Internal
 			return _implementation.GetAuthCredentials(browser, originUrl, isProxy, host, port, realm, scheme, callback);
 		}
 
-		bool ICefRequestHandlerPrivate.AvoidOnQuotaRequest()
-		{
-			return _implementation.AvoidOnQuotaRequest();
-		}
-
-		protected internal unsafe override bool OnQuotaRequest(CefBrowser browser, string originUrl, long newSize, CefCallback callback)
-		{
-			return _implementation.OnQuotaRequest(browser, originUrl, newSize, callback);
-		}
-
 		bool ICefRequestHandlerPrivate.AvoidOnCertificateError()
 		{
 			return _implementation.AvoidOnCertificateError();
@@ -109,14 +99,34 @@ namespace CefNet.Internal
 			_implementation.OnRenderViewReady(browser);
 		}
 
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessUnresponsive()
+		{
+			return _implementation.AvoidOnRenderProcessUnresponsive();
+		}
+
+		protected internal unsafe override bool OnRenderProcessUnresponsive(CefBrowser browser, CefUnresponsiveProcessCallback callback)
+		{
+			return _implementation.OnRenderProcessUnresponsive(browser, callback);
+		}
+
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessResponsive()
+		{
+			return _implementation.AvoidOnRenderProcessResponsive();
+		}
+
+		protected internal unsafe override void OnRenderProcessResponsive(CefBrowser browser)
+		{
+			_implementation.OnRenderProcessResponsive(browser);
+		}
+
 		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated()
 		{
 			return _implementation.AvoidOnRenderProcessTerminated();
 		}
 
-		protected internal unsafe override void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status)
+		protected internal unsafe override void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status, int errorCode, string errorString)
 		{
-			_implementation.OnRenderProcessTerminated(browser, status);
+			_implementation.OnRenderProcessTerminated(browser, status, errorCode, errorString);
 		}
 
 		bool ICefRequestHandlerPrivate.AvoidOnDocumentAvailableInMainFrame()

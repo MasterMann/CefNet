@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <Platforms>x86;x64</Platforms>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -16,9 +15,9 @@
     <Compile Include="..\WinFormsCoreApp\CefAppImpl.cs" Link="CefAppImpl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.17" />
-    <PackageReference Include="MessageBox.Avalonia" Version="2.0.2" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="12.1.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CefNet.Avalonia\CefNet.Avalonia.csproj" />

@@ -21,8 +21,9 @@ using CefNet.Internal;
 namespace CefNet
 {
 	/// <summary>
-	/// Callback structure for cef_media_sink_t::GetDeviceInfo. The functions of this
-	/// structure will be called on the browser process UI thread.
+	/// Callback structure for cef_media_sink_t::GetDeviceInfo. The functions of
+	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,12 +54,14 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaSinkDeviceInfoCallbackPrivate.AvoidOnMediaSinkDeviceInfo();
+		bool ICefMediaSinkDeviceInfoCallbackPrivate.AvoidOnMediaSinkDeviceInfo()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaSinkDeviceInfoCallback), nameof(OnMediaSinkDeviceInfo));
+		}
 
 		/// <summary>
-		/// Method that will be executed asyncronously once device information has been
-		/// retrieved.
+		/// Method that will be executed asyncronously once device information has
+		/// been retrieved.
 		/// </summary>
 		protected internal unsafe virtual void OnMediaSinkDeviceInfo(CefMediaSinkDeviceInfo deviceInfo)
 		{
@@ -69,7 +72,7 @@ namespace CefNet
 		private unsafe delegate void OnMediaSinkDeviceInfoDelegate(cef_media_sink_device_info_callback_t* self, cef_media_sink_device_info_t* device_info);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_sink_device_info_callback_t* self, const const _cef_media_sink_device_info_t* device_info)*
+		// void (*)(_cef_media_sink_device_info_callback_t* self, _cef_media_sink_device_info_t const* device_info)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -80,7 +83,7 @@ namespace CefNet
 			{
 				return;
 			}
-			instance.OnMediaSinkDeviceInfo(*(CefMediaSinkDeviceInfo*)device_info);
+			instance.OnMediaSinkDeviceInfo(new CefMediaSinkDeviceInfo(device_info));
 		}
 	}
 }

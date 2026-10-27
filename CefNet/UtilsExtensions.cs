@@ -10,23 +10,16 @@ namespace CefNet
 {
 	static class UtilsExtensions
 	{
-#if NETSTANDARD_2_0
-		public static bool Remove<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, out TValue value)
-		{
-			if (!self.TryGetValue(key, out value))
-				return false;
-			return self.Remove(key);
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a block of memory at the given location with a given initial value without assuming architecture dependent alignment of the address.
 		/// </summary>
 		/// <param name="startAddress">The address of the start of the memory block to initialize.</param>
 		/// <param name="value">The value to initialize the block to.</param>
 		/// <param name="size">The number of bytes to initialize.</param>
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		public static extern void InitBlock(this IntPtr startAddress, byte value, int size);
+		public static unsafe void InitBlock(this IntPtr startAddress, byte value, int size)
+		{
+			System.Runtime.CompilerServices.Unsafe.InitBlockUnaligned((void*)startAddress, value, (uint)size);
+		}
 
 		/// <summary>
 		/// Reinterprets the given read-only reference as a reference to a value of type <typeparamref name="TTo"/>.
@@ -35,8 +28,10 @@ namespace CefNet
 		/// <typeparam name="TTo">The desired type of the reference.</typeparam>
 		/// <param name="source">The read-only reference to reinterpret.</param>
 		/// <returns>A reference to a value of type <typeparamref name="TTo"/>.</returns>
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		public static extern ref TTo AsRef<TFrom, TTo>(in TFrom source);
+		public static ref TTo AsRef<TFrom, TTo>(in TFrom source)
+		{
+			return ref System.Runtime.CompilerServices.Unsafe.As<TFrom, TTo>(ref System.Runtime.CompilerServices.Unsafe.AsRef(in source));
+		}
 
 		/// <summary>
 		/// Casts the given object to the specified type.
@@ -44,7 +39,9 @@ namespace CefNet
 		/// <typeparam name="T">The type which the object will be cast to.</typeparam>
 		/// <param name="o">The object to cast.</param>
 		/// <returns>The original object, casted to the given type..</returns>
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		public static extern T As<T>(object o) where T : class;
+		public static T As<T>(object o) where T : class
+		{
+			return System.Runtime.CompilerServices.Unsafe.As<T>(o);
+		}
 	}
 }

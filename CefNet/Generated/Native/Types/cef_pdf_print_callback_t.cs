@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::PrintToPDF. The functions of this
 	/// structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_pdf_print_callback_t
@@ -31,13 +32,13 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_pdf_print_callback_t* self, const cef_string_t* path, int ok)*
+		/// void (*)(_cef_pdf_print_callback_t* self, cef_string_t const* path, int ok)*
 		/// </summary>
 		public void* on_pdf_print_finished;
 
 		/// <summary>
-		/// Method that will be executed when the PDF printing has completed. |path| is
-		/// the output path. |ok| will be true (1) if the printing completed
+		/// Method that will be executed when the PDF printing has completed. |path|
+		/// is the output path. |ok| will be true (1) if the printing completed
 		/// successfully or false (0) otherwise.
 		/// </summary>
 		[NativeName("on_pdf_print_finished")]

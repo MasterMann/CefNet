@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Callback structure used for continuation of custom context menu display.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_run_context_menu_callback_t

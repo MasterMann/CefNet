@@ -26,9 +26,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefUrlParts : IDisposable
+	public unsafe partial class CefUrlParts : IDisposable
 	{
-		private cef_urlparts_t _instance;
+		private cef_urlparts_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefUrlParts()
+		{
+			_disposable = true;
+			_instance = (cef_urlparts_t*)CefStructure.Allocate(sizeof(cef_urlparts_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_urlparts_t));
+		}
+
+		internal static unsafe CefUrlParts Create(IntPtr instance)
+		{
+			return new CefUrlParts((cef_urlparts_t*)instance);
+		}
+
+		public CefUrlParts(cef_urlparts_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_urlparts_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_urlparts_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// The complete URL specification.
@@ -37,17 +84,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.spec)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->spec);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.spec)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->spec, value);
 			}
 		}
 
@@ -58,17 +99,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.scheme)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->scheme);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.scheme)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->scheme, value);
 			}
 		}
 
@@ -79,17 +114,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.username)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->username);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.username)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->username, value);
 			}
 		}
 
@@ -100,17 +129,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.password)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->password);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.password)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->password, value);
 			}
 		}
 
@@ -122,17 +145,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.host)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->host);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.host)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->host, value);
 			}
 		}
 
@@ -143,17 +160,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.port)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->port);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.port)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->port, value);
 			}
 		}
 
@@ -167,17 +178,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.origin)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->origin);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.origin)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->origin, value);
 			}
 		}
 
@@ -188,17 +193,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.path)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->path);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.path)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->path, value);
 			}
 		}
 
@@ -209,17 +208,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.query)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->query);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.query)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->query, value);
 			}
 		}
 
@@ -230,42 +223,42 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.fragment)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->fragment);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.fragment)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->fragment, value);
 			}
 		}
 
 		public void Dispose()
 		{
-			Spec = null;
-			Scheme = null;
-			Username = null;
-			Password = null;
-			Host = null;
-			Port = null;
-			Origin = null;
-			Path = null;
-			Query = null;
-			Fragment = null;
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator CefUrlParts(cef_urlparts_t instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return new CefUrlParts { _instance = instance };
+			if (_disposable && _instance != null)
+			{
+				Spec = null;
+				Scheme = null;
+				Username = null;
+				Password = null;
+				Host = null;
+				Port = null;
+				Origin = null;
+				Path = null;
+				Query = null;
+				Fragment = null;
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
-		public static implicit operator cef_urlparts_t(CefUrlParts instance)
+		~CefUrlParts()
 		{
-			return instance._instance;
+			Dispose(false);
 		}
 	}
 }

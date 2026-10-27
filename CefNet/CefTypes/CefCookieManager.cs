@@ -130,7 +130,7 @@ namespace CefNet
 					fixed (char* s0 = url)
 					{
 						var cstr0 = new cef_string_t { Str = s0, Length = url.Length };
-						return SafeCall(NativeInstance->SetCookie(&cstr0, (cef_cookie_t*)&aCookie, (callback != null) ? callback.GetNativeInstance() : null) != 0);
+						return SafeCall(NativeInstance->SetCookie(&cstr0, aCookie.GetNativeInstance(), (callback != null) ? callback.GetNativeInstance() : null) != 0);
 					}
 				}
 				finally
@@ -158,41 +158,14 @@ namespace CefNet
 		/// <exception cref="ArgumentOutOfRangeException">An invalid URL is specified.</exception>
 		public async Task<bool> SetCookieAsync(string url, CefNetCookie cookie, CancellationToken cancellationToken)
 		{
-			if (url is null)
-				throw new ArgumentNullException(nameof(url));
-			if (cookie is null)
-				throw new ArgumentNullException(nameof(cookie));
+			var callback = new CefSetCookieCallbackImpl();
+			if (!SetCookie(url, cookie, callback))
+				return false;
 
-			if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri)
-				&& (Uri.UriSchemeHttp.Equals(uri.Scheme, StringComparison.Ordinal) || Uri.UriSchemeHttps.Equals(uri.Scheme, StringComparison.Ordinal)))
+			using (var ctr = cancellationToken.Register(callback.Cancel))
 			{
-				var callback = new CefSetCookieCallbackImpl();
-				CefCookie aCookie = cookie.ToCefCookie();
-				try
-				{
-					if (cookie.Domain != null && !cookie.Domain.StartsWith("."))
-						aCookie.Domain = null;
-
-					unsafe
-					{
-						fixed (char* s0 = url)
-						{
-							var cstr0 = new cef_string_t { Str = s0, Length = url.Length };
-							if (!SafeCall(NativeInstance->SetCookie(&cstr0, (cef_cookie_t*)&aCookie, callback.GetNativeInstance()) != 0))
-								return false;
-						}
-					}
-				}
-				finally
-				{
-					aCookie.Dispose();
-				}
-				using (var ctr = cancellationToken.Register(callback.Cancel))
-				{
-					return await callback.WaitTask.ConfigureAwait(false);
-				}
+				return await callback.WaitTask.ConfigureAwait(false);
 			}
-			throw new ArgumentOutOfRangeException(nameof(url));
 		}
 
 		/// <summary>

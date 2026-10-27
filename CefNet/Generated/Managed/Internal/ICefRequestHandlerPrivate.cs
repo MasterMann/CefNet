@@ -26,10 +26,11 @@ namespace CefNet.Internal
 		bool AvoidOnOpenUrlFromTab();
 		bool AvoidGetResourceRequestHandler();
 		bool AvoidGetAuthCredentials();
-		bool AvoidOnQuotaRequest();
 		bool AvoidOnCertificateError();
 		bool AvoidOnSelectClientCertificate();
 		bool AvoidOnRenderViewReady();
+		bool AvoidOnRenderProcessUnresponsive();
+		bool AvoidOnRenderProcessResponsive();
 		bool AvoidOnRenderProcessTerminated();
 		bool AvoidOnDocumentAvailableInMainFrame();
 	}

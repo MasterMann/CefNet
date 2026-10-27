@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure that manages custom scheme registrations.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_scheme_registrar_t
@@ -30,13 +31,13 @@ namespace CefNet.CApi
 		public cef_base_scoped_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_scheme_registrar_t* self, const cef_string_t* scheme_name, int options)*
+		/// int (*)(_cef_scheme_registrar_t* self, cef_string_t const* scheme_name, int options)*
 		/// </summary>
 		public void* add_custom_scheme;
 
 		/// <summary>
-		/// Register a custom scheme. This function should not be called for the built-
-		/// in HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
+		/// Register a custom scheme. This function should not be called for the
+		/// built-in HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
 		/// See cef_scheme_options_t for possible values for |options|.
 		/// This function may be called on any thread. It should only be called once
 		/// per unique |scheme_name| value. If |scheme_name| is already registered or

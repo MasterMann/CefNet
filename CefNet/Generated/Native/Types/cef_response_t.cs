@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a web response. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_response_t
@@ -135,7 +136,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_response_t* self, const cef_string_t* statusText)*
+		/// void (*)(_cef_response_t* self, cef_string_t const* statusText)*
 		/// </summary>
 		public void* set_status_text;
 
@@ -170,7 +171,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_response_t* self, const cef_string_t* mimeType)*
+		/// void (*)(_cef_response_t* self, cef_string_t const* mimeType)*
 		/// </summary>
 		public void* set_mime_type;
 
@@ -205,7 +206,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_response_t* self, const cef_string_t* charset)*
+		/// void (*)(_cef_response_t* self, cef_string_t const* charset)*
 		/// </summary>
 		public void* set_charset;
 
@@ -222,7 +223,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_response_t* self, const cef_string_t* name)*
+		/// cef_string_userfree_t (*)(_cef_response_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* get_header_by_name;
 
@@ -240,14 +241,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_response_t* self, const cef_string_t* name, const cef_string_t* value, int overwrite)*
+		/// void (*)(_cef_response_t* self, cef_string_t const* name, cef_string_t const* value, int overwrite)*
 		/// </summary>
 		public void* set_header_by_name;
 
 		/// <summary>
 		/// Set the header |name| to |value|. If |overwrite| is true (1) any existing
-		/// values will be replaced with the new value. If |overwrite| is false (0) any
-		/// existing values will not be overwritten.
+		/// values will be replaced with the new value. If |overwrite| is false (0)
+		/// any existing values will not be overwritten.
 		/// </summary>
 		[NativeName("set_header_by_name")]
 		public unsafe void SetHeaderByName([Immutable]cef_string_t* name, [Immutable]cef_string_t* value, int overwrite)
@@ -311,7 +312,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_response_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_response_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_url;
 

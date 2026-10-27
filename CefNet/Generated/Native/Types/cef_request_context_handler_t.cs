@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to provide handler implementations. The handler
 	/// instance will not be released until all objects related to the context have
 	/// been destroyed.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_request_context_handler_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_resource_request_handler_t* (*)(_cef_request_context_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, const cef_string_t* request_initiator, int* disable_default_handling)*
+		/// _cef_resource_request_handler_t* (*)(_cef_request_context_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, cef_string_t const* request_initiator, int* disable_default_handling)*
 		/// </summary>
 		public void* get_resource_request_handler;
 
@@ -59,18 +60,21 @@ namespace CefNet.CApi
 		/// initiated. The |browser| and |frame| values represent the source of the
 		/// request, and may be NULL for requests originating from service workers or
 		/// cef_urlrequest_t. |request| represents the request contents and cannot be
-		/// modified in this callback. |is_navigation| will be true (1) if the resource
-		/// request is a navigation. |is_download| will be true (1) if the resource
-		/// request is a download. |request_initiator| is the origin (scheme + domain)
-		/// of the page that initiated the request. Set |disable_default_handling| to
-		/// true (1) to disable default handling of the request, in which case it will
-		/// need to be handled via cef_resource_request_handler_t::GetResourceHandler
-		/// or it will be canceled. To allow the resource load to proceed with default
-		/// handling return NULL. To specify a handler for the resource return a
+		/// modified in this callback. |is_navigation| will be true (1) if the
+		/// resource request is a navigation. |is_download| will be true (1) if the
+		/// resource request is a download. |request_initiator| is the origin (scheme
+		/// + domain) of the page that initiated the request. Set
+		/// |disable_default_handling| to true (1) to disable default handling of the
+		/// request, in which case it will need to be handled via
+		/// cef_resource_request_handler_t::GetResourceHandler or it will be canceled.
+		/// To allow the resource load to proceed with default handling return NULL.
+		/// To specify a handler for the resource return a
 		/// cef_resource_request_handler_t object. This function will not be called if
 		/// the client associated with |browser| returns a non-NULL value from
 		/// cef_request_handler_t::GetResourceRequestHandler for the same request
-		/// (identified by cef_request_t::GetIdentifier).
+		/// (identified by cef_request_t::GetIdentifier). For worker requests without
+		/// an associated frame or process handler, an arbitrary non-NULL handler from
+		/// the contexts sharing the same storage will be used.
 		/// </summary>
 		[NativeName("get_resource_request_handler")]
 		public unsafe cef_resource_request_handler_t* GetResourceRequestHandler(cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, int is_navigation, int is_download, [Immutable]cef_string_t* request_initiator, int* disable_default_handling)

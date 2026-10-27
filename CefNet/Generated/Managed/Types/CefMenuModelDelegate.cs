@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle menu model events. The functions of this
 	/// structure will be called on the browser process UI thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -78,8 +79,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidExecuteCommand();
+		bool ICefMenuModelDelegatePrivate.AvoidExecuteCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(ExecuteCommand));
+		}
 
 		/// <summary>
 		/// Perform the action associated with the specified |command_id| and optional
@@ -109,8 +112,10 @@ namespace CefNet
 			instance.ExecuteCommand(CefMenuModel.Wrap(CefMenuModel.Create, menu_model), command_id, event_flags);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidMouseOutsideMenu();
+		bool ICefMenuModelDelegatePrivate.AvoidMouseOutsideMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(MouseOutsideMenu));
+		}
 
 		/// <summary>
 		/// Called when the user moves the mouse outside the menu and over the owning
@@ -125,7 +130,7 @@ namespace CefNet
 		private unsafe delegate void MouseOutsideMenuDelegate(cef_menu_model_delegate_t* self, cef_menu_model_t* menu_model, cef_point_t* screen_point);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, const cef_point_t* screen_point)*
+		// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, cef_point_t const* screen_point)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -140,8 +145,10 @@ namespace CefNet
 			instance.MouseOutsideMenu(CefMenuModel.Wrap(CefMenuModel.Create, menu_model), *(CefPoint*)screen_point);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidUnhandledOpenSubmenu();
+		bool ICefMenuModelDelegatePrivate.AvoidUnhandledOpenSubmenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(UnhandledOpenSubmenu));
+		}
 
 		/// <summary>
 		/// Called on unhandled open submenu keyboard commands. |is_rtl| will be true
@@ -171,8 +178,10 @@ namespace CefNet
 			instance.UnhandledOpenSubmenu(CefMenuModel.Wrap(CefMenuModel.Create, menu_model), is_rtl != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidUnhandledCloseSubmenu();
+		bool ICefMenuModelDelegatePrivate.AvoidUnhandledCloseSubmenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(UnhandledCloseSubmenu));
+		}
 
 		/// <summary>
 		/// Called on unhandled close submenu keyboard commands. |is_rtl| will be true
@@ -202,8 +211,10 @@ namespace CefNet
 			instance.UnhandledCloseSubmenu(CefMenuModel.Wrap(CefMenuModel.Create, menu_model), is_rtl != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidMenuWillShow();
+		bool ICefMenuModelDelegatePrivate.AvoidMenuWillShow()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(MenuWillShow));
+		}
 
 		/// <summary>
 		/// The menu is about to show.
@@ -232,8 +243,10 @@ namespace CefNet
 			instance.MenuWillShow(CefMenuModel.Wrap(CefMenuModel.Create, menu_model));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidMenuClosed();
+		bool ICefMenuModelDelegatePrivate.AvoidMenuClosed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(MenuClosed));
+		}
 
 		/// <summary>
 		/// The menu has closed.
@@ -262,8 +275,10 @@ namespace CefNet
 			instance.MenuClosed(CefMenuModel.Wrap(CefMenuModel.Create, menu_model));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMenuModelDelegatePrivate.AvoidFormatLabel();
+		bool ICefMenuModelDelegatePrivate.AvoidFormatLabel()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMenuModelDelegate), nameof(FormatLabel));
+		}
 
 		/// <summary>
 		/// Optionally modify a menu item label. Return true (1) if |label| was

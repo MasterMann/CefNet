@@ -43,7 +43,7 @@ namespace CefNet
 
 		Search = 8,
 
-		Max = Search,
+		NumValues = 9,
 	}
 }
 

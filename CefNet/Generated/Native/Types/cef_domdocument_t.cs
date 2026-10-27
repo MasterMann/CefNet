@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a DOM document. The functions of this structure
 	/// should only be called on the render process main thread thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_domdocument_t
@@ -117,7 +118,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_domnode_t* (*)(_cef_domdocument_t* self, const cef_string_t* id)*
+		/// _cef_domnode_t* (*)(_cef_domdocument_t* self, cef_string_t const* id)*
 		/// </summary>
 		public void* get_element_by_id;
 
@@ -256,7 +257,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_domdocument_t* self, const cef_string_t* partialURL)*
+		/// cef_string_userfree_t (*)(_cef_domdocument_t* self, cef_string_t const* partialURL)*
 		/// </summary>
 		public void* get_complete_url;
 

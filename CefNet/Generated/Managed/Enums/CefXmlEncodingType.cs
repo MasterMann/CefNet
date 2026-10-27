@@ -35,6 +35,8 @@ namespace CefNet
 		Utf16be = 3,
 
 		Ascii = 4,
+
+		NumValues = 5,
 	}
 }
 

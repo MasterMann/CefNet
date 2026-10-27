@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a web request. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_request_t
@@ -66,7 +67,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_url;
 
@@ -102,7 +103,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* method)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* method)*
 		/// </summary>
 		public void* set_method;
 
@@ -119,14 +120,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* referrer_url, cef_referrer_policy_t policy)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* referrer_url, cef_referrer_policy_t policy)*
 		/// </summary>
 		public void* set_referrer;
 
 		/// <summary>
-		/// Set the referrer URL and policy. If non-NULL the referrer URL must be fully
-		/// qualified with an HTTP or HTTPS scheme component. Any username, password or
-		/// ref component will be removed.
+		/// Set the referrer URL and policy. If non-NULL the referrer URL must be
+		/// fully qualified with an HTTP or HTTPS scheme component. Any username,
+		/// password or ref component will be removed.
 		/// </summary>
 		[NativeName("set_referrer")]
 		public unsafe void SetReferrer([Immutable]cef_string_t* referrer_url, CefReferrerPolicy policy)
@@ -242,7 +243,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_request_t* self, const cef_string_t* name)*
+		/// cef_string_userfree_t (*)(_cef_request_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* get_header_by_name;
 
@@ -262,15 +263,15 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* name, const cef_string_t* value, int overwrite)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* name, cef_string_t const* value, int overwrite)*
 		/// </summary>
 		public void* set_header_by_name;
 
 		/// <summary>
 		/// Set the header |name| to |value|. If |overwrite| is true (1) any existing
-		/// values will be replaced with the new value. If |overwrite| is false (0) any
-		/// existing values will not be overwritten. The Referer value cannot be set
-		/// using this function.
+		/// values will be replaced with the new value. If |overwrite| is false (0)
+		/// any existing values will not be overwritten. The Referer value cannot be
+		/// set using this function.
 		/// </summary>
 		[NativeName("set_header_by_name")]
 		public unsafe void SetHeaderByName([Immutable]cef_string_t* name, [Immutable]cef_string_t* value, int overwrite)
@@ -282,7 +283,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url, const cef_string_t* method, _cef_post_data_t* postData, cef_string_multimap_t headerMap)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url, cef_string_t const* method, _cef_post_data_t* postData, cef_string_multimap_t headerMap)*
 		/// </summary>
 		public void* set;
 
@@ -354,7 +355,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_first_party_for_cookies;
 
@@ -409,14 +410,15 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// uint64 (*)(_cef_request_t* self)*
+		/// uint64_t (*)(_cef_request_t* self)*
 		/// </summary>
 		public void* get_identifier;
 
 		/// <summary>
 		/// Returns the globally unique identifier for this request or 0 if not
-		/// specified. Can be used by cef_resource_request_handler_t implementations in
-		/// the browser process to track a single request across multiple callbacks.
+		/// specified. Can be used by cef_resource_request_handler_t implementations
+		/// in the browser process to track a single request across multiple
+		/// callbacks.
 		/// </summary>
 		[NativeName("get_identifier")]
 		public unsafe ulong GetIdentifier()

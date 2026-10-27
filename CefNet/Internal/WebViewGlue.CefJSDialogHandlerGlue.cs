@@ -97,8 +97,10 @@ namespace CefNet.Internal
 			Interlocked.Exchange(ref _scriptDialogDeferral, null)?.Dispose();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnDialogClosed();
+		internal bool AvoidOnDialogClosed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnDialogClosed));
+		}
 
 		/// <summary>
 		/// Called when the dialog is closed.

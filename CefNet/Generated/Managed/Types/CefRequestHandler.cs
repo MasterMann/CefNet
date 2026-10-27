@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to browser requests. The
 	/// functions of this structure will be called on the thread indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -38,13 +39,15 @@ namespace CefNet
 
 		private static readonly GetAuthCredentialsDelegate fnGetAuthCredentials = GetAuthCredentialsImpl;
 
-		private static readonly OnQuotaRequestDelegate fnOnQuotaRequest = OnQuotaRequestImpl;
-
 		private static readonly OnCertificateErrorDelegate fnOnCertificateError = OnCertificateErrorImpl;
 
 		private static readonly OnSelectClientCertificateDelegate fnOnSelectClientCertificate = OnSelectClientCertificateImpl;
 
 		private static readonly OnRenderViewReadyDelegate fnOnRenderViewReady = OnRenderViewReadyImpl;
+
+		private static readonly OnRenderProcessUnresponsiveDelegate fnOnRenderProcessUnresponsive = OnRenderProcessUnresponsiveImpl;
+
+		private static readonly OnRenderProcessResponsiveDelegate fnOnRenderProcessResponsive = OnRenderProcessResponsiveImpl;
 
 		private static readonly OnRenderProcessTerminatedDelegate fnOnRenderProcessTerminated = OnRenderProcessTerminatedImpl;
 
@@ -64,10 +67,11 @@ namespace CefNet
 			self->on_open_urlfrom_tab = (void*)Marshal.GetFunctionPointerForDelegate(fnOnOpenUrlFromTab);
 			self->get_resource_request_handler = (void*)Marshal.GetFunctionPointerForDelegate(fnGetResourceRequestHandler);
 			self->get_auth_credentials = (void*)Marshal.GetFunctionPointerForDelegate(fnGetAuthCredentials);
-			self->on_quota_request = (void*)Marshal.GetFunctionPointerForDelegate(fnOnQuotaRequest);
 			self->on_certificate_error = (void*)Marshal.GetFunctionPointerForDelegate(fnOnCertificateError);
 			self->on_select_client_certificate = (void*)Marshal.GetFunctionPointerForDelegate(fnOnSelectClientCertificate);
 			self->on_render_view_ready = (void*)Marshal.GetFunctionPointerForDelegate(fnOnRenderViewReady);
+			self->on_render_process_unresponsive = (void*)Marshal.GetFunctionPointerForDelegate(fnOnRenderProcessUnresponsive);
+			self->on_render_process_responsive = (void*)Marshal.GetFunctionPointerForDelegate(fnOnRenderProcessResponsive);
 			self->on_render_process_terminated = (void*)Marshal.GetFunctionPointerForDelegate(fnOnRenderProcessTerminated);
 			self->on_document_available_in_main_frame = (void*)Marshal.GetFunctionPointerForDelegate(fnOnDocumentAvailableInMainFrame);
 			#else
@@ -75,11 +79,12 @@ namespace CefNet
 			self->on_open_urlfrom_tab = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_frame_t*, cef_string_t*, CefWindowOpenDisposition, int, int>)&OnOpenUrlFromTabImpl;
 			self->get_resource_request_handler = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_frame_t*, cef_request_t*, int, int, cef_string_t*, int*, cef_resource_request_handler_t*>)&GetResourceRequestHandlerImpl;
 			self->get_auth_credentials = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_string_t*, int, cef_string_t*, int, cef_string_t*, cef_string_t*, cef_auth_callback_t*, int>)&GetAuthCredentialsImpl;
-			self->on_quota_request = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_string_t*, long, cef_callback_t*, int>)&OnQuotaRequestImpl;
 			self->on_certificate_error = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefErrorCode, cef_string_t*, cef_sslinfo_t*, cef_callback_t*, int>)&OnCertificateErrorImpl;
-			self->on_select_client_certificate = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, UIntPtr, cef_x509certificate_t**, cef_select_client_certificate_callback_t*, int>)&OnSelectClientCertificateImpl;
+			self->on_select_client_certificate = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, UIntPtr, cef_x509_certificate_t**, cef_select_client_certificate_callback_t*, int>)&OnSelectClientCertificateImpl;
 			self->on_render_view_ready = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)&OnRenderViewReadyImpl;
-			self->on_render_process_terminated = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefTerminationStatus, void>)&OnRenderProcessTerminatedImpl;
+			self->on_render_process_unresponsive = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_unresponsive_process_callback_t*, int>)&OnRenderProcessUnresponsiveImpl;
+			self->on_render_process_responsive = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)&OnRenderProcessResponsiveImpl;
+			self->on_render_process_terminated = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefTerminationStatus, int, cef_string_t*, void>)&OnRenderProcessTerminatedImpl;
 			self->on_document_available_in_main_frame = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)&OnDocumentAvailableInMainFrameImpl;
 			#endif
 		}
@@ -89,20 +94,23 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnBeforeBrowse();
+		bool ICefRequestHandlerPrivate.AvoidOnBeforeBrowse()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnBeforeBrowse));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before browser navigation. Return true (1) to
 		/// cancel the navigation or false (0) to allow the navigation to proceed. The
 		/// |request| object cannot be modified in this callback.
-		/// cef_load_handler_t::OnLoadingStateChange will be called twice in all cases.
-		/// If the navigation is allowed cef_load_handler_t::OnLoadStart and
-		/// cef_load_handler_t::OnLoadEnd will be called. If the navigation is canceled
-		/// cef_load_handler_t::OnLoadError will be called with an |errorCode| value of
-		/// ERR_ABORTED. The |user_gesture| value will be true (1) if the browser
-		/// navigated via explicit user gesture (e.g. clicking a link) or false (0) if
-		/// it navigated automatically (e.g. via the DomContentLoaded event).
+		/// cef_load_handler_t::OnLoadingStateChange will be called twice in all
+		/// cases. If the navigation is allowed cef_load_handler_t::OnLoadStart and
+		/// cef_load_handler_t::OnLoadEnd will be called. If the navigation is
+		/// canceled cef_load_handler_t::OnLoadError will be called with an
+		/// |errorCode| value of ERR_ABORTED. The |user_gesture| value will be true
+		/// (1) if the browser navigated via explicit user gesture (e.g. clicking a
+		/// link) or false (0) if it navigated automatically (e.g. via the
+		/// DomContentLoaded event).
 		/// </summary>
 		protected internal unsafe virtual bool OnBeforeBrowse(CefBrowser browser, CefFrame frame, CefRequest request, bool userGesture, bool isRedirect)
 		{
@@ -131,8 +139,10 @@ namespace CefNet
 			return instance.OnBeforeBrowse(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), user_gesture != 0, is_redirect != 0) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnOpenUrlFromTab();
+		bool ICefRequestHandlerPrivate.AvoidOnOpenUrlFromTab()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnOpenUrlFromTab));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before OnBeforeBrowse in certain limited cases
@@ -160,7 +170,7 @@ namespace CefNet
 		private unsafe delegate int OnOpenUrlFromTabDelegate(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* target_url, CefWindowOpenDisposition target_disposition, int user_gesture);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* target_url, cef_window_open_disposition_t target_disposition, int user_gesture)*
+		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* target_url, cef_window_open_disposition_t target_disposition, int user_gesture)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -176,8 +186,10 @@ namespace CefNet
 			return instance.OnOpenUrlFromTab(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefString.Read(target_url), target_disposition, user_gesture != 0) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidGetResourceRequestHandler();
+		bool ICefRequestHandlerPrivate.AvoidGetResourceRequestHandler()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(GetResourceRequestHandler));
+		}
 
 		/// <summary>
 		/// Called on the browser process IO thread before a resource request is
@@ -185,12 +197,12 @@ namespace CefNet
 		/// request. |request| represents the request contents and cannot be modified
 		/// in this callback. |is_navigation| will be true (1) if the resource request
 		/// is a navigation. |is_download| will be true (1) if the resource request is
-		/// a download. |request_initiator| is the origin (scheme + domain) of the page
-		/// that initiated the request. Set |disable_default_handling| to true (1) to
-		/// disable default handling of the request, in which case it will need to be
-		/// handled via cef_resource_request_handler_t::GetResourceHandler or it will
-		/// be canceled. To allow the resource load to proceed with default handling
-		/// return NULL. To specify a handler for the resource return a
+		/// a download. |request_initiator| is the origin (scheme + domain) of the
+		/// page that initiated the request. Set |disable_default_handling| to true
+		/// (1) to disable default handling of the request, in which case it will need
+		/// to be handled via cef_resource_request_handler_t::GetResourceHandler or it
+		/// will be canceled. To allow the resource load to proceed with default
+		/// handling return NULL. To specify a handler for the resource return a
 		/// cef_resource_request_handler_t object. If this callback returns NULL the
 		/// same function will be called on the associated
 		/// cef_request_context_handler_t, if any.
@@ -205,7 +217,7 @@ namespace CefNet
 		private unsafe delegate cef_resource_request_handler_t* GetResourceRequestHandlerDelegate(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, int is_navigation, int is_download, cef_string_t* request_initiator, int* disable_default_handling);
 
 #endif // NET_LESS_5_0
-		// _cef_resource_request_handler_t* (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, const cef_string_t* request_initiator, int* disable_default_handling)*
+		// _cef_resource_request_handler_t* (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, cef_string_t const* request_initiator, int* disable_default_handling)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -225,8 +237,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidGetAuthCredentials();
+		bool ICefRequestHandlerPrivate.AvoidGetAuthCredentials()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(GetAuthCredentials));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when the browser needs credentials from the user.
@@ -236,9 +250,9 @@ namespace CefNet
 		/// and may be NULL. |scheme| is the authentication scheme used, such as
 		/// &quot;basic&quot; or &quot;digest&quot;, and will be NULL if the source of the request is an
 		/// FTP server. Return true (1) to continue the request and call
-		/// cef_auth_callback_t::cont() either in this function or at a later time when
-		/// the authentication information is available. Return false (0) to cancel the
-		/// request immediately.
+		/// cef_auth_callback_t::cont() either in this function or at a later time
+		/// when the authentication information is available. Return false (0) to
+		/// cancel the request immediately.
 		/// </summary>
 		protected internal unsafe virtual bool GetAuthCredentials(CefBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, CefAuthCallback callback)
 		{
@@ -250,7 +264,7 @@ namespace CefNet
 		private unsafe delegate int GetAuthCredentialsDelegate(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, int isProxy, cef_string_t* host, int port, cef_string_t* realm, cef_string_t* scheme, cef_auth_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, const cef_string_t* origin_url, int isProxy, const cef_string_t* host, int port, const cef_string_t* realm, const cef_string_t* scheme, _cef_auth_callback_t* callback)*
+		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_string_t const* origin_url, int isProxy, cef_string_t const* host, int port, cef_string_t const* realm, cef_string_t const* scheme, _cef_auth_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -266,54 +280,18 @@ namespace CefNet
 			return instance.GetAuthCredentials(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(origin_url), isProxy != 0, CefString.Read(host), port, CefString.Read(realm), CefString.Read(scheme), CefAuthCallback.Wrap(CefAuthCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnQuotaRequest();
-
-		/// <summary>
-		/// Called on the IO thread when JavaScript requests a specific storage quota
-		/// size via the webkitStorageInfo.requestQuota function. |origin_url| is the
-		/// origin of the page making the request. |new_size| is the requested quota
-		/// size in bytes. Return true (1) to continue the request and call
-		/// cef_callback_t functions either in this function or at a later time to
-		/// grant or deny the request. Return false (0) to cancel the request
-		/// immediately.
-		/// </summary>
-		protected internal unsafe virtual bool OnQuotaRequest(CefBrowser browser, string originUrl, long newSize, CefCallback callback)
+		bool ICefRequestHandlerPrivate.AvoidOnCertificateError()
 		{
-			return default;
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnCertificateError));
 		}
-
-#if NET_LESS_5_0
-		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate int OnQuotaRequestDelegate(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, long new_size, cef_callback_t* callback);
-
-#endif // NET_LESS_5_0
-		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, const cef_string_t* origin_url, int64 new_size, _cef_callback_t* callback)*
-#if !NET_LESS_5_0
-		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-#endif
-		private static unsafe int OnQuotaRequestImpl(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, long new_size, cef_callback_t* callback)
-		{
-			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
-			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnQuotaRequest())
-			{
-				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
-				ReleaseIfNonNull((cef_base_ref_counted_t*)callback);
-				return default;
-			}
-			return instance.OnQuotaRequest(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(origin_url), new_size, CefCallback.Wrap(CefCallback.Create, callback)) ? 1 : 0;
-		}
-
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnCertificateError();
 
 		/// <summary>
 		/// Called on the UI thread to handle requests for URLs with an invalid SSL
 		/// certificate. Return true (1) and call cef_callback_t functions either in
 		/// this function or at a later time to continue or cancel the request. Return
 		/// false (0) to cancel the request immediately. If
-		/// CefSettings.ignore_certificate_errors is set all invalid certificates will
-		/// be accepted without calling this function.
+		/// cef_settings_t.ignore_certificate_errors is set all invalid certificates
+		/// will be accepted without calling this function.
 		/// </summary>
 		protected internal unsafe virtual bool OnCertificateError(CefBrowser browser, CefErrorCode certError, string requestUrl, CefSSLInfo sSLInfo, CefCallback callback)
 		{
@@ -325,7 +303,7 @@ namespace CefNet
 		private unsafe delegate int OnCertificateErrorDelegate(cef_request_handler_t* self, cef_browser_t* browser, CefErrorCode cert_error, cef_string_t* request_url, cef_sslinfo_t* ssl_info, cef_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_errorcode_t cert_error, const cef_string_t* request_url, _cef_sslinfo_t* ssl_info, _cef_callback_t* callback)*
+		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_errorcode_t cert_error, cef_string_t const* request_url, _cef_sslinfo_t* ssl_info, _cef_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -342,21 +320,26 @@ namespace CefNet
 			return instance.OnCertificateError(CefBrowser.Wrap(CefBrowser.Create, browser), cert_error, CefString.Read(request_url), CefSSLInfo.Wrap(CefSSLInfo.Create, ssl_info), CefCallback.Wrap(CefCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnSelectClientCertificate();
+		bool ICefRequestHandlerPrivate.AvoidOnSelectClientCertificate()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnSelectClientCertificate));
+		}
 
 		/// <summary>
 		/// Called on the UI thread when a client certificate is being requested for
-		/// authentication. Return false (0) to use the default behavior and
-		/// automatically select the first certificate available. Return true (1) and
-		/// call cef_select_client_certificate_callback_t::Select either in this
-		/// function or at a later time to select a certificate. Do not call Select or
-		/// call it with NULL to continue without using any certificate. |isProxy|
-		/// indicates whether the host is an HTTPS proxy or the origin server. |host|
-		/// and |port| contains the hostname and port of the SSL server. |certificates|
-		/// is the list of certificates to choose from; this list has already been
-		/// pruned by Chromium so that it only contains certificates from issuers that
-		/// the server trusts.
+		/// authentication. Return false (0) to use the default behavior.  If the
+		/// |certificates| list is not NULL the default behavior will be to display a
+		/// dialog for certificate selection. If the |certificates| list is NULL then
+		/// the default behavior will be not to show a dialog and it will continue
+		/// without using any certificate. Return true (1) and call
+		/// cef_select_client_certificate_callback_t::Select either in this function
+		/// or at a later time to select a certificate. Do not call Select or call it
+		/// with NULL to continue without using any certificate. |isProxy| indicates
+		/// whether the host is an HTTPS proxy or the origin server. |host| and |port|
+		/// contains the hostname and port of the SSL server. |certificates| is the
+		/// list of certificates to choose from; this list has already been pruned by
+		/// Chromium so that it only contains certificates from issuers that the
+		/// server trusts.
 		/// </summary>
 		protected internal unsafe virtual bool OnSelectClientCertificate(CefBrowser browser, bool isProxy, string host, int port, CefX509Certificate[] certificates, CefSelectClientCertificateCallback callback)
 		{
@@ -365,14 +348,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate int OnSelectClientCertificateDelegate(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback);
+		private unsafe delegate int OnSelectClientCertificateDelegate(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509_certificate_t** certificates, cef_select_client_certificate_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, int isProxy, const cef_string_t* host, int port, size_t certificatesCount, const _cef_x509certificate_t** certificates, _cef_select_client_certificate_callback_t* callback)*
+		// const int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, int isProxy, cef_string_t const* host, int port, size_t certificatesCount, _cef_x509_certificate_t** certificates, _cef_select_client_certificate_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe int OnSelectClientCertificateImpl(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
+		private static unsafe int OnSelectClientCertificateImpl(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509_certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
 			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnSelectClientCertificate())
@@ -391,8 +374,10 @@ namespace CefNet
 			return instance.OnSelectClientCertificate(CefBrowser.Wrap(CefBrowser.Create, browser), isProxy != 0, CefString.Read(host), port, obj_certificates, CefSelectClientCertificateCallback.Wrap(CefSelectClientCertificateCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderViewReady();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderViewReady()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderViewReady));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render view associated
@@ -423,27 +408,116 @@ namespace CefNet
 			instance.OnRenderViewReady(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessUnresponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessUnresponsive));
+		}
 
 		/// <summary>
-		/// Called on the browser process UI thread when the render process terminates
-		/// unexpectedly. |status| indicates how the process terminated.
+		/// Called on the browser process UI thread when the render process is
+		/// unresponsive as indicated by a lack of input event processing for at least
+		/// 15 seconds. Return false (0) for the default behavior which is to continue
+		/// waiting with Alloy style or display of the &quot;Page unresponsive&quot; dialog with
+		/// Chrome style. Return true (1) and don&apos;t execute the callback to continue
+		/// waiting without display of the Chrome style dialog. Return true (1) and
+		/// call cef_unresponsive_process_callback_t::Wait either in this function or
+		/// at a later time to reset the wait timer. In cases where you continue
+		/// waiting there may be another call to this function if the process remains
+		/// unresponsive. Return true (1) and call
+		/// cef_unresponsive_process_callback_t::Terminate either in this function or
+		/// at a later time to terminate the unresponsive process, resulting in a call
+		/// to OnRenderProcessTerminated. OnRenderProcessResponsive will be called if
+		/// the process becomes responsive after this function is called. This
+		/// functionality depends on the hang monitor which can be disabled by passing
+		/// the `--disable-hang-monitor` command-line flag.
 		/// </summary>
-		protected internal unsafe virtual void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status)
+		protected internal unsafe virtual bool OnRenderProcessUnresponsive(CefBrowser browser, CefUnresponsiveProcessCallback callback)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int OnRenderProcessUnresponsiveDelegate(cef_request_handler_t* self, cef_browser_t* browser, cef_unresponsive_process_callback_t* callback);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_unresponsive_process_callback_t* callback)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int OnRenderProcessUnresponsiveImpl(cef_request_handler_t* self, cef_browser_t* browser, cef_unresponsive_process_callback_t* callback)
+		{
+			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
+			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnRenderProcessUnresponsive())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				ReleaseIfNonNull((cef_base_ref_counted_t*)callback);
+				return default;
+			}
+			return instance.OnRenderProcessUnresponsive(CefBrowser.Wrap(CefBrowser.Create, browser), CefUnresponsiveProcessCallback.Wrap(CefUnresponsiveProcessCallback.Create, callback)) ? 1 : 0;
+		}
+
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessResponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessResponsive));
+		}
+
+		/// <summary>
+		/// Called on the browser process UI thread when the render process becomes
+		/// responsive after previously being unresponsive. See documentation on
+		/// OnRenderProcessUnresponsive.
+		/// </summary>
+		protected internal unsafe virtual void OnRenderProcessResponsive(CefBrowser browser)
 		{
 		}
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnRenderProcessTerminatedDelegate(cef_request_handler_t* self, cef_browser_t* browser, CefTerminationStatus status);
+		private unsafe delegate void OnRenderProcessResponsiveDelegate(cef_request_handler_t* self, cef_browser_t* browser);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_termination_status_t status)*
+		// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnRenderProcessTerminatedImpl(cef_request_handler_t* self, cef_browser_t* browser, CefTerminationStatus status)
+		private static unsafe void OnRenderProcessResponsiveImpl(cef_request_handler_t* self, cef_browser_t* browser)
+		{
+			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
+			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnRenderProcessResponsive())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				return;
+			}
+			instance.OnRenderProcessResponsive(CefBrowser.Wrap(CefBrowser.Create, browser));
+		}
+
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessTerminated));
+		}
+
+		/// <summary>
+		/// Called on the browser process UI thread when the render process terminates
+		/// unexpectedly. |status| indicates how the process terminated. |error_code|
+		/// and |error_string| represent the error that would be displayed in Chrome&apos;s
+		/// &quot;Aw, Snap!&quot; view. Possible |error_code| values include cef_resultcode_t
+		/// non-normal exit values and platform-specific crash values (for example, a
+		/// Posix signal or Windows hardware exception).
+		/// </summary>
+		protected internal unsafe virtual void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status, int errorCode, string errorString)
+		{
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate void OnRenderProcessTerminatedDelegate(cef_request_handler_t* self, cef_browser_t* browser, CefTerminationStatus status, int error_code, cef_string_t* error_string);
+
+#endif // NET_LESS_5_0
+		// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_termination_status_t status, int error_code, cef_string_t const* error_string)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe void OnRenderProcessTerminatedImpl(cef_request_handler_t* self, cef_browser_t* browser, CefTerminationStatus status, int error_code, cef_string_t* error_string)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
 			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnRenderProcessTerminated())
@@ -451,11 +525,13 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return;
 			}
-			instance.OnRenderProcessTerminated(CefBrowser.Wrap(CefBrowser.Create, browser), status);
+			instance.OnRenderProcessTerminated(CefBrowser.Wrap(CefBrowser.Create, browser), status, error_code, CefString.Read(error_string));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnDocumentAvailableInMainFrame();
+		bool ICefRequestHandlerPrivate.AvoidOnDocumentAvailableInMainFrame()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnDocumentAvailableInMainFrame));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the window.document object of

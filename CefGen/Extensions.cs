@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -22,6 +22,36 @@ namespace CefGen
 {
 	internal static class Extensions
 	{
+		/// <summary>
+		/// Returns the minimally qualified C# type name, spelling native integers as
+		/// <c>IntPtr</c>/<c>UIntPtr</c> as the wrapper builders expect (C# 11+ shows <c>nint</c>/<c>nuint</c>).
+		/// </summary>
+		public static string ToCefDisplayString(this ITypeSymbol type)
+		{
+			string name = type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+			name = Regex.Replace(name, @"\bnuint\b", "UIntPtr");
+			return Regex.Replace(name, @"\bnint\b", "IntPtr");
+		}
+
+		/// <summary>
+		/// Returns the C type name in the form the name resolvers expect (<c>const T*</c>);
+		/// CppAst prints pointers and qualifiers as <c>T const *</c>.
+		/// </summary>
+		public static string GetCName(this CppType type)
+		{
+			string name = Regex.Replace(type.GetDisplayName(), @"\s+\*", "*");
+			name = Regex.Replace(name, @"^([\w ]+?) const(?=\*|$)", "const $1");
+			// An array of const pointers (T* const*) is an input array; the builders recognize
+			// input arrays by a leading const, so fold pointer-level const into it.
+			if (Regex.IsMatch(name, @"\*\s*const\b"))
+			{
+				name = Regex.Replace(name, @"\*\s*const\b", "*");
+				if (!name.StartsWith("const "))
+					name = "const " + name;
+			}
+			return name;
+		}
+
 		private struct BoolIntInfo
 		{
 			public string Method;
@@ -31,7 +61,7 @@ namespace CefGen
 		private static readonly char[] WordSplittres = new char[] { ' ', '\t', '\r', '\n' };
 
 		private readonly static Lazy<string[]> Handlers = new Lazy<string[]>(() => 
-			File.ReadAllLines(Path.Combine("Settings", "Handlers.txt"), Encoding.UTF8)
+			File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "Handlers.txt"), Encoding.UTF8)
 			.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray(), true);
 
 		internal readonly static Dictionary<string, CefSourceKind> StructTypes = new Dictionary<string, CefSourceKind>();
@@ -39,7 +69,7 @@ namespace CefGen
 		private readonly static Lazy<BoolIntInfo[]> BooleanInt = new Lazy<BoolIntInfo[]>(() =>
 		{
 			var info = new List<BoolIntInfo>();
-			foreach(string s in File.ReadAllLines(Path.Combine("Settings", "BooleanIntParams.txt"), Encoding.UTF8)
+			foreach(string s in File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "BooleanIntParams.txt"), Encoding.UTF8)
 				.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)))
 			{
 				int startPos = s.IndexOf('(');
@@ -58,7 +88,7 @@ namespace CefGen
 		}, true);
 
 		private readonly static Lazy<Dictionary<string, string>> Names = new Lazy<Dictionary<string, string>> (() => 
-			File.ReadAllLines(Path.Combine("Settings", "NamesSchema.txt"), Encoding.UTF8).Select(s => s.Trim()).Select(s => s.Split(':'))
+			File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "Settings", "NamesSchema.txt"), Encoding.UTF8).Select(s => s.Trim()).Select(s => s.Split(':'))
 			.Where(a => a.Length == 2).ToDictionary(a => a[0].Trim(), a => a[1].Trim()), true);
 
 
@@ -350,6 +380,16 @@ namespace CefGen
 		{
 			if (method.ReturnType.Name != "Int32")
 				return false;
+
+			// BooleanIntParams.txt marks boolean return values with the pseudo-argument "return".
+			AttributeData nativeNameAttribute = method.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Name == "NativeNameAttribute");
+			if (nativeNameAttribute?.ConstructorArguments[0].Value is string methodNativeName)
+			{
+				string methodName = (method.ContainingType.Name + "::" + methodNativeName).TrimStart('_');
+				if (BooleanInt.Value.Any(boolInt => boolInt.Method == methodName && boolInt.Arg == "return"))
+					return true;
+			}
+
 			string comment = method.GetComment();
 			if (comment == null)
 				return false;

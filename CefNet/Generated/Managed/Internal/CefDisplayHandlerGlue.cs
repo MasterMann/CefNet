@@ -139,5 +139,25 @@ namespace CefNet.Internal
 			_implementation.OnMediaAccessChange(browser, hasVideoAccess, hasAudioAccess);
 		}
 
+		bool ICefDisplayHandlerPrivate.AvoidOnContentsBoundsChange()
+		{
+			return _implementation.AvoidOnContentsBoundsChange();
+		}
+
+		protected internal unsafe override bool OnContentsBoundsChange(CefBrowser browser, CefRect newBounds)
+		{
+			return _implementation.OnContentsBoundsChange(browser, newBounds);
+		}
+
+		bool ICefDisplayHandlerPrivate.AvoidGetRootWindowScreenRect()
+		{
+			return _implementation.AvoidGetRootWindowScreenRect();
+		}
+
+		protected internal unsafe override bool GetRootWindowScreenRect(CefBrowser browser, ref CefRect rect)
+		{
+			return _implementation.GetRootWindowScreenRect(browser, ref rect);
+		}
+
 	}
 }

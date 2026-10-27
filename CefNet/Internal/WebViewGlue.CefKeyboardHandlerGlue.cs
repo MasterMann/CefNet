@@ -16,8 +16,10 @@ namespace CefNet.Internal
 				this.KeyboardGlue = new CefKeyboardHandlerGlue(this);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnPreKeyEvent();
+		internal bool AvoidOnPreKeyEvent()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnPreKeyEvent));
+		}
 
 		/// <summary>
 		/// Called before a keyboard event is sent to the renderer.
@@ -35,8 +37,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnKeyEvent();
+		internal bool AvoidOnKeyEvent()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnKeyEvent));
+		}
 
 		/// <summary>
 		/// Called after the renderer and JavaScript in the page has had a chance to handle the event. 

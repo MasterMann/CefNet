@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The
 	/// functions of this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_dev_tools_message_observer_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, const void* message, size_t message_size)*
+		/// int (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, void const* message, size_t message_size)*
 		/// </summary>
 		public void* on_dev_tools_message;
 
@@ -39,21 +40,22 @@ namespace CefNet.CApi
 		/// Method that will be called on receipt of a DevTools protocol message.
 		/// |browser| is the originating browser instance. |message| is a UTF8-encoded
 		/// JSON dictionary representing either a function result or an event.
-		/// |message| is only valid for the scope of this callback and should be copied
-		/// if necessary. Return true (1) if the message was handled or false (0) if
-		/// the message should be further processed and passed to the
+		/// |message| is only valid for the scope of this callback and should be
+		/// copied if necessary. Return true (1) if the message was handled or false
+		/// (0) if the message should be further processed and passed to the
 		/// OnDevToolsMethodResult or OnDevToolsEvent functions as appropriate.
 		/// Method result dictionaries include an &quot;id&quot; (int) value that identifies the
-		/// orginating function call sent from cef_browser_host_t::SendDevToolsMessage,
-		/// and optionally either a &quot;result&quot; (dictionary) or &quot;error&quot; (dictionary)
-		/// value. The &quot;error&quot; dictionary will contain &quot;code&quot; (int) and &quot;message&quot;
-		/// (string) values. Event dictionaries include a &quot;function&quot; (string) value and
-		/// optionally a &quot;params&quot; (dictionary) value. See the DevTools protocol
-		/// documentation at https://chromedevtools.github.io/devtools-protocol/ for
-		/// details of supported function calls and the expected &quot;result&quot; or &quot;params&quot;
-		/// dictionary contents. JSON dictionaries can be parsed using the CefParseJSON
-		/// function if desired, however be aware of performance considerations when
-		/// parsing large messages (some of which may exceed 1MB in size).
+		/// orginating function call sent from
+		/// cef_browser_host_t::SendDevToolsMessage, and optionally either a &quot;result&quot;
+		/// (dictionary) or &quot;error&quot; (dictionary) value. The &quot;error&quot; dictionary will
+		/// contain &quot;code&quot; (int) and &quot;message&quot; (string) values. Event dictionaries
+		/// include a &quot;function&quot; (string) value and optionally a &quot;params&quot; (dictionary)
+		/// value. See the DevTools protocol documentation at
+		/// https://chromedevtools.github.io/devtools-protocol/ for details of
+		/// supported function calls and the expected &quot;result&quot; or &quot;params&quot; dictionary
+		/// contents. JSON dictionaries can be parsed using the CefParseJSON function
+		/// if desired, however be aware of performance considerations when parsing
+		/// large messages (some of which may exceed 1MB in size).
 		/// </summary>
 		[NativeName("on_dev_tools_message")]
 		public unsafe int OnDevToolsMessage(cef_browser_t* browser, [Immutable]void* message, UIntPtr message_size)
@@ -65,21 +67,21 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, int message_id, int success, const void* result, size_t result_size)*
+		/// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, int message_id, int success, void const* result, size_t result_size)*
 		/// </summary>
 		public void* on_dev_tools_method_result;
 
 		/// <summary>
-		/// Method that will be called after attempted execution of a DevTools protocol
-		/// function. |browser| is the originating browser instance. |message_id| is
-		/// the &quot;id&quot; value that identifies the originating function call message. If
-		/// the function succeeded |success| will be true (1) and |result| will be the
-		/// UTF8-encoded JSON &quot;result&quot; dictionary value (which may be NULL). If the
-		/// function failed |success| will be false (0) and |result| will be the
-		/// UTF8-encoded JSON &quot;error&quot; dictionary value. |result| is only valid for the
-		/// scope of this callback and should be copied if necessary. See the
-		/// OnDevToolsMessage documentation for additional details on |result|
-		/// contents.
+		/// Method that will be called after attempted execution of a DevTools
+		/// protocol function. |browser| is the originating browser instance.
+		/// |message_id| is the &quot;id&quot; value that identifies the originating function
+		/// call message. If the function succeeded |success| will be true (1) and
+		/// |result| will be the UTF8-encoded JSON &quot;result&quot; dictionary value (which
+		/// may be NULL). If the function failed |success| will be false (0) and
+		/// |result| will be the UTF8-encoded JSON &quot;error&quot; dictionary value. |result|
+		/// is only valid for the scope of this callback and should be copied if
+		/// necessary. See the OnDevToolsMessage documentation for additional details
+		/// on |result| contents.
 		/// </summary>
 		[NativeName("on_dev_tools_method_result")]
 		public unsafe void OnDevToolsMethodResult(cef_browser_t* browser, int message_id, int success, [Immutable]void* result, UIntPtr result_size)
@@ -91,17 +93,17 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, const cef_string_t* method, const void* params, size_t params_size)*
+		/// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, cef_string_t const* method, void const* params, size_t params_size)*
 		/// </summary>
 		public void* on_dev_tools_event;
 
 		/// <summary>
 		/// Method that will be called on receipt of a DevTools protocol event.
-		/// |browser| is the originating browser instance. |function| is the &quot;function&quot;
-		/// value. |params| is the UTF8-encoded JSON &quot;params&quot; dictionary value (which
-		/// may be NULL). |params| is only valid for the scope of this callback and
-		/// should be copied if necessary. See the OnDevToolsMessage documentation for
-		/// additional details on |params| contents.
+		/// |browser| is the originating browser instance. |function| is the
+		/// &quot;function&quot; value. |params| is the UTF8-encoded JSON &quot;params&quot; dictionary
+		/// value (which may be NULL). |params| is only valid for the scope of this
+		/// callback and should be copied if necessary. See the OnDevToolsMessage
+		/// documentation for additional details on |params| contents.
 		/// </summary>
 		[NativeName("on_dev_tools_event")]
 		public unsafe void OnDevToolsEvent(cef_browser_t* browser, [Immutable]cef_string_t* method, [Immutable]void* @params, UIntPtr params_size)
@@ -138,9 +140,9 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Method that will be called when the DevTools agent has detached. |browser|
-		/// is the originating browser instance. Any function results that were pending
-		/// before the agent became detached will not be delivered, and any active
-		/// event subscriptions will be canceled.
+		/// is the originating browser instance. Any function results that were
+		/// pending before the agent became detached will not be delivered, and any
+		/// active event subscriptions will be canceled.
 		/// </summary>
 		[NativeName("on_dev_tools_agent_detached")]
 		public unsafe void OnDevToolsAgentDetached(cef_browser_t* browser)

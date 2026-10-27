@@ -110,6 +110,16 @@ namespace CefNet
 		public event EventHandler<CefPaintEventArgs> CefPaint;
 
 		/// <summary>
+		/// Occurs when a view or a pop-up window was rendered into a shared GPU texture.<para/>
+		/// This event is raised on the CEF UI thread, which can differ from the UI thread of the application.
+		/// </summary>
+		/// <remarks>
+		/// This event only occurs when <see cref="SharedTextureEnabled"/> is true. The texture is only
+		/// valid while the event is raised; see <see cref="CefAcceleratedPaintInfo"/>.
+		/// </remarks>
+		public event EventHandler<CefAcceleratedPaintEventArgs> CefAcceleratedPaint;
+
+		/// <summary>
 		/// Occurs when a new browser is created.
 		/// </summary>
 		public event EventHandler BrowserCreated;
@@ -246,11 +256,32 @@ namespace CefNet
 		}
 
 		/// <summary>
+		/// Gets and sets a value indicating whether a windowless browser renders into shared GPU
+		/// textures (<see cref="CefAcceleratedPaint"/>) instead of CPU bitmaps (<see cref="CefPaint"/>).
+		/// </summary>
+		/// <remarks>
+		/// This property cannot be used after the browser is created. It requires GPU acceleration.
+		/// </remarks>
+		[DefaultValue(false)]
+		public bool SharedTextureEnabled
+		{
+			get
+			{
+				return GetInitProperty<bool>(InitialPropertyKeys.SharedTexture);
+			}
+			set
+			{
+				SetInitProperty(InitialPropertyKeys.SharedTexture, value);
+			}
+		}
+
+		/// <summary>
 		/// Gets and sets a default URL.
 		/// </summary>
 		/// <remarks>
 		/// This property cannot be used after the browser is created.
 		/// </remarks>
+		[DefaultValue(null)]
 		public string InitialUrl
 		{
 			get
@@ -308,6 +339,7 @@ namespace CefNet
 		/// opened by being linked to or created by another, returns null.
 		/// </summary>
 		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IChromiumWebView Opener
 		{
 			get
@@ -458,17 +490,17 @@ namespace CefNet
 		/// <summary>
 		/// Returns the frame with the specified identifier, or null if not found.
 		/// </summary>
-		public CefFrame GetFrame(long identifier)
+		public CefFrame GetFrameByIdentifier(string identifier)
 		{
-			return BrowserObject?.GetFrameByIdent(identifier);
+			return BrowserObject?.GetFrameByIdentifier(identifier);
 		}
 
 		/// <summary>
 		/// Returns the frame with the specified name, or null if not found.
 		/// </summary>
-		public CefFrame GetFrame(string name)
+		public CefFrame GetFrameByName(string name)
 		{
-			return BrowserObject?.GetFrame(name);
+			return BrowserObject?.GetFrameByName(name);
 		}
 
 		/// <summary>
@@ -482,17 +514,9 @@ namespace CefNet
 		/// <summary>
 		/// Gets the identifiers of all existing frames.
 		/// </summary>
-		public long[] GetFrameIdentifiers()
+		public string[] GetFrameIdentifiers()
 		{
-			CefBrowser browser = BrowserObject;
-			if (browser == null)
-				return new long[0];
-
-			long count = browser.FrameCount << 1;
-			var identifiers = new long[count];
-			browser.GetFrameIdentifiers(ref count, ref identifiers);
-			GC.KeepAlive(browser);
-			return identifiers;
+			return BrowserObject?.GetFrameIdentifiers() ?? Array.Empty<string>();
 		}
 
 		/// <summary>
@@ -833,6 +857,29 @@ namespace CefNet
 		{
 			OnCefPaint(e);
 		}
+
+		void IChromiumWebViewPrivate.RaiseCefAcceleratedPaint(CefAcceleratedPaintEventArgs e)
+		{
+			OnCefAcceleratedPaint(e);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="CefAcceleratedPaint"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="CefAcceleratedPaintEventArgs"/> that contains the event data.</param>
+		/// <remarks>
+		/// This method is called on the CEF UI thread and must copy the texture before it returns.
+		/// </remarks>
+		protected virtual void OnCefAcceleratedPaint(CefAcceleratedPaintEventArgs e)
+		{
+			PresentSharedTexture(e);
+			CefAcceleratedPaint?.Invoke(this, e);
+		}
+
+		/// <summary>
+		/// Lets a UI framework integration present the shared texture before handlers run.
+		/// </summary>
+		partial void PresentSharedTexture(CefAcceleratedPaintEventArgs e);
 
 		void IChromiumWebViewPrivate.RaisePopupShow(PopupShowEventArgs e)
 		{
@@ -1404,14 +1451,14 @@ namespace CefNet
 			if (metaKey)
 				modifiers |= CefEventFlags.CommandDown;
 
-			VirtualKeys key = KeycodeConverter.CharacterToVirtualKey(c);
+			bool hasKey = KeycodeConverter.TryCharacterToVirtualKey(c, out VirtualKeys key);
 
 			var k = new CefKeyEvent();
 			k.Type = CefKeyEventType.Char;
 			k.Modifiers = (uint)modifiers;
 			k.IsSystemKey = altKey;
 			k.WindowsKeyCode = PlatformInfo.IsLinux ? (int)key : c;
-			k.NativeKeyCode = KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, extendedKey);
+			k.NativeKeyCode = hasKey ? KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, extendedKey) : 0;
 			k.Character = c;
 			k.UnmodifiedCharacter = c;
 			this.BrowserObject?.Host?.SendKeyEvent(k);

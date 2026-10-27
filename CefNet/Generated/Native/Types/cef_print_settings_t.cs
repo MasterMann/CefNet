@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure representing print settings.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_print_settings_t
@@ -100,7 +101,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_print_settings_t* self, const cef_size_t* physical_size_device_units, const cef_rect_t* printable_area_device_units, int landscape_needs_flip)*
+		/// void (*)(_cef_print_settings_t* self, cef_size_t const* physical_size_device_units, cef_rect_t const* printable_area_device_units, int landscape_needs_flip)*
 		/// </summary>
 		public void* set_printer_printable_area;
 
@@ -119,7 +120,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_print_settings_t* self, const cef_string_t* name)*
+		/// void (*)(_cef_print_settings_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* set_device_name;
 
@@ -188,7 +189,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_print_settings_t* self, size_t rangesCount, const cef_range_t* ranges)*
+		/// void (*)(_cef_print_settings_t* self, size_t rangesCount, cef_range_t const* ranges)*
 		/// </summary>
 		public void* set_page_ranges;
 

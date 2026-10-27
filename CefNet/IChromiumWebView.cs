@@ -106,6 +106,16 @@ namespace CefNet
 		event EventHandler<CefPaintEventArgs> CefPaint;
 
 		/// <summary>
+		/// Occurs when a view or a pop-up window was rendered into a shared GPU texture.
+		/// This event is raised on the CEF UI thread.
+		/// </summary>
+		/// <remarks>
+		/// This event only occurs when shared textures are enabled for the browser. The texture is only
+		/// valid while the event is raised; see <see cref="CefAcceleratedPaintInfo"/>.
+		/// </remarks>
+		event EventHandler<CefAcceleratedPaintEventArgs> CefAcceleratedPaint;
+
+		/// <summary>
 		/// Occurs when a new browser is created.
 		/// </summary>
 		event EventHandler BrowserCreated;
@@ -284,12 +294,12 @@ namespace CefNet
 		/// <summary>
 		/// Returns the frame with the specified identifier, or null if not found.
 		/// </summary>
-		CefFrame GetFrame(long identifier);
+		CefFrame GetFrameByIdentifier(string identifier);
 
 		/// <summary>
 		/// Returns the frame with the specified name, or null if not found.
 		/// </summary>
-		CefFrame GetFrame(string name);
+		CefFrame GetFrameByName(string name);
 
 		/// <summary>
 		/// Returns the number of frames that currently exist.
@@ -299,7 +309,7 @@ namespace CefNet
 		/// <summary>
 		/// Gets the identifiers of all existing frames.
 		/// </summary>
-		long[] GetFrameIdentifiers();
+		string[] GetFrameIdentifiers();
 
 		/// <summary>
 		/// Gets the names of all existing frames.

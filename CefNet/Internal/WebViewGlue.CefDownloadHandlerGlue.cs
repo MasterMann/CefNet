@@ -32,7 +32,8 @@ namespace CefNet.Internal
 		/// Execute <paramref name="callback"/> either asynchronously or in this function
 		/// to continue the download if desired.
 		/// </param>
-		internal protected virtual void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
+		/// <returns>True, because the download is always handled by the <see cref="IChromiumWebView.Download"/> event.</returns>
+		internal protected virtual bool OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
 		{
 			var e = new DownloadEventArgs(new CefNetDownloadOperation(downloadItem), suggestedName, callback);
 			e.DownloadOperation.SuggestedFileName = suggestedName;
@@ -44,6 +45,7 @@ namespace CefNet.Internal
 				else if (e.ShowDialog.HasValue)
 					callback.Continue(e.DownloadPath != suggestedName && Path.IsPathRooted(e.DownloadPath) ? e.DownloadPath : null, e.ShowDialog.Value);
 			});
+			return true;
 		}
 
 		internal bool AvoidOnDownloadUpdated() => false;

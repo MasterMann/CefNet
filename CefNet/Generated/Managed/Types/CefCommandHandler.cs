@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to commands. The functions
 	/// of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -31,6 +32,14 @@ namespace CefNet
 	{
 #if NET_LESS_5_0
 		private static readonly OnChromeCommandDelegate fnOnChromeCommand = OnChromeCommandImpl;
+
+		private static readonly IsChromeAppMenuItemVisibleDelegate fnIsChromeAppMenuItemVisible = IsChromeAppMenuItemVisibleImpl;
+
+		private static readonly IsChromeAppMenuItemEnabledDelegate fnIsChromeAppMenuItemEnabled = IsChromeAppMenuItemEnabledImpl;
+
+		private static readonly IsChromePageActionIconVisibleDelegate fnIsChromePageActionIconVisible = IsChromePageActionIconVisibleImpl;
+
+		private static readonly IsChromeToolbarButtonVisibleDelegate fnIsChromeToolbarButtonVisible = IsChromeToolbarButtonVisibleImpl;
 
 #endif // NET_LESS_5_0
 		internal static unsafe CefCommandHandler Create(IntPtr instance)
@@ -43,8 +52,16 @@ namespace CefNet
 			cef_command_handler_t* self = this.NativeInstance;
 			#if NET_LESS_5_0
 			self->on_chrome_command = (void*)Marshal.GetFunctionPointerForDelegate(fnOnChromeCommand);
+			self->is_chrome_app_menu_item_visible = (void*)Marshal.GetFunctionPointerForDelegate(fnIsChromeAppMenuItemVisible);
+			self->is_chrome_app_menu_item_enabled = (void*)Marshal.GetFunctionPointerForDelegate(fnIsChromeAppMenuItemEnabled);
+			self->is_chrome_page_action_icon_visible = (void*)Marshal.GetFunctionPointerForDelegate(fnIsChromePageActionIconVisible);
+			self->is_chrome_toolbar_button_visible = (void*)Marshal.GetFunctionPointerForDelegate(fnIsChromeToolbarButtonVisible);
 			#else
 			self->on_chrome_command = (delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, CefWindowOpenDisposition, int>)&OnChromeCommandImpl;
+			self->is_chrome_app_menu_item_visible = (delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, int>)&IsChromeAppMenuItemVisibleImpl;
+			self->is_chrome_app_menu_item_enabled = (delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, int>)&IsChromeAppMenuItemEnabledImpl;
+			self->is_chrome_page_action_icon_visible = (delegate* unmanaged[Stdcall]<cef_command_handler_t*, CefChromePageActionIconType, int>)&IsChromePageActionIconVisibleImpl;
+			self->is_chrome_toolbar_button_visible = (delegate* unmanaged[Stdcall]<cef_command_handler_t*, CefChromeToolbarButtonType, int>)&IsChromeToolbarButtonVisibleImpl;
 			#endif
 		}
 
@@ -53,17 +70,21 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidOnChromeCommand();
+		bool ICefCommandHandlerPrivate.AvoidOnChromeCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(OnChromeCommand));
+		}
 
 		/// <summary>
-		/// Called to execute a Chrome command triggered via menu selection or keyboard
-		/// shortcut. Values for |command_id| can be found in the cef_command_ids.h
-		/// file. |disposition| provides information about the intended command target.
-		/// Return true (1) if the command was handled or false (0) for the default
-		/// implementation. For context menu commands this will be called after
-		/// cef_context_menu_handler_t::OnContextMenuCommand. Only used with the Chrome
-		/// runtime.
+		/// Called to execute a Chrome command triggered via menu selection or
+		/// keyboard shortcut. Use the cef_id_for_command_id_name() function for
+		/// version-safe mapping of command IDC names from cef_command_ids.h to
+		/// version-specific numerical |command_id| values. |disposition| provides
+		/// information about the intended command target. Return true (1) if the
+		/// command was handled or false (0) for the default implementation. For
+		/// context menu commands this will be called after
+		/// cef_context_menu_handler_t::OnContextMenuCommand. Only used with Chrome
+		/// style.
 		/// </summary>
 		protected internal unsafe virtual bool OnChromeCommand(CefBrowser browser, int commandId, CefWindowOpenDisposition disposition)
 		{
@@ -88,6 +109,148 @@ namespace CefNet
 				return default;
 			}
 			return instance.OnChromeCommand(CefBrowser.Wrap(CefBrowser.Create, browser), command_id, disposition) ? 1 : 0;
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeAppMenuItemVisible));
+		}
+
+		/// <summary>
+		/// Called to check if a Chrome app menu item should be visible. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. Only called for menu items that would be visible by
+		/// default. Only used with Chrome style.
+		/// </summary>
+		protected internal unsafe virtual bool IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int IsChromeAppMenuItemVisibleDelegate(cef_command_handler_t* self, cef_browser_t* browser, int command_id);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_command_handler_t* self, _cef_browser_t* browser, int command_id)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int IsChromeAppMenuItemVisibleImpl(cef_command_handler_t* self, cef_browser_t* browser, int command_id)
+		{
+			var instance = GetInstance((IntPtr)self) as CefCommandHandler;
+			if (instance == null || ((ICefCommandHandlerPrivate)instance).AvoidIsChromeAppMenuItemVisible())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				return default;
+			}
+			return instance.IsChromeAppMenuItemVisible(CefBrowser.Wrap(CefBrowser.Create, browser), command_id) ? 1 : 0;
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeAppMenuItemEnabled));
+		}
+
+		/// <summary>
+		/// Called to check if a Chrome app menu item should be enabled. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. Only called for menu items that would be enabled by
+		/// default. Only used with Chrome style.
+		/// </summary>
+		protected internal unsafe virtual bool IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int IsChromeAppMenuItemEnabledDelegate(cef_command_handler_t* self, cef_browser_t* browser, int command_id);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_command_handler_t* self, _cef_browser_t* browser, int command_id)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int IsChromeAppMenuItemEnabledImpl(cef_command_handler_t* self, cef_browser_t* browser, int command_id)
+		{
+			var instance = GetInstance((IntPtr)self) as CefCommandHandler;
+			if (instance == null || ((ICefCommandHandlerPrivate)instance).AvoidIsChromeAppMenuItemEnabled())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				return default;
+			}
+			return instance.IsChromeAppMenuItemEnabled(CefBrowser.Wrap(CefBrowser.Create, browser), command_id) ? 1 : 0;
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromePageActionIconVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromePageActionIconVisible));
+		}
+
+		/// <summary>
+		/// Called during browser creation to check if a Chrome page action icon
+		/// should be visible. Only called for icons that would be visible by default.
+		/// Only used with Chrome style.
+		/// </summary>
+		protected internal unsafe virtual bool IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int IsChromePageActionIconVisibleDelegate(cef_command_handler_t* self, CefChromePageActionIconType icon_type);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_command_handler_t* self, cef_chrome_page_action_icon_type_t icon_type)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int IsChromePageActionIconVisibleImpl(cef_command_handler_t* self, CefChromePageActionIconType icon_type)
+		{
+			var instance = GetInstance((IntPtr)self) as CefCommandHandler;
+			if (instance == null || ((ICefCommandHandlerPrivate)instance).AvoidIsChromePageActionIconVisible())
+			{
+				return default;
+			}
+			return instance.IsChromePageActionIconVisible(icon_type) ? 1 : 0;
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromeToolbarButtonVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeToolbarButtonVisible));
+		}
+
+		/// <summary>
+		/// Called during browser creation to check if a Chrome toolbar button should
+		/// be visible. Only called for buttons that would be visible by default. Only
+		/// used with Chrome style.
+		/// </summary>
+		protected internal unsafe virtual bool IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int IsChromeToolbarButtonVisibleDelegate(cef_command_handler_t* self, CefChromeToolbarButtonType button_type);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_command_handler_t* self, cef_chrome_toolbar_button_type_t button_type)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int IsChromeToolbarButtonVisibleImpl(cef_command_handler_t* self, CefChromeToolbarButtonType button_type)
+		{
+			var instance = GetInstance((IntPtr)self) as CefCommandHandler;
+			if (instance == null || ((ICefCommandHandlerPrivate)instance).AvoidIsChromeToolbarButtonVisible())
+			{
+				return default;
+			}
+			return instance.IsChromeToolbarButtonVisible(button_type) ? 1 : 0;
 		}
 	}
 }

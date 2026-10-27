@@ -21,7 +21,7 @@ namespace CefGen
 			"CefNet.WinApi"
 		};
 
-		private static Lazy<string> License = new Lazy<string>(() => File.ReadAllText(Path.Combine("Settings", "LicenseTemplate.txt"), Encoding.UTF8));
+		private static Lazy<string> License = new Lazy<string>(() => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Settings", "LicenseTemplate.txt"), Encoding.UTF8));
 
 		protected virtual CodeFile CreateCodeFile(string sources)
 		{

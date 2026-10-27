@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implemented by the client to observe MediaRouter events and registered via
 	/// cef_media_router_t::AddObserver. The functions of this structure will be
 	/// called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -66,8 +67,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnSinks();
+		bool ICefMediaObserverPrivate.AvoidOnSinks()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnSinks));
+		}
 
 		/// <summary>
 		/// The list of available media sinks has changed or
@@ -82,7 +85,7 @@ namespace CefNet
 		private unsafe delegate void OnSinksDelegate(cef_media_observer_t* self, UIntPtr sinksCount, cef_media_sink_t** sinks);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_observer_t* self, size_t sinksCount, const _cef_media_sink_t** sinks)*
+		// const void (*)(_cef_media_observer_t* self, size_t sinksCount, _cef_media_sink_t** sinks)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -103,8 +106,10 @@ namespace CefNet
 			instance.OnSinks(obj_sinks);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRoutes();
+		bool ICefMediaObserverPrivate.AvoidOnRoutes()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRoutes));
+		}
 
 		/// <summary>
 		/// The list of available media routes has changed or
@@ -119,7 +124,7 @@ namespace CefNet
 		private unsafe delegate void OnRoutesDelegate(cef_media_observer_t* self, UIntPtr routesCount, cef_media_route_t** routes);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_observer_t* self, size_t routesCount, const _cef_media_route_t** routes)*
+		// const void (*)(_cef_media_observer_t* self, size_t routesCount, _cef_media_route_t** routes)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -140,8 +145,10 @@ namespace CefNet
 			instance.OnRoutes(obj_routes);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRouteStateChanged();
+		bool ICefMediaObserverPrivate.AvoidOnRouteStateChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRouteStateChanged));
+		}
 
 		/// <summary>
 		/// The connection state of |route| has changed.
@@ -170,11 +177,13 @@ namespace CefNet
 			instance.OnRouteStateChanged(CefMediaRoute.Wrap(CefMediaRoute.Create, route), state);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRouteMessageReceived();
+		bool ICefMediaObserverPrivate.AvoidOnRouteMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRouteMessageReceived));
+		}
 
 		/// <summary>
-		/// A message was recieved over |route|. |message| is only valid for the scope
+		/// A message was received over |route|. |message| is only valid for the scope
 		/// of this callback and should be copied if necessary.
 		/// </summary>
 		protected internal unsafe virtual void OnRouteMessageReceived(CefMediaRoute route, IntPtr message, long messageSize)
@@ -186,7 +195,7 @@ namespace CefNet
 		private unsafe delegate void OnRouteMessageReceivedDelegate(cef_media_observer_t* self, cef_media_route_t* route, void* message, UIntPtr message_size);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_observer_t* self, _cef_media_route_t* route, const void* message, size_t message_size)*
+		// void (*)(_cef_media_observer_t* self, _cef_media_route_t* route, void const* message, size_t message_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

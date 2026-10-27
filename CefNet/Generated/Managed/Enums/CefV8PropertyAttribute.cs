@@ -25,8 +25,7 @@ namespace CefNet
 	public enum CefV8PropertyAttribute
 	{
 		/// <summary>
-		/// Writeable, Enumerable,
-		/// Configurable
+		/// Writeable, Enumerable, Configurable
 		/// </summary>
 		None = 0,
 

@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to find results. The
 	/// functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_find_handler_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_find_handler_t* self, _cef_browser_t* browser, int identifier, int count, const cef_rect_t* selectionRect, int activeMatchOrdinal, int finalUpdate)*
+		/// void (*)(_cef_find_handler_t* self, _cef_browser_t* browser, int identifier, int count, cef_rect_t const* selectionRect, int activeMatchOrdinal, int finalUpdate)*
 		/// </summary>
 		public void* on_find_result;
 

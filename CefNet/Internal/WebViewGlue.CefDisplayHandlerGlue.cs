@@ -42,8 +42,10 @@ namespace CefNet.Internal
 			WebView.RaiseTitleChange(new DocumentTitleChangedEventArgs(title));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnFaviconUrlChange();
+		internal bool AvoidOnFaviconUrlChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFaviconUrlChange));
+		}
 
 		/// <summary>
 		/// Called when the page icon changes.
@@ -55,8 +57,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnFullscreenModeChange();
+		internal bool AvoidOnFullscreenModeChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFullscreenModeChange));
+		}
 
 		/// <summary>
 		/// Called when web content in the page has toggled fullscreen mode.
@@ -72,8 +76,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnTooltip();
+		internal bool AvoidOnTooltip()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnTooltip));
+		}
 
 		/// <summary>
 		/// Called when the browser is about to display a tooltip. To handle the display of the tooltip yourself return true.
@@ -90,8 +96,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnStatusMessage();
+		internal bool AvoidOnStatusMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnStatusMessage));
+		}
 
 		/// <summary>
 		/// Called when the browser receives a status message.
@@ -105,8 +113,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnConsoleMessage();
+		internal bool AvoidOnConsoleMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnConsoleMessage));
+		}
 
 		/// <summary>
 		/// Called to display a console message. 
@@ -124,8 +134,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnAutoResize();
+		internal bool AvoidOnAutoResize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnAutoResize));
+		}
 
 		/// <summary>
 		/// Called when auto-resize is enabled via CefBrowserHost::SetAutoResizeEnabled and the contents have auto-resized.
@@ -142,8 +154,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnLoadingProgressChange();
+		internal bool AvoidOnLoadingProgressChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnLoadingProgressChange));
+		}
 
 		/// <summary>
 		/// Called when the overall page loading progress has changed. .
@@ -177,8 +191,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnMediaAccessChange();
+		internal bool AvoidOnMediaAccessChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnMediaAccessChange));
+		}
 
 		/// <summary>
 		/// Called when the browser&apos;s access to an audio and/or video source has
@@ -190,6 +206,34 @@ namespace CefNet.Internal
 		internal protected virtual void OnMediaAccessChange(CefBrowser browser, bool hasVideoAccess, bool hasAudioAccess)
 		{
 
+		}
+
+		internal bool AvoidOnContentsBoundsChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnContentsBoundsChange));
+		}
+
+		/// <summary>
+		/// Called when JavaScript requests a change to the browser contents bounds.
+		/// Return true if the bounds change was handled.
+		/// </summary>
+		internal protected virtual bool OnContentsBoundsChange(CefBrowser browser, CefRect newBounds)
+		{
+			return false;
+		}
+
+		internal bool AvoidGetRootWindowScreenRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.GetRootWindowScreenRect));
+		}
+
+		/// <summary>
+		/// Called to retrieve the root window rectangle in screen DIP coordinates for
+		/// JavaScript window.screenX/Y and window.outerWidth/Height. Return true if <paramref name="rect"/> was set.
+		/// </summary>
+		internal protected virtual bool GetRootWindowScreenRect(CefBrowser browser, ref CefRect rect)
+		{
+			return false;
 		}
 
 	}

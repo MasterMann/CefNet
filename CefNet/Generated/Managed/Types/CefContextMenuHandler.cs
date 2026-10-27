@@ -21,8 +21,9 @@ using CefNet.Internal;
 namespace CefNet
 {
 	/// <summary>
-	/// Implement this structure to handle context menu events. The functions of this
-	/// structure will be called on the UI thread.
+	/// Implement this structure to handle context menu events. The functions of
+	/// this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -77,8 +78,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnBeforeContextMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidOnBeforeContextMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnBeforeContextMenu));
+		}
 
 		/// <summary>
 		/// Called before a context menu is displayed. |params| provides information
@@ -114,16 +117,18 @@ namespace CefNet
 			instance.OnBeforeContextMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), CefMenuModel.Wrap(CefMenuModel.Create, model));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidRunContextMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidRunContextMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(RunContextMenu));
+		}
 
 		/// <summary>
 		/// Called to allow custom display of the context menu. |params| provides
-		/// information about the context menu state. |model| contains the context menu
-		/// model resulting from OnBeforeContextMenu. For custom display return true
-		/// (1) and execute |callback| either synchronously or asynchronously with the
-		/// selected command ID. For default display return false (0). Do not keep
-		/// references to |params| or |model| outside of this callback.
+		/// information about the context menu state. |model| contains the context
+		/// menu model resulting from OnBeforeContextMenu. For custom display return
+		/// true (1) and execute |callback| either synchronously or asynchronously
+		/// with the selected command ID. For default display return false (0). Do not
+		/// keep references to |params| or |model| outside of this callback.
 		/// </summary>
 		protected internal unsafe virtual bool RunContextMenu(CefBrowser browser, CefFrame frame, CefContextMenuParams @params, CefMenuModel model, CefRunContextMenuCallback callback)
 		{
@@ -154,17 +159,19 @@ namespace CefNet
 			return instance.RunContextMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), CefMenuModel.Wrap(CefMenuModel.Create, model), CefRunContextMenuCallback.Wrap(CefRunContextMenuCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuCommand();
+		bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnContextMenuCommand));
+		}
 
 		/// <summary>
-		/// Called to execute a command selected from the context menu. Return true (1)
-		/// if the command was handled or false (0) for the default implementation. See
-		/// cef_menu_id_t for the command ids that have default implementations. All
-		/// user-defined command ids should be between MENU_ID_USER_FIRST and
-		/// MENU_ID_USER_LAST. |params| will have the same values as what was passed to
-		/// on_before_context_menu(). Do not keep a reference to |params| outside of
-		/// this callback.
+		/// Called to execute a command selected from the context menu. Return true
+		/// (1) if the command was handled or false (0) for the default
+		/// implementation. See cef_menu_id_t for the command ids that have default
+		/// implementations. All user-defined command ids should be between
+		/// MENU_ID_USER_FIRST and MENU_ID_USER_LAST. |params| will have the same
+		/// values as what was passed to on_before_context_menu(). Do not keep a
+		/// reference to |params| outside of this callback.
 		/// </summary>
 		protected internal unsafe virtual bool OnContextMenuCommand(CefBrowser browser, CefFrame frame, CefContextMenuParams @params, int commandId, CefEventFlags eventFlags)
 		{
@@ -193,8 +200,10 @@ namespace CefNet
 			return instance.OnContextMenuCommand(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), command_id, event_flags) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuDismissed();
+		bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnContextMenuDismissed));
+		}
 
 		/// <summary>
 		/// Called when the context menu is dismissed irregardless of whether the menu
@@ -225,8 +234,10 @@ namespace CefNet
 			instance.OnContextMenuDismissed(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidRunQuickMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidRunQuickMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(RunQuickMenu));
+		}
 
 		/// <summary>
 		/// Called to allow custom display of the quick menu for a windowless browser.
@@ -234,8 +245,8 @@ namespace CefNet
 		/// size of the selected region. |edit_state_flags| is a combination of flags
 		/// that represent the state of the quick menu. Return true (1) if the menu
 		/// will be handled and execute |callback| either synchronously or
-		/// asynchronously with the selected command ID. Return false (0) to cancel the
-		/// menu.
+		/// asynchronously with the selected command ID. Return false (0) to cancel
+		/// the menu.
 		/// </summary>
 		protected internal unsafe virtual bool RunQuickMenu(CefBrowser browser, CefFrame frame, CefPoint location, CefSize size, CefQuickMenuEditStateFlags editStateFlags, CefRunQuickMenuCallback callback)
 		{
@@ -247,7 +258,7 @@ namespace CefNet
 		private unsafe delegate int RunQuickMenuDelegate(cef_context_menu_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_point_t* location, cef_size_t* size, CefQuickMenuEditStateFlags edit_state_flags, cef_run_quick_menu_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_context_menu_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_point_t* location, const cef_size_t* size, cef_quick_menu_edit_state_flags_t edit_state_flags, _cef_run_quick_menu_callback_t* callback)*
+		// int (*)(_cef_context_menu_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_point_t const* location, cef_size_t const* size, cef_quick_menu_edit_state_flags_t edit_state_flags, _cef_run_quick_menu_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -264,14 +275,16 @@ namespace CefNet
 			return instance.RunQuickMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), *(CefPoint*)location, *(CefSize*)size, edit_state_flags, CefRunQuickMenuCallback.Wrap(CefRunQuickMenuCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuCommand();
+		bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnQuickMenuCommand));
+		}
 
 		/// <summary>
 		/// Called to execute a command selected from the quick menu for a windowless
 		/// browser. Return true (1) if the command was handled or false (0) for the
-		/// default implementation. See cef_menu_id_t for command IDs that have default
-		/// implementations.
+		/// default implementation. See cef_menu_id_t for command IDs that have
+		/// default implementations.
 		/// </summary>
 		protected internal unsafe virtual bool OnQuickMenuCommand(CefBrowser browser, CefFrame frame, int commandId, CefEventFlags eventFlags)
 		{
@@ -299,8 +312,10 @@ namespace CefNet
 			return instance.OnQuickMenuCommand(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), command_id, event_flags) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuDismissed();
+		bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnQuickMenuDismissed));
+		}
 
 		/// <summary>
 		/// Called when the quick menu for a windowless browser is dismissed

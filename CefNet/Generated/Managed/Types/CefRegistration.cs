@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Generic callback structure used for managing the lifespan of a registration.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

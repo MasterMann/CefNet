@@ -35,7 +35,7 @@ namespace CefNet
 
 		BackgroundHovered = 5,
 
-		Count = 6,
+		NumValues = 6,
 	}
 }
 

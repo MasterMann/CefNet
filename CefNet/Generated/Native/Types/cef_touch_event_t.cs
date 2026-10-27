@@ -25,8 +25,8 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_touch_event_t
 	{
 		/// <summary>
-		/// Id of a touch point. Must be unique per touch, can be any number except -1.
-		/// Note that a maximum of 16 concurrent touches will be tracked; touches
+		/// Id of a touch point. Must be unique per touch, can be any number except
+		/// -1. Note that a maximum of 16 concurrent touches will be tracked; touches
 		/// beyond that will be ignored.
 		/// </summary>
 		public int id;
@@ -74,7 +74,7 @@ namespace CefNet.CApi
 		/// Bit flags describing any pressed modifier keys. See
 		/// cef_event_flags_t for values.
 		/// </summary>
-		public uint modifiers;
+		public UInt32 modifiers;
 
 		/// <summary>
 		/// The device type that caused the event.

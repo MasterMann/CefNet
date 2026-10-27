@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using CefGen.CodeDom;
 using CppAst;
 using Microsoft.CodeAnalysis;
@@ -43,11 +44,24 @@ namespace CefGen
 				string handlerClassName = Path.GetFileNameWithoutExtension(filename);
 				GenerateFileCode(GeneratePrivateInterfaceFileCode, Path.Combine(OutputPath, "I" + handlerClassName + "Private.cs"), unit);
 
-				if (handlerClassName == "CefApp")
+				// WebView glue covers browser handlers; views delegates are implemented by applications directly.
+				if (handlerClassName == "CefApp" || IsViewsType(source))
 					continue;
 
 				GenerateFileCode(GenerateHandlerGlueFileCode, Path.Combine(OutputPath, handlerClassName + "Glue.cs"), unit);
 			}
+		}
+
+		/// <summary>
+		/// Returns true if the managed source was generated from a native type declared in a views header.
+		/// </summary>
+		private bool IsViewsType(string managedSource)
+		{
+			Match match = Regex.Match(managedSource, @"^// Source: (Generated/Native/Types/\S+\.cs)", RegexOptions.Multiline);
+			if (!match.Success)
+				return false;
+			string nativeFile = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(InputPath))), match.Groups[1].Value);
+			return File.Exists(nativeFile) && File.ReadAllText(nativeFile, Encoding.UTF8).Contains("Source: include/capi/views/");
 		}
 
 		private void GenerateFileCode(CodeGenFunc codegen, string filename, CompilationUnitSyntax unit)

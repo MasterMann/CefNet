@@ -32,14 +32,30 @@ namespace CefNet.Input
 		/// The function finds no key that translates to the passed character code.
 		/// Perhaps the wrong locale is being used.
 		/// </exception>
-		public virtual VirtualKeys CharacterToVirtualKey(char character)
+		public VirtualKeys CharacterToVirtualKey(char character)
+		{
+			if (TryCharacterToVirtualKey(character, out VirtualKeys key))
+				return key;
+			throw new InvalidOperationException("Incompatible input locale.");
+		}
+
+		/// <summary>
+		/// Translates the specified character to the corresponding virtual-key code
+		/// for the current keyboard.
+		/// </summary>
+		/// <param name="character">The character to be translated into a virtual-key code.</param>
+		/// <param name="key">The virtual key code, if the current keyboard has a key for the character.</param>
+		/// <returns>
+		/// True if a key was found; false if no key on the current keyboard produces the character,
+		/// for example with IME input or characters of another layout.
+		/// </returns>
+		public virtual bool TryCharacterToVirtualKey(char character, out VirtualKeys key)
 		{
 			if (PlatformInfo.IsWindows)
 			{
 				int virtualKeyCode = (WinApi.NativeMethods.VkKeyScan(character) & 0xFF);
-				if (virtualKeyCode == 0xFF)
-					throw new InvalidOperationException("Incompatible input locale.");
-				return (VirtualKeys)virtualKeyCode;
+				key = (VirtualKeys)virtualKeyCode;
+				return virtualKeyCode != 0xFF;
 			}
 
 			if (PlatformInfo.IsLinux)
@@ -47,14 +63,16 @@ namespace CefNet.Input
 				XKeySym keysym = Linux.KeyInterop.CharToXKeySym(character);
 				if (keysym == XKeySym.None)
 					keysym = CefNet.Linux.NativeMethods.XStringToKeysym("U" + ((int)character).ToString("X"));
-				return Linux.KeyInterop.XKeySymToVirtualKey(TranslateXKeySymToAsciiXKeySym(keysym));
+				key = Linux.KeyInterop.XKeySymToVirtualKey(TranslateXKeySymToAsciiXKeySym(keysym));
+				return true;
 			}
 
 			if (PlatformInfo.IsMacOS)
 			{
 				// US QWERTY only
 				XKeySym keysym = Linux.KeyInterop.CharToXKeySym(character);
-				return Linux.KeyInterop.XKeySymToVirtualKey(keysym);
+				key = Linux.KeyInterop.XKeySymToVirtualKey(keysym);
+				return true;
 			}
 
 			throw new NotImplementedException();

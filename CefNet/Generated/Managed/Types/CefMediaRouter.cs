@@ -24,6 +24,7 @@ namespace CefNet
 	/// Supports discovery of and communication with media devices on the local
 	/// network via the Cast and DIAL protocols. The functions of this structure may
 	/// be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -41,8 +42,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add an observer for MediaRouter events. The observer will remain registered
-		/// until the returned Registration object is destroyed.
+		/// Add an observer for MediaRouter events. The observer will remain
+		/// registered until the returned Registration object is destroyed.
 		/// </summary>
 		public unsafe virtual CefRegistration AddObserver(CefMediaObserver observer)
 		{
@@ -52,11 +53,7 @@ namespace CefNet
 		/// <summary>
 		/// Returns a MediaSource object for the specified media source URN. Supported
 		/// URN schemes include &quot;cast:&quot; and &quot;dial:&quot;, and will be already known by the
-		/// client application (e.g. &quot;cast:
-		/// &lt;appId
-		/// &gt;?clientId=
-		/// &lt;clientId
-		/// &gt;&quot;).
+		/// client application (e.g. &quot;cast:&lt;appId&gt;?clientId=&lt;clientId&gt;&quot;).
 		/// </summary>
 		public unsafe virtual CefMediaSource GetSource(string urn)
 		{
@@ -80,8 +77,8 @@ namespace CefNet
 		/// <summary>
 		/// Create a new route between |source| and |sink|. Source and sink must be
 		/// valid, compatible (as reported by cef_media_sink_t::IsCompatibleWith), and
-		/// a route between them must not already exist. |callback| will be executed on
-		/// success or failure. If route creation succeeds it will also trigger an
+		/// a route between them must not already exist. |callback| will be executed
+		/// on success or failure. If route creation succeeds it will also trigger an
 		/// asynchronous call to cef_media_observer_t::OnRoutes on all registered
 		/// observers.
 		/// </summary>

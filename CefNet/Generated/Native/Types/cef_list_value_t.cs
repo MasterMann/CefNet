@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure representing a list value. Can be used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_list_value_t
@@ -35,10 +36,10 @@ namespace CefNet.CApi
 		public void* is_valid;
 
 		/// <summary>
-		/// Returns true (1) if this object is valid. This object may become invalid if
-		/// the underlying data is owned by another object (e.g. list or dictionary)
-		/// and that other object is then modified or destroyed. Do not call any other
-		/// functions if this function returns false (0).
+		/// Returns true (1) if this object is valid. This object may become invalid
+		/// if the underlying data is owned by another object (e.g. list or
+		/// dictionary) and that other object is then modified or destroyed. Do not
+		/// call any other functions if this function returns false (0).
 		/// </summary>
 		[NativeName("is_valid")]
 		public unsafe int IsValid()
@@ -320,8 +321,8 @@ namespace CefNet.CApi
 		public void* get_binary;
 
 		/// <summary>
-		/// Returns the value at the specified index as type binary. The returned value
-		/// will reference existing data.
+		/// Returns the value at the specified index as type binary. The returned
+		/// value will reference existing data.
 		/// </summary>
 		[NativeName("get_binary")]
 		public unsafe cef_binary_value_t* GetBinary(UIntPtr index)
@@ -398,8 +399,8 @@ namespace CefNet.CApi
 		public void* set_null;
 
 		/// <summary>
-		/// Sets the value at the specified index as type null. Returns true (1) if the
-		/// value was set successfully.
+		/// Sets the value at the specified index as type null. Returns true (1) if
+		/// the value was set successfully.
 		/// </summary>
 		[NativeName("set_null")]
 		public unsafe int SetNull(UIntPtr index)
@@ -416,8 +417,8 @@ namespace CefNet.CApi
 		public void* set_bool;
 
 		/// <summary>
-		/// Sets the value at the specified index as type bool. Returns true (1) if the
-		/// value was set successfully.
+		/// Sets the value at the specified index as type bool. Returns true (1) if
+		/// the value was set successfully.
 		/// </summary>
 		[NativeName("set_bool")]
 		public unsafe int SetBool(UIntPtr index, int value)
@@ -465,7 +466,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_list_value_t* self, size_t index, const cef_string_t* value)*
+		/// int (*)(_cef_list_value_t* self, size_t index, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 
@@ -509,11 +510,11 @@ namespace CefNet.CApi
 		public void* set_dictionary;
 
 		/// <summary>
-		/// Sets the value at the specified index as type dict. Returns true (1) if the
-		/// value was set successfully. If |value| is currently owned by another object
-		/// then the value will be copied and the |value| reference will not change.
-		/// Otherwise, ownership will be transferred to this object and the |value|
-		/// reference will be invalidated.
+		/// Sets the value at the specified index as type dict. Returns true (1) if
+		/// the value was set successfully. If |value| is currently owned by another
+		/// object then the value will be copied and the |value| reference will not
+		/// change. Otherwise, ownership will be transferred to this object and the
+		/// |value| reference will be invalidated.
 		/// </summary>
 		[NativeName("set_dictionary")]
 		public unsafe int SetDictionary(UIntPtr index, cef_dictionary_value_t* value)
@@ -530,11 +531,11 @@ namespace CefNet.CApi
 		public void* set_list;
 
 		/// <summary>
-		/// Sets the value at the specified index as type list. Returns true (1) if the
-		/// value was set successfully. If |value| is currently owned by another object
-		/// then the value will be copied and the |value| reference will not change.
-		/// Otherwise, ownership will be transferred to this object and the |value|
-		/// reference will be invalidated.
+		/// Sets the value at the specified index as type list. Returns true (1) if
+		/// the value was set successfully. If |value| is currently owned by another
+		/// object then the value will be copied and the |value| reference will not
+		/// change. Otherwise, ownership will be transferred to this object and the
+		/// |value| reference will be invalidated.
 		/// </summary>
 		[NativeName("set_list")]
 		public unsafe int SetList(UIntPtr index, cef_list_value_t* value)

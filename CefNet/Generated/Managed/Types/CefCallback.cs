@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Generic callback structure used for asynchronous continuation.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Represents a sink to which media can be routed. Instances of this object are
 	/// retrieved via cef_media_observer_t::OnSinks. The functions of this structure
 	/// may be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_sink_t
@@ -64,24 +65,6 @@ namespace CefNet.CApi
 			fixed (cef_media_sink_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_media_sink_t*, cef_string_userfree_t>)get_name)(self);
-			}
-		}
-
-		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_media_sink_t* self)*
-		/// </summary>
-		public void* get_description;
-
-		/// <summary>
-		/// Returns the description of this sink.
-		/// The resulting string must be freed by calling cef_string_userfree_free().
-		/// </summary>
-		[NativeName("get_description")]
-		public unsafe cef_string_userfree_t GetDescription()
-		{
-			fixed (cef_media_sink_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_media_sink_t*, cef_string_userfree_t>)get_description)(self);
 			}
 		}
 

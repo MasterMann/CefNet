@@ -48,6 +48,11 @@ namespace CefNet
 		/// Request failed for some reason.
 		/// </summary>
 		Failed = 4,
+
+		/// <summary>
+		/// Request failed for some reason.
+		/// </summary>
+		NumValues = 5,
 	}
 }
 

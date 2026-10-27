@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Implement this structure to provide handler implementations.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -186,8 +187,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Return the handler for context menus. If no handler is provided the default
-		/// implementation will be used.
+		/// Return the handler for context menus. If no handler is provided the
+		/// default implementation will be used.
 		/// </summary>
 		protected internal unsafe virtual CefContextMenuHandler GetContextMenuHandler()
 		{
@@ -278,8 +279,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Return the handler for download events. If no handler is returned downloads
-		/// will not be allowed.
+		/// Return the handler for download events. If no handler is returned
+		/// downloads will be canceled with Alloy style and will proceed with default
+		/// handling with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual CefDownloadHandler GetDownloadHandler()
 		{
@@ -672,13 +674,15 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefClientPrivate.AvoidOnProcessMessageReceived();
+		bool ICefClientPrivate.AvoidOnProcessMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefClient), nameof(OnProcessMessageReceived));
+		}
 
 		/// <summary>
-		/// Called when a new message is received from a different process. Return true
-		/// (1) if the message was handled or false (0) otherwise.  It is safe to keep
-		/// a reference to |message| outside of this callback.
+		/// Called when a new message is received from a different process. Return
+		/// true (1) if the message was handled or false (0) otherwise.  It is safe to
+		/// keep a reference to |message| outside of this callback.
 		/// </summary>
 		protected internal unsafe virtual bool OnProcessMessageReceived(CefBrowser browser, CefFrame frame, CefProcessId sourceProcess, CefProcessMessage message)
 		{

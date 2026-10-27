@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure that wraps other data value types. Complex types (binary,
 	/// dictionary and list) will be referenced but not owned by this object. Can be
 	/// used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_value_t
@@ -39,10 +40,10 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Returns true (1) if the underlying data is valid. This will always be true
 		/// (1) for simple types. For complex types (binary, dictionary and list) the
-		/// underlying data may become invalid if owned by another object (e.g. list or
-		/// dictionary) and that other object is then modified or destroyed. This value
-		/// object can be re-used by calling Set*() even if the underlying data is
-		/// invalid.
+		/// underlying data may become invalid if owned by another object (e.g. list
+		/// or dictionary) and that other object is then modified or destroyed. This
+		/// value object can be re-used by calling Set*() even if the underlying data
+		/// is invalid.
 		/// </summary>
 		[NativeName("is_valid")]
 		public unsafe int IsValid()
@@ -236,10 +237,10 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Returns the underlying value as type binary. The returned reference may
 		/// become invalid if the value is owned by another object or if ownership is
-		/// transferred to another object in the future. To maintain a reference to the
-		/// value after assigning ownership to a dictionary or list pass this object to
-		/// the set_value() function instead of passing the returned reference to
-		/// set_binary().
+		/// transferred to another object in the future. To maintain a reference to
+		/// the value after assigning ownership to a dictionary or list pass this
+		/// object to the set_value() function instead of passing the returned
+		/// reference to set_binary().
 		/// </summary>
 		[NativeName("get_binary")]
 		public unsafe cef_binary_value_t* GetBinary()
@@ -256,12 +257,12 @@ namespace CefNet.CApi
 		public void* get_dictionary;
 
 		/// <summary>
-		/// Returns the underlying value as type dictionary. The returned reference may
-		/// become invalid if the value is owned by another object or if ownership is
-		/// transferred to another object in the future. To maintain a reference to the
-		/// value after assigning ownership to a dictionary or list pass this object to
-		/// the set_value() function instead of passing the returned reference to
-		/// set_dictionary().
+		/// Returns the underlying value as type dictionary. The returned reference
+		/// may become invalid if the value is owned by another object or if ownership
+		/// is transferred to another object in the future. To maintain a reference to
+		/// the value after assigning ownership to a dictionary or list pass this
+		/// object to the set_value() function instead of passing the returned
+		/// reference to set_dictionary().
 		/// </summary>
 		[NativeName("get_dictionary")]
 		public unsafe cef_dictionary_value_t* GetDictionary()
@@ -280,10 +281,10 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Returns the underlying value as type list. The returned reference may
 		/// become invalid if the value is owned by another object or if ownership is
-		/// transferred to another object in the future. To maintain a reference to the
-		/// value after assigning ownership to a dictionary or list pass this object to
-		/// the set_value() function instead of passing the returned reference to
-		/// set_list().
+		/// transferred to another object in the future. To maintain a reference to
+		/// the value after assigning ownership to a dictionary or list pass this
+		/// object to the set_value() function instead of passing the returned
+		/// reference to set_list().
 		/// </summary>
 		[NativeName("get_list")]
 		public unsafe cef_list_value_t* GetList()
@@ -354,8 +355,8 @@ namespace CefNet.CApi
 		public void* set_double;
 
 		/// <summary>
-		/// Sets the underlying value as type double. Returns true (1) if the value was
-		/// set successfully.
+		/// Sets the underlying value as type double. Returns true (1) if the value
+		/// was set successfully.
 		/// </summary>
 		[NativeName("set_double")]
 		public unsafe int SetDouble(double value)
@@ -367,13 +368,13 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_value_t* self, const cef_string_t* value)*
+		/// int (*)(_cef_value_t* self, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 
 		/// <summary>
-		/// Sets the underlying value as type string. Returns true (1) if the value was
-		/// set successfully.
+		/// Sets the underlying value as type string. Returns true (1) if the value
+		/// was set successfully.
 		/// </summary>
 		[NativeName("set_string")]
 		public unsafe int SetString([Immutable]cef_string_t* value)
@@ -390,9 +391,9 @@ namespace CefNet.CApi
 		public void* set_binary;
 
 		/// <summary>
-		/// Sets the underlying value as type binary. Returns true (1) if the value was
-		/// set successfully. This object keeps a reference to |value| and ownership of
-		/// the underlying data remains unchanged.
+		/// Sets the underlying value as type binary. Returns true (1) if the value
+		/// was set successfully. This object keeps a reference to |value| and
+		/// ownership of the underlying data remains unchanged.
 		/// </summary>
 		[NativeName("set_binary")]
 		public unsafe int SetBinary(cef_binary_value_t* value)
@@ -410,8 +411,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Sets the underlying value as type dict. Returns true (1) if the value was
-		/// set successfully. This object keeps a reference to |value| and ownership of
-		/// the underlying data remains unchanged.
+		/// set successfully. This object keeps a reference to |value| and ownership
+		/// of the underlying data remains unchanged.
 		/// </summary>
 		[NativeName("set_dictionary")]
 		public unsafe int SetDictionary(cef_dictionary_value_t* value)
@@ -429,8 +430,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Sets the underlying value as type list. Returns true (1) if the value was
-		/// set successfully. This object keeps a reference to |value| and ownership of
-		/// the underlying data remains unchanged.
+		/// set successfully. This object keeps a reference to |value| and ownership
+		/// of the underlying data remains unchanged.
 		/// </summary>
 		[NativeName("set_list")]
 		public unsafe int SetList(cef_list_value_t* value)

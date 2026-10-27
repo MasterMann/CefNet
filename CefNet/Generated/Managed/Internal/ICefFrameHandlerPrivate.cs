@@ -23,6 +23,7 @@ namespace CefNet.Internal
 	public interface ICefFrameHandlerPrivate
 	{
 		bool AvoidOnFrameCreated();
+		bool AvoidOnFrameDestroyed();
 		bool AvoidOnFrameAttached();
 		bool AvoidOnFrameDetached();
 		bool AvoidOnMainFrameChanged();

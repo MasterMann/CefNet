@@ -34,6 +34,8 @@ namespace CefNet
 		FormResubmitted = 4,
 
 		Other = 5,
+
+		NumValues = 6,
 	}
 }
 

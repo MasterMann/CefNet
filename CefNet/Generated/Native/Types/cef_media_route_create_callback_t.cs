@@ -19,8 +19,9 @@ using CefNet.WinApi;
 namespace CefNet.CApi
 {
 	/// <summary>
-	/// Callback structure for cef_media_router_t::CreateRoute. The functions of this
-	/// structure will be called on the browser process UI thread.
+	/// Callback structure for cef_media_router_t::CreateRoute. The functions of
+	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_route_create_callback_t
@@ -31,14 +32,14 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, const cef_string_t* error, _cef_media_route_t* route)*
+		/// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, cef_string_t const* error, _cef_media_route_t* route)*
 		/// </summary>
 		public void* on_media_route_create_finished;
 
 		/// <summary>
-		/// Method that will be executed when the route creation has finished. |result|
-		/// will be CEF_MRCR_OK if the route creation succeeded. |error| will be a
-		/// description of the error if the route creation failed. |route| is the
+		/// Method that will be executed when the route creation has finished.
+		/// |result| will be CEF_MRCR_OK if the route creation succeeded. |error| will
+		/// be a description of the error if the route creation failed. |route| is the
 		/// resulting route, or NULL if the route creation failed.
 		/// </summary>
 		[NativeName("on_media_route_create_finished")]

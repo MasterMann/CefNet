@@ -24,6 +24,11 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_sink_device_info_t
 	{
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
 		public cef_string_t ip_address;
 
 		public int port;

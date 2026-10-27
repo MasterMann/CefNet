@@ -7,7 +7,7 @@ using static CefNet.MacOS.NativeMethods;
 
 namespace CefNet
 {
-	public unsafe partial struct CefScreenInfo
+	public unsafe partial class CefScreenInfo
 	{
 		/// <summary>
 		/// Gets the primary display.
@@ -67,6 +67,23 @@ namespace CefNet
 			screenInfo.Rect = bounds;
 			screenInfo.AvailableRect = workingArea;
 			return screenInfo;
+		}
+
+		/// <summary>
+		/// Copies the screen information of this instance to <paramref name="target"/>.
+		/// </summary>
+		/// <param name="target">The instance to receive the values.</param>
+		public void CopyTo(CefScreenInfo target)
+		{
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+
+			target.DeviceScaleFactor = DeviceScaleFactor;
+			target.Depth = Depth;
+			target.DepthPerComponent = DepthPerComponent;
+			target.IsMonochrome = IsMonochrome;
+			target.Rect = Rect;
+			target.AvailableRect = AvailableRect;
 		}
 
 	}

@@ -33,6 +33,7 @@ namespace CefNet.CApi
 	/// in single-process mode will share the same request context. This will be the
 	/// first request context passed into a cef_browser_host_t static factory
 	/// function and all other request context objects will be ignored.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_request_context_t
@@ -40,7 +41,7 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Base structure.
 		/// </summary>
-		public cef_base_ref_counted_t @base;
+		public cef_preference_manager_t @base;
 
 		/// <summary>
 		/// int (*)(_cef_request_context_t* self, _cef_request_context_t* other)*
@@ -153,7 +154,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* scheme_name, const cef_string_t* domain_name, _cef_scheme_handler_factory_t* factory)*
+		/// int (*)(_cef_request_context_t* self, cef_string_t const* scheme_name, cef_string_t const* domain_name, _cef_scheme_handler_factory_t* factory)*
 		/// </summary>
 		public void* register_scheme_handler_factory;
 
@@ -167,8 +168,8 @@ namespace CefNet.CApi
 		/// you must also implement the cef_app_t::on_register_custom_schemes()
 		/// function in all processes. This function may be called multiple times to
 		/// change or remove the factory that matches the specified |scheme_name| and
-		/// optional |domain_name|. Returns false (0) if an error occurs. This function
-		/// may be called on any thread in the browser process.
+		/// optional |domain_name|. Returns false (0) if an error occurs. This
+		/// function may be called on any thread in the browser process.
 		/// </summary>
 		[NativeName("register_scheme_handler_factory")]
 		public unsafe int RegisterSchemeHandlerFactory([Immutable]cef_string_t* scheme_name, [Immutable]cef_string_t* domain_name, cef_scheme_handler_factory_t* factory)
@@ -194,108 +195,6 @@ namespace CefNet.CApi
 			fixed (cef_request_context_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, int>)clear_scheme_handler_factories)(self);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* name)*
-		/// </summary>
-		public void* has_preference;
-
-		/// <summary>
-		/// Returns true (1) if a preference with the specified |name| exists. This
-		/// function must be called on the browser process UI thread.
-		/// </summary>
-		[NativeName("has_preference")]
-		public unsafe int HasPreference([Immutable]cef_string_t* name)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, int>)has_preference)(self, name);
-			}
-		}
-
-		/// <summary>
-		/// _cef_value_t* (*)(_cef_request_context_t* self, const cef_string_t* name)*
-		/// </summary>
-		public void* get_preference;
-
-		/// <summary>
-		/// Returns the value for the preference with the specified |name|. Returns
-		/// NULL if the preference does not exist. The returned object contains a copy
-		/// of the underlying preference value and modifications to the returned object
-		/// will not modify the underlying preference value. This function must be
-		/// called on the browser process UI thread.
-		/// </summary>
-		[NativeName("get_preference")]
-		public unsafe cef_value_t* GetPreference([Immutable]cef_string_t* name)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_value_t*>)get_preference)(self, name);
-			}
-		}
-
-		/// <summary>
-		/// _cef_dictionary_value_t* (*)(_cef_request_context_t* self, int include_defaults)*
-		/// </summary>
-		public void* get_all_preferences;
-
-		/// <summary>
-		/// Returns all preferences as a dictionary. If |include_defaults| is true (1)
-		/// then preferences currently at their default value will be included. The
-		/// returned object contains a copy of the underlying preference values and
-		/// modifications to the returned object will not modify the underlying
-		/// preference values. This function must be called on the browser process UI
-		/// thread.
-		/// </summary>
-		[NativeName("get_all_preferences")]
-		public unsafe cef_dictionary_value_t* GetAllPreferences(int include_defaults)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, int, cef_dictionary_value_t*>)get_all_preferences)(self, include_defaults);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* name)*
-		/// </summary>
-		public void* can_set_preference;
-
-		/// <summary>
-		/// Returns true (1) if the preference with the specified |name| can be
-		/// modified using SetPreference. As one example preferences set via the
-		/// command-line usually cannot be modified. This function must be called on
-		/// the browser process UI thread.
-		/// </summary>
-		[NativeName("can_set_preference")]
-		public unsafe int CanSetPreference([Immutable]cef_string_t* name)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, int>)can_set_preference)(self, name);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* name, _cef_value_t* value, cef_string_t* error)*
-		/// </summary>
-		public void* set_preference;
-
-		/// <summary>
-		/// Set the |value| associated with preference |name|. Returns true (1) if the
-		/// value is set successfully and false (0) otherwise. If |value| is NULL the
-		/// preference will be restored to its default value. If setting the preference
-		/// fails then |error| will be populated with a detailed description of the
-		/// problem. This function must be called on the browser process UI thread.
-		/// </summary>
-		[NativeName("set_preference")]
-		public unsafe int SetPreference([Immutable]cef_string_t* name, cef_value_t* value, cef_string_t* error)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_value_t*, cef_string_t*, int>)set_preference)(self, name, value, error);
 			}
 		}
 
@@ -346,10 +245,10 @@ namespace CefNet.CApi
 		public void* close_all_connections;
 
 		/// <summary>
-		/// Clears all active and idle connections that Chromium currently has. This is
-		/// only recommended if you have released all other CEF objects but don&apos;t yet
-		/// want to call cef_shutdown(). If |callback| is non-NULL it will be executed
-		/// on the UI thread after completion.
+		/// Clears all active and idle connections that Chromium currently has. This
+		/// is only recommended if you have released all other CEF objects but don&apos;t
+		/// yet want to call cef_shutdown(). If |callback| is non-NULL it will be
+		/// executed on the UI thread after completion.
 		/// </summary>
 		[NativeName("close_all_connections")]
 		public unsafe void CloseAllConnections(cef_completion_callback_t* callback)
@@ -361,7 +260,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_context_t* self, const cef_string_t* origin, _cef_resolve_callback_t* callback)*
+		/// void (*)(_cef_request_context_t* self, cef_string_t const* origin, _cef_resolve_callback_t* callback)*
 		/// </summary>
 		public void* resolve_host;
 
@@ -379,152 +278,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_context_t* self, const cef_string_t* root_directory, _cef_dictionary_value_t* manifest, _cef_extension_handler_t* handler)*
-		/// </summary>
-		public void* load_extension;
-
-		/// <summary>
-		/// Load an extension.
-		/// If extension resources will be read from disk using the default load
-		/// implementation then |root_directory| should be the absolute path to the
-		/// extension resources directory and |manifest| should be NULL. If extension
-		/// resources will be provided by the client (e.g. via cef_request_handler_t
-		/// and/or cef_extension_handler_t) then |root_directory| should be a path
-		/// component unique to the extension (if not absolute this will be internally
-		/// prefixed with the PK_DIR_RESOURCES path) and |manifest| should contain the
-		/// contents that would otherwise be read from the &quot;manifest.json&quot; file on
-		/// disk.
-		/// The loaded extension will be accessible in all contexts sharing the same
-		/// storage (HasExtension returns true (1)). However, only the context on which
-		/// this function was called is considered the loader (DidLoadExtension returns
-		/// true (1)) and only the loader will receive cef_request_context_handler_t
-		/// callbacks for the extension.
-		/// cef_extension_handler_t::OnExtensionLoaded will be called on load success
-		/// or cef_extension_handler_t::OnExtensionLoadFailed will be called on load
-		/// failure.
-		/// If the extension specifies a background script via the &quot;background&quot;
-		/// manifest key then cef_extension_handler_t::OnBeforeBackgroundBrowser will
-		/// be called to create the background browser. See that function for
-		/// additional information about background scripts.
-		/// For visible extension views the client application should evaluate the
-		/// manifest to determine the correct extension URL to load and then pass that
-		/// URL to the cef_browser_host_t::CreateBrowser* function after the extension
-		/// has loaded. For example, the client can look for the &quot;browser_action&quot;
-		/// manifest key as documented at
-		/// https://developer.chrome.com/extensions/browserAction. Extension URLs take
-		/// the form &quot;chrome-extension://
-		/// &lt;extension
-		/// _id&gt;/
-		/// &lt;path
-		/// &gt;&quot;.
-		/// Browsers that host extensions differ from normal browsers as follows:
-		/// - Can access chrome.* JavaScript APIs if allowed by the manifest. Visit
-		/// chrome://extensions-support for the list of extension APIs currently
-		/// supported by CEF.
-		/// - Main frame navigation to non-extension content is blocked.
-		/// - Pinch-zooming is disabled.
-		/// - CefBrowserHost::GetExtension returns the hosted extension.
-		/// - CefBrowserHost::IsBackgroundHost returns true for background hosts.
-		/// See https://developer.chrome.com/extensions for extension implementation
-		/// and usage documentation.
-		/// </summary>
-		[NativeName("load_extension")]
-		public unsafe void LoadExtension([Immutable]cef_string_t* root_directory, cef_dictionary_value_t* manifest, cef_extension_handler_t* handler)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_dictionary_value_t*, cef_extension_handler_t*, void>)load_extension)(self, root_directory, manifest, handler);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* extension_id)*
-		/// </summary>
-		public void* did_load_extension;
-
-		/// <summary>
-		/// Returns true (1) if this context was used to load the extension identified
-		/// by |extension_id|. Other contexts sharing the same storage will also have
-		/// access to the extension (see HasExtension). This function must be called on
-		/// the browser process UI thread.
-		/// </summary>
-		[NativeName("did_load_extension")]
-		public unsafe int DidLoadExtension([Immutable]cef_string_t* extension_id)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, int>)did_load_extension)(self, extension_id);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, const cef_string_t* extension_id)*
-		/// </summary>
-		public void* has_extension;
-
-		/// <summary>
-		/// Returns true (1) if this context has access to the extension identified by
-		/// |extension_id|. This may not be the context that was used to load the
-		/// extension (see DidLoadExtension). This function must be called on the
-		/// browser process UI thread.
-		/// </summary>
-		[NativeName("has_extension")]
-		public unsafe int HasExtension([Immutable]cef_string_t* extension_id)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, int>)has_extension)(self, extension_id);
-			}
-		}
-
-		/// <summary>
-		/// int (*)(_cef_request_context_t* self, cef_string_list_t extension_ids)*
-		/// </summary>
-		public void* get_extensions;
-
-		/// <summary>
-		/// Retrieve the list of all extensions that this context has access to (see
-		/// HasExtension). |extension_ids| will be populated with the list of extension
-		/// ID values. Returns true (1) on success. This function must be called on the
-		/// browser process UI thread.
-		/// </summary>
-		[NativeName("get_extensions")]
-		public unsafe int GetExtensions(cef_string_list_t extension_ids)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_list_t, int>)get_extensions)(self, extension_ids);
-			}
-		}
-
-		/// <summary>
-		/// _cef_extension_t* (*)(_cef_request_context_t* self, const cef_string_t* extension_id)*
-		/// </summary>
-		public void* get_extension;
-
-		/// <summary>
-		/// Returns the extension matching |extension_id| or NULL if no matching
-		/// extension is accessible in this context (see HasExtension). This function
-		/// must be called on the browser process UI thread.
-		/// </summary>
-		[NativeName("get_extension")]
-		public unsafe cef_extension_t* GetExtension([Immutable]cef_string_t* extension_id)
-		{
-			fixed (cef_request_context_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_extension_t*>)get_extension)(self, extension_id);
-			}
-		}
-
-		/// <summary>
 		/// _cef_media_router_t* (*)(_cef_request_context_t* self, _cef_completion_callback_t* callback)*
 		/// </summary>
 		public void* get_media_router;
 
 		/// <summary>
-		/// Returns the MediaRouter object associated with this context.  If |callback|
-		/// is non-NULL it will be executed asnychronously on the UI thread after the
-		/// manager&apos;s context has been initialized.
+		/// Returns the MediaRouter object associated with this context.  If
+		/// |callback| is non-NULL it will be executed asnychronously on the UI thread
+		/// after the manager&apos;s context has been initialized.
 		/// </summary>
 		[NativeName("get_media_router")]
 		public unsafe cef_media_router_t* GetMediaRouter(cef_completion_callback_t* callback)
@@ -532,6 +293,212 @@ namespace CefNet.CApi
 			fixed (cef_request_context_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_completion_callback_t*, cef_media_router_t*>)get_media_router)(self, callback);
+			}
+		}
+
+		/// <summary>
+		/// _cef_value_t* (*)(_cef_request_context_t* self, cef_string_t const* requesting_url, cef_string_t const* top_level_url, cef_content_setting_types_t content_type)*
+		/// </summary>
+		public void* get_website_setting;
+
+		/// <summary>
+		/// Returns the current value for |content_type| that applies for the
+		/// specified URLs. If both URLs are NULL the default value will be returned.
+		/// Returns nullptr if no value is configured. Must be called on the browser
+		/// process UI thread.
+		/// </summary>
+		[NativeName("get_website_setting")]
+		public unsafe cef_value_t* GetWebsiteSetting([Immutable]cef_string_t* requesting_url, [Immutable]cef_string_t* top_level_url, CefContentSettingTypes content_type)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_string_t*, CefContentSettingTypes, cef_value_t*>)get_website_setting)(self, requesting_url, top_level_url, content_type);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_context_t* self, cef_string_t const* requesting_url, cef_string_t const* top_level_url, cef_content_setting_types_t content_type, _cef_value_t* value)*
+		/// </summary>
+		public void* set_website_setting;
+
+		/// <summary>
+		/// Sets the current value for |content_type| for the specified URLs in the
+		/// default scope. If both URLs are NULL, and the context is not incognito,
+		/// the default value will be set. Pass nullptr for |value| to remove the
+		/// default value for this content type.
+		/// WARNING: Incorrect usage of this function may cause instability or
+		/// security issues in Chromium. Make sure that you first understand the
+		/// potential impact of any changes to |content_type| by reviewing the related
+		/// source code in Chromium. For example, if you plan to modify
+		/// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
+		/// ContentSettingsType::POPUPS in Chromium:
+		/// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
+		/// </summary>
+		[NativeName("set_website_setting")]
+		public unsafe void SetWebsiteSetting([Immutable]cef_string_t* requesting_url, [Immutable]cef_string_t* top_level_url, CefContentSettingTypes content_type, cef_value_t* value)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_string_t*, CefContentSettingTypes, cef_value_t*, void>)set_website_setting)(self, requesting_url, top_level_url, content_type, value);
+			}
+		}
+
+		/// <summary>
+		/// cef_content_setting_values_t (*)(_cef_request_context_t* self, cef_string_t const* requesting_url, cef_string_t const* top_level_url, cef_content_setting_types_t content_type)*
+		/// </summary>
+		public void* get_content_setting;
+
+		/// <summary>
+		/// Returns the current value for |content_type| that applies for the
+		/// specified URLs. If both URLs are NULL the default value will be returned.
+		/// Returns CEF_CONTENT_SETTING_VALUE_DEFAULT if no value is configured. Must
+		/// be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("get_content_setting")]
+		public unsafe CefContentSettingValues GetContentSetting([Immutable]cef_string_t* requesting_url, [Immutable]cef_string_t* top_level_url, CefContentSettingTypes content_type)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_string_t*, CefContentSettingTypes, CefContentSettingValues>)get_content_setting)(self, requesting_url, top_level_url, content_type);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_context_t* self, cef_string_t const* requesting_url, cef_string_t const* top_level_url, cef_content_setting_types_t content_type, cef_content_setting_values_t value)*
+		/// </summary>
+		public void* set_content_setting;
+
+		/// <summary>
+		/// Sets the current value for |content_type| for the specified URLs in the
+		/// default scope. If both URLs are NULL, and the context is not incognito,
+		/// the default value will be set. Pass CEF_CONTENT_SETTING_VALUE_DEFAULT for
+		/// |value| to use the default value for this content type.
+		/// WARNING: Incorrect usage of this function may cause instability or
+		/// security issues in Chromium. Make sure that you first understand the
+		/// potential impact of any changes to |content_type| by reviewing the related
+		/// source code in Chromium. For example, if you plan to modify
+		/// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
+		/// ContentSettingsType::POPUPS in Chromium:
+		/// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
+		/// </summary>
+		[NativeName("set_content_setting")]
+		public unsafe void SetContentSetting([Immutable]cef_string_t* requesting_url, [Immutable]cef_string_t* top_level_url, CefContentSettingTypes content_type, CefContentSettingValues value)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_string_t*, cef_string_t*, CefContentSettingTypes, CefContentSettingValues, void>)set_content_setting)(self, requesting_url, top_level_url, content_type, value);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_context_t* self, cef_color_variant_t variant, cef_color_t user_color)*
+		/// </summary>
+		public void* set_chrome_color_scheme;
+
+		/// <summary>
+		/// Sets the Chrome color scheme for all browsers that share this request
+		/// context. |variant| values of SYSTEM, LIGHT and DARK change the underlying
+		/// color mode (e.g. light vs dark). Other |variant| values determine how
+		/// |user_color| will be applied in the current color mode. If |user_color| is
+		/// transparent (0) the default color will be used.
+		/// </summary>
+		[NativeName("set_chrome_color_scheme")]
+		public unsafe void SetChromeColorScheme(CefColorVariant variant, cef_color_t user_color)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_request_context_t*, CefColorVariant, cef_color_t, void>)set_chrome_color_scheme)(self, variant, user_color);
+			}
+		}
+
+		/// <summary>
+		/// cef_color_variant_t (*)(_cef_request_context_t* self)*
+		/// </summary>
+		public void* get_chrome_color_scheme_mode;
+
+		/// <summary>
+		/// Returns the current Chrome color scheme mode (SYSTEM, LIGHT or DARK). Must
+		/// be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("get_chrome_color_scheme_mode")]
+		public unsafe CefColorVariant GetChromeColorSchemeMode()
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, CefColorVariant>)get_chrome_color_scheme_mode)(self);
+			}
+		}
+
+		/// <summary>
+		/// cef_color_t (*)(_cef_request_context_t* self)*
+		/// </summary>
+		public void* get_chrome_color_scheme_color;
+
+		/// <summary>
+		/// Returns the current Chrome color scheme color, or transparent (0) for the
+		/// default color. Must be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("get_chrome_color_scheme_color")]
+		public unsafe cef_color_t GetChromeColorSchemeColor()
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_color_t>)get_chrome_color_scheme_color)(self);
+			}
+		}
+
+		/// <summary>
+		/// cef_color_variant_t (*)(_cef_request_context_t* self)*
+		/// </summary>
+		public void* get_chrome_color_scheme_variant;
+
+		/// <summary>
+		/// Returns the current Chrome color scheme variant. Must be called on the
+		/// browser process UI thread.
+		/// </summary>
+		[NativeName("get_chrome_color_scheme_variant")]
+		public unsafe CefColorVariant GetChromeColorSchemeVariant()
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, CefColorVariant>)get_chrome_color_scheme_variant)(self);
+			}
+		}
+
+		/// <summary>
+		/// _cef_registration_t* (*)(_cef_request_context_t* self, _cef_setting_observer_t* observer)*
+		/// </summary>
+		public void* add_setting_observer;
+
+		/// <summary>
+		/// Add an observer for content and website setting changes. The observer will
+		/// remain registered until the returned Registration object is destroyed.
+		/// This function must be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("add_setting_observer")]
+		public unsafe cef_registration_t* AddSettingObserver(cef_setting_observer_t* observer)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_setting_observer_t*, cef_registration_t*>)add_setting_observer)(self, observer);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_context_t* self, _cef_completion_callback_t* callback)*
+		/// </summary>
+		public void* clear_http_cache;
+
+		/// <summary>
+		/// Clears the HTTP cache. If |callback| is non-NULL it will be executed on
+		/// the UI thread after completion.
+		/// </summary>
+		[NativeName("clear_http_cache")]
+		public unsafe void ClearHttpCache(cef_completion_callback_t* callback)
+		{
+			fixed (cef_request_context_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_request_context_t*, cef_completion_callback_t*, void>)clear_http_cache)(self, callback);
 			}
 		}
 	}

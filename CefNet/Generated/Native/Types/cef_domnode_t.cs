@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a DOM node. The functions of this structure
 	/// should only be called on the render process main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_domnode_t
@@ -116,20 +117,19 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_domnode_t* self)*
+		/// cef_dom_form_control_type_t (*)(_cef_domnode_t* self)*
 		/// </summary>
 		public void* get_form_control_element_type;
 
 		/// <summary>
 		/// Returns the type of this form control element node.
-		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		[NativeName("get_form_control_element_type")]
-		public unsafe cef_string_userfree_t GetFormControlElementType()
+		public unsafe CefDOMFormControlType GetFormControlElementType()
 		{
 			fixed (cef_domnode_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_domnode_t*, cef_string_userfree_t>)get_form_control_element_type)(self);
+				return ((delegate* unmanaged[Stdcall]<cef_domnode_t*, CefDOMFormControlType>)get_form_control_element_type)(self);
 			}
 		}
 
@@ -188,7 +188,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_domnode_t* self, const cef_string_t* value)*
+		/// int (*)(_cef_domnode_t* self, cef_string_t const* value)*
 		/// </summary>
 		public void* set_value;
 
@@ -377,7 +377,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_domnode_t* self, const cef_string_t* attrName)*
+		/// int (*)(_cef_domnode_t* self, cef_string_t const* attrName)*
 		/// </summary>
 		public void* has_element_attribute;
 
@@ -394,7 +394,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_domnode_t* self, const cef_string_t* attrName)*
+		/// cef_string_userfree_t (*)(_cef_domnode_t* self, cef_string_t const* attrName)*
 		/// </summary>
 		public void* get_element_attribute;
 
@@ -429,7 +429,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_domnode_t* self, const cef_string_t* attrName, const cef_string_t* value)*
+		/// int (*)(_cef_domnode_t* self, cef_string_t const* attrName, cef_string_t const* value)*
 		/// </summary>
 		public void* set_element_attribute;
 

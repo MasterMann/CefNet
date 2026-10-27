@@ -26,9 +26,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefKeyEvent
+	public unsafe partial class CefKeyEvent : IDisposable
 	{
-		private cef_key_event_t _instance;
+		private cef_key_event_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefKeyEvent()
+		{
+			_disposable = true;
+			_instance = (cef_key_event_t*)CefStructure.Allocate(sizeof(cef_key_event_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_key_event_t));
+		}
+
+		internal static unsafe CefKeyEvent Create(IntPtr instance)
+		{
+			return new CefKeyEvent((cef_key_event_t*)instance);
+		}
+
+		public CefKeyEvent(cef_key_event_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_key_event_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_key_event_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// The type of keyboard event.
@@ -37,11 +84,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.type;
+				return _instance->type;
 			}
 			set
 			{
-				_instance.type = value;
+				_instance->type = value;
 			}
 		}
 
@@ -53,11 +100,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.modifiers;
+				return _instance->modifiers;
 			}
 			set
 			{
-				_instance.modifiers = value;
+				_instance->modifiers = value;
 			}
 		}
 
@@ -71,11 +118,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.windows_key_code;
+				return _instance->windows_key_code;
 			}
 			set
 			{
-				_instance.windows_key_code = value;
+				_instance->windows_key_code = value;
 			}
 		}
 
@@ -86,11 +133,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.native_key_code;
+				return _instance->native_key_code;
 			}
 			set
 			{
-				_instance.native_key_code = value;
+				_instance->native_key_code = value;
 			}
 		}
 
@@ -103,11 +150,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.is_system_key != 0;
+				return _instance->is_system_key != 0;
 			}
 			set
 			{
-				_instance.is_system_key = value ? 1 : 0;
+				_instance->is_system_key = value ? 1 : 0;
 			}
 		}
 
@@ -118,11 +165,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.character;
+				return _instance->character;
 			}
 			set
 			{
-				_instance.character = value;
+				_instance->character = value;
 			}
 		}
 
@@ -134,11 +181,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.unmodified_character;
+				return _instance->unmodified_character;
 			}
 			set
 			{
-				_instance.unmodified_character = value;
+				_instance->unmodified_character = value;
 			}
 		}
 
@@ -150,22 +197,32 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.focus_on_editable_field != 0;
+				return _instance->focus_on_editable_field != 0;
 			}
 			set
 			{
-				_instance.focus_on_editable_field = value ? 1 : 0;
+				_instance->focus_on_editable_field = value ? 1 : 0;
 			}
 		}
 
-		public static implicit operator CefKeyEvent(cef_key_event_t instance)
+		public void Dispose()
 		{
-			return new CefKeyEvent { _instance = instance };
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator cef_key_event_t(CefKeyEvent instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return instance._instance;
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefKeyEvent()
+		{
+			Dispose(false);
 		}
 	}
 }

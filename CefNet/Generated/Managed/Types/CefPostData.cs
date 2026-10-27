@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent post data for a web request. The functions of
 	/// this structure may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -51,10 +52,10 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the underlying POST data includes elements that are not
-		/// represented by this cef_post_data_t object (for example, multi-part file
-		/// upload data). Modifying cef_post_data_t objects with excluded elements may
-		/// result in the request failing.
+		/// Gets a value indicating whether the underlying POST data includes elements that are
+		/// not represented by this cef_post_data_t object (for example, multi-part
+		/// file upload data). Modifying cef_post_data_t objects with excluded
+		/// elements may result in the request failing.
 		/// </summary>
 		public unsafe virtual bool HasExcludedElements
 		{
@@ -108,7 +109,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add the specified post data element.  Returns true (1) if the add succeeds.
+		/// Add the specified post data element.  Returns true (1) if the add
+		/// succeeds.
 		/// </summary>
 		public unsafe virtual bool AddElement(CefPostDataElement element)
 		{

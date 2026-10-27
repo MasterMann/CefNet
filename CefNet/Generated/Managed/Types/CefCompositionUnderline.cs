@@ -28,9 +28,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefCompositionUnderline
+	public unsafe partial class CefCompositionUnderline : IDisposable
 	{
-		private cef_composition_underline_t _instance;
+		private cef_composition_underline_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefCompositionUnderline()
+		{
+			_disposable = true;
+			_instance = (cef_composition_underline_t*)CefStructure.Allocate(sizeof(cef_composition_underline_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_composition_underline_t));
+		}
+
+		internal static unsafe CefCompositionUnderline Create(IntPtr instance)
+		{
+			return new CefCompositionUnderline((cef_composition_underline_t*)instance);
+		}
+
+		public CefCompositionUnderline(cef_composition_underline_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_composition_underline_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_composition_underline_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Underline character range.
@@ -39,11 +86,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.range;
+				return _instance->range;
 			}
 			set
 			{
-				_instance.range = value;
+				_instance->range = value;
 			}
 		}
 
@@ -54,11 +101,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.color;
+				return _instance->color;
 			}
 			set
 			{
-				_instance.color = value;
+				_instance->color = value;
 			}
 		}
 
@@ -69,11 +116,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.background_color;
+				return _instance->background_color;
 			}
 			set
 			{
-				_instance.background_color = value;
+				_instance->background_color = value;
 			}
 		}
 
@@ -84,11 +131,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.thick != 0;
+				return _instance->thick != 0;
 			}
 			set
 			{
-				_instance.thick = value ? 1 : 0;
+				_instance->thick = value ? 1 : 0;
 			}
 		}
 
@@ -99,22 +146,32 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.style;
+				return _instance->style;
 			}
 			set
 			{
-				_instance.style = value;
+				_instance->style = value;
 			}
 		}
 
-		public static implicit operator CefCompositionUnderline(cef_composition_underline_t instance)
+		public void Dispose()
 		{
-			return new CefCompositionUnderline { _instance = instance };
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator cef_composition_underline_t(CefCompositionUnderline instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return instance._instance;
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefCompositionUnderline()
+		{
+			Dispose(false);
 		}
 	}
 }

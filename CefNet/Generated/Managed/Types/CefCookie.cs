@@ -26,9 +26,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefCookie : IDisposable
+	public unsafe partial class CefCookie : IDisposable
 	{
-		private cef_cookie_t _instance;
+		private cef_cookie_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefCookie()
+		{
+			_disposable = true;
+			_instance = (cef_cookie_t*)CefStructure.Allocate(sizeof(cef_cookie_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_cookie_t));
+		}
+
+		internal static unsafe CefCookie Create(IntPtr instance)
+		{
+			return new CefCookie((cef_cookie_t*)instance);
+		}
+
+		public CefCookie(cef_cookie_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_cookie_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_cookie_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// The cookie name.
@@ -37,17 +84,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.name)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->name);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.name)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->name, value);
 			}
 		}
 
@@ -58,17 +99,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.value)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->value);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.value)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->value, value);
 			}
 		}
 
@@ -81,17 +116,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.domain)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->domain);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.domain)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->domain, value);
 			}
 		}
 
@@ -103,17 +132,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.path)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->path);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.path)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->path, value);
 			}
 		}
 
@@ -124,11 +147,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.secure != 0;
+				return _instance->secure != 0;
 			}
 			set
 			{
-				_instance.secure = value ? 1 : 0;
+				_instance->secure = value ? 1 : 0;
 			}
 		}
 
@@ -139,11 +162,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.httponly != 0;
+				return _instance->httponly != 0;
 			}
 			set
 			{
-				_instance.httponly = value ? 1 : 0;
+				_instance->httponly = value ? 1 : 0;
 			}
 		}
 
@@ -155,11 +178,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.creation;
+				return _instance->creation;
 			}
 			set
 			{
-				_instance.creation = value;
+				_instance->creation = value;
 			}
 		}
 
@@ -171,11 +194,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.last_access;
+				return _instance->last_access;
 			}
 			set
 			{
-				_instance.last_access = value;
+				_instance->last_access = value;
 			}
 		}
 
@@ -186,11 +209,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.has_expires != 0;
+				return _instance->has_expires != 0;
 			}
 			set
 			{
-				_instance.has_expires = value ? 1 : 0;
+				_instance->has_expires = value ? 1 : 0;
 			}
 		}
 
@@ -198,11 +221,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.expires;
+				return _instance->expires;
 			}
 			set
 			{
-				_instance.expires = value;
+				_instance->expires = value;
 			}
 		}
 
@@ -213,11 +236,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.same_site;
+				return _instance->same_site;
 			}
 			set
 			{
-				_instance.same_site = value;
+				_instance->same_site = value;
 			}
 		}
 
@@ -228,30 +251,36 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.priority;
+				return _instance->priority;
 			}
 			set
 			{
-				_instance.priority = value;
+				_instance->priority = value;
 			}
 		}
 
 		public void Dispose()
 		{
-			Name = null;
-			Value = null;
-			Domain = null;
-			Path = null;
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator CefCookie(cef_cookie_t instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return new CefCookie { _instance = instance };
+			if (_disposable && _instance != null)
+			{
+				Name = null;
+				Value = null;
+				Domain = null;
+				Path = null;
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
-		public static implicit operator cef_cookie_t(CefCookie instance)
+		~CefCookie()
 		{
-			return instance._instance;
+			Dispose(false);
 		}
 	}
 }

@@ -21,8 +21,9 @@ using CefNet.Internal;
 namespace CefNet
 {
 	/// <summary>
-	/// Callback structure for cef_media_router_t::CreateRoute. The functions of this
-	/// structure will be called on the browser process UI thread.
+	/// Callback structure for cef_media_router_t::CreateRoute. The functions of
+	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,13 +54,15 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaRouteCreateCallbackPrivate.AvoidOnMediaRouteCreateFinished();
+		bool ICefMediaRouteCreateCallbackPrivate.AvoidOnMediaRouteCreateFinished()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaRouteCreateCallback), nameof(OnMediaRouteCreateFinished));
+		}
 
 		/// <summary>
-		/// Method that will be executed when the route creation has finished. |result|
-		/// will be CEF_MRCR_OK if the route creation succeeded. |error| will be a
-		/// description of the error if the route creation failed. |route| is the
+		/// Method that will be executed when the route creation has finished.
+		/// |result| will be CEF_MRCR_OK if the route creation succeeded. |error| will
+		/// be a description of the error if the route creation failed. |route| is the
 		/// resulting route, or NULL if the route creation failed.
 		/// </summary>
 		protected internal unsafe virtual void OnMediaRouteCreateFinished(CefMediaRouteCreateResult result, string error, CefMediaRoute route)
@@ -71,7 +74,7 @@ namespace CefNet
 		private unsafe delegate void OnMediaRouteCreateFinishedDelegate(cef_media_route_create_callback_t* self, CefMediaRouteCreateResult result, cef_string_t* error, cef_media_route_t* route);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, const cef_string_t* error, _cef_media_route_t* route)*
+		// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, cef_string_t const* error, _cef_media_route_t* route)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

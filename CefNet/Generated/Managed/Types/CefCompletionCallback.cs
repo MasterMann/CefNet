@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Generic callback structure used for asynchronous completion.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler

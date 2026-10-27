@@ -166,38 +166,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Register a new V8 extension with the specified JavaScript extension code and handler.<para/>
-		/// This function may only be called on the render process main thread.
-		/// </summary>
-		/// <param name="name">An extension name.</param>
-		/// <param name="jscode">
-		/// An extension source code. Functions implemented by the <paramref name="handler"/>
-		/// are prototyped using the keyword &apos;native&apos;.
-		/// </param>
-		/// <param name="handler">A <see cref="CefV8Handler"/> instance.</param>
-		/// <returns>Returns true on success.</returns>
-		/// <remarks>
-		/// The calling of a native function is restricted to the scope
-		/// in which the prototype of the native function is defined.
-		/// </remarks>
-		public static bool RegisterExtension(string name, string jscode, CefV8Handler handler)
-		{
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			if (jscode == null)
-				throw new ArgumentNullException(nameof(jscode));
-
-			fixed (char* sName = name)
-			fixed (char* sCode = jscode)
-			{
-				var aName = new cef_string_t { Str = sName, Length = name.Length };
-				var aCode = new cef_string_t { Str = sCode, Length = jscode.Length };
-				return CefNativeApi.cef_register_extension(&aName, &aCode, handler != null ? handler.GetNativeInstance() : null) != 0;
-			}
-
-		}
-
-		/// <summary>
 		/// Register a scheme handler factory with the global request context. This
 		/// function may be called multiple times to change or remove the factory that
 		/// matches the specified <paramref name="schemeName"/> and optional
@@ -357,15 +325,15 @@ namespace CefNet
 			CefNativeApi.cef_set_osmodal_loop(osModalLoop ? 1 : 0);
 		}
 
-		/// <summary>
-		/// Call during process startup to enable High-DPI support on Windows 7 or newer.
-		/// Older versions of Windows should be left DPI-unaware because they do not
-		/// support DirectWrite and GDI fonts are kerned very badly.
-		/// </summary>
-		public static void EnableHighDPISupport()
-		{
-			CefNativeApi.cef_enable_highdpi_support();
-		}
+		///// <summary>
+		///// Call during process startup to enable High-DPI support on Windows 7 or newer.
+		///// Older versions of Windows should be left DPI-unaware because they do not
+		///// support DirectWrite and GDI fonts are kerned very badly.
+		///// </summary>
+		//public static void EnableHighDPISupport()
+		//{
+		//	CefNativeApi.cef_enable_highdpi_support();
+		//}
 
 		/// <summary>
 		/// Returns true if the certificate status has any error, major or minor.
@@ -729,7 +697,7 @@ namespace CefNet
 			fixed (char* s0 = url)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = url.Length };
-				if (CefNativeApi.cef_parse_url(&cstr0, (cef_urlparts_t*)&url_parts) != 0)
+				if (CefNativeApi.cef_parse_url(&cstr0, url_parts.GetNativeInstance()) != 0)
 				{
 					return url_parts;
 				}
@@ -750,7 +718,7 @@ namespace CefNet
 		public static string CreateUrl(CefUrlParts parts)
 		{
 			var s = new cef_string_t();
-			CefNativeApi.cef_create_url((cef_urlparts_t*)&parts, &s);
+			CefNativeApi.cef_create_url(parts.GetNativeInstance(), &s);
 			return CefString.ReadAndFree(&s);
 		}
 
@@ -1108,7 +1076,16 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Returns CEF API hashes for the libcef library.
+		/// Gets the CEF API version these bindings were generated for.
+		/// </summary>
+		public static int ApiVersion
+		{
+			get { return CefNativeApi.ApiVersion; }
+		}
+
+		/// <summary>
+		/// Configures the libcef library to use <see cref="ApiVersion"/> and returns one of its API hashes.
+		/// The first call fixes the API version for the process.
 		/// </summary>
 		/// <param name="type">
 		/// Describes which hash value will be returned.
@@ -1116,7 +1093,7 @@ namespace CefNet
 		/// <returns>Returns CEF API hash.</returns>
 		public static string CefApiHash(CefApiHashType type)
 		{
-			return Marshal.PtrToStringAnsi(CefNativeApi.cef_api_hash((int)type));
+			return Marshal.PtrToStringAnsi(CefNativeApi.cef_api_hash(CefNativeApi.ApiVersion, (int)type));
 		}
 
 	}

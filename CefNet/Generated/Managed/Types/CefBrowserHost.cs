@@ -23,8 +23,9 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent the browser process aspects of a browser. The
 	/// functions of this structure can only be called in the browser process. They
-	/// may be called on any thread in that process unless otherwise indicated in the
-	/// comments.
+	/// may be called on any thread in that process unless otherwise indicated in
+	/// the comments.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -53,6 +54,30 @@ namespace CefNet
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether the browser is ready to be closed, meaning that the
+		/// close has already been initiated and that JavaScript unload handlers have
+		/// already executed or should be ignored. This can be used from a top-level
+		/// window close handler such as cef_window_delegate_t::CanClose (or platform-
+		/// specific equivalent) to distringuish between potentially cancelable
+		/// browser close events (like the user clicking the top-level window close
+		/// button before browser close has started) and mandatory browser close
+		/// events (like JavaScript `window.close()` or after browser close has
+		/// started in response to [Try]close_browser()). Not completing the browser
+		/// close for mandatory close events (when this property returns true)
+		/// will leave the browser in a partially closed state that interferes with
+		/// proper functioning. See close_browser() documentation for additional usage
+		/// information. This property must be called on the browser process UI
+		/// thread.
+		/// </summary>
+		public unsafe virtual bool IsReadyToBeClosed
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsReadyToBeClosed() != 0);
+			}
+		}
+
+		/// <summary>
 		/// Retrieve the window handle (if any) for this browser. If this browser is
 		/// wrapped in a cef_browser_view_t this property should be called on the
 		/// browser process UI thread and it will return the handle for the top-level
@@ -77,6 +102,18 @@ namespace CefNet
 			get
 			{
 				return SafeCall(NativeInstance->GetOpenerWindowHandle());
+			}
+		}
+
+		/// <summary>
+		/// Retrieve the unique identifier of the browser that opened this browser.
+		/// Will return 0 for non-popup browsers.
+		/// </summary>
+		public unsafe virtual int OpenerIdentifier
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetOpenerIdentifier());
 			}
 		}
 
@@ -114,8 +151,20 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets and sets the current zoom level. The default zoom level is 0.0. This property
-		/// can only be called on the UI thread.
+		/// Get the default zoom level. This value will be 0.0 by default but can be
+		/// configured. This property can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual double DefaultZoomLevel
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetDefaultZoomLevel());
+			}
+		}
+
+		/// <summary>
+		/// Gets and sets the current zoom level. This property can only be called on the UI
+		/// thread.
 		/// </summary>
 		public unsafe virtual double ZoomLevel
 		{
@@ -155,10 +204,10 @@ namespace CefNet
 
 		/// <summary>
 		/// Gets or sets the maximum rate in frames per second (fps) that
-		/// cef_render_handler_t:: OnPaint will be called for a windowless browser. The
+		/// cef_render_handler_t::OnPaint will be called for a windowless browser. The
 		/// actual fps may be lower if the browser cannot generate frames at the
-		/// requested rate. The minimum value is 1 and the maximum value is 60 (default
-		/// 30). This property can only be called on the UI thread.
+		/// requested rate. The minimum value is 1 and the default value is 30. This
+		/// function can only be called on the UI thread.
 		/// </summary>
 		public unsafe virtual int WindowlessFrameRate
 		{
@@ -186,31 +235,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the extension hosted in this browser or NULL if no extension is
-		/// hosted. See cef_request_context_t::LoadExtension for details.
-		/// </summary>
-		public unsafe virtual CefExtension Extension
-		{
-			get
-			{
-				return SafeCall(CefExtension.Wrap(CefExtension.Create, NativeInstance->GetExtension()));
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether this browser is hosting an extension background script.
-		/// Background hosts do not have a window and are not displayable. See
-		/// cef_request_context_t::LoadExtension for details.
-		/// </summary>
-		public unsafe virtual bool IsBackgroundHost
-		{
-			get
-			{
-				return SafeCall(NativeInstance->IsBackgroundHost() != 0);
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether the browser&apos;s audio is muted.  This property can only
 		/// be called on the UI thread.
 		/// </summary>
@@ -228,14 +252,68 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Request that the browser close. The JavaScript &apos;onbeforeunload&apos; event will
-		/// be fired. If |force_close| is false (0) the event handler, if any, will be
-		/// allowed to prompt the user and the user can optionally cancel the close. If
-		/// |force_close| is true (1) the prompt will not be displayed and the close
-		/// will proceed. Results in a call to cef_life_span_handler_t::do_close() if
-		/// the event handler allows the close or if |force_close| is true (1). See
-		/// cef_life_span_handler_t::do_close() documentation for additional usage
-		/// information.
+		/// Gets a value indicating whether the renderer is currently in browser fullscreen. This
+		/// differs from window fullscreen in that browser fullscreen is entered using
+		/// the JavaScript Fullscreen API and modifies CSS attributes such as the
+		/// ::backdrop pseudo-element and :fullscreen pseudo-structure. This property
+		/// can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool IsFullscreen
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsFullscreen() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the render process associated with this browser is
+		/// currently unresponsive as indicated by a lack of input event processing
+		/// for at least 15 seconds. To receive associated state change notifications
+		/// and optionally handle an unresponsive render process implement
+		/// cef_request_handler_t::OnRenderProcessUnresponsive. This property can only
+		/// be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool IsRenderProcessUnresponsive
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsRenderProcessUnresponsive() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets the runtime style for this browser (ALLOY or CHROME). See
+		/// cef_runtime_style_t documentation for details.
+		/// </summary>
+		public unsafe virtual CefRuntimeStyle RuntimeStyle
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetRuntimeStyle());
+			}
+		}
+
+		/// <summary>
+		/// Request that the browser close. Closing a browser is a multi-stage process
+		/// that may complete either synchronously or asynchronously, and involves
+		/// callbacks such as cef_life_span_handler_t::DoClose (Alloy style only),
+		/// cef_life_span_handler_t::OnBeforeClose, and a top-level window close
+		/// handler such as cef_window_delegate_t::CanClose (or platform-specific
+		/// equivalent). In some cases a close request may be delayed or canceled by
+		/// the user. Using try_close_browser() instead of close_browser() is
+		/// recommended for most use cases. See cef_life_span_handler_t::do_close()
+		/// documentation for detailed usage and examples.
+		/// If |force_close| is false (0) then JavaScript unload handlers, if any, may
+		/// be fired and the close may be delayed or canceled by the user. If
+		/// |force_close| is true (1) then the user will not be prompted and the close
+		/// will proceed immediately (possibly asynchronously). If browser close is
+		/// delayed and not canceled the default behavior is to call the top-level
+		/// window close handler once the browser is ready to be closed. This default
+		/// behavior can be changed for Alloy style browsers by implementing
+		/// cef_life_span_handler_t::do_close(). is_ready_to_be_closed() can be used
+		/// to detect mandatory browser close events when customizing close behavior
+		/// on the browser process UI thread.
 		/// </summary>
 		public unsafe virtual void CloseBrowser(bool forceClose)
 		{
@@ -244,13 +322,16 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Helper for closing a browser. Call this function from the top-level window
-		/// close handler (if any). Internally this calls CloseBrowser(false (0)) if
-		/// the close has not yet been initiated. This function returns false (0) while
-		/// the close is pending and true (1) after the close has completed. See
-		/// close_browser() and cef_life_span_handler_t::do_close() documentation for
-		/// additional usage information. This function must be called on the browser
-		/// process UI thread.
+		/// Helper for closing a browser. This is similar in behavior to
+		/// CLoseBrowser(false (0)) but returns a boolean to reflect the immediate
+		/// close status. Call this function from a top-level window close handler
+		/// such as cef_window_delegate_t::CanClose (or platform-specific equivalent)
+		/// to request that the browser close, and return the result to indicate if
+		/// the window close should proceed. Returns false (0) if the close will be
+		/// delayed (JavaScript unload handlers triggered but still pending) or true
+		/// (1) if the close will proceed immediately (possibly asynchronously). See
+		/// close_browser() documentation for additional usage information. This
+		/// function must be called on the browser process UI thread.
 		/// </summary>
 		public unsafe virtual bool TryCloseBrowser()
 		{
@@ -258,19 +339,39 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Call to run a file chooser dialog. Only a single file chooser dialog may be
-		/// pending at any given time. |mode| represents the type of dialog to display.
-		/// |title| to the title to be used for the dialog and may be NULL to show the
-		/// default title (&quot;Open&quot; or &quot;Save&quot; depending on the mode). |default_file_path|
-		/// is the path with optional directory and/or file name component that will be
-		/// initially selected in the dialog. |accept_filters| are used to restrict the
-		/// selectable file types and may any combination of (a) valid lower-cased MIME
-		/// types (e.g. &quot;text/*&quot; or &quot;image/*&quot;), (b) individual file extensions (e.g.
-		/// &quot;.txt&quot; or &quot;.png&quot;), or (c) combined description and file extension delimited
-		/// using &quot;|&quot; and &quot;;&quot; (e.g. &quot;Image Types|.png;.gif;.jpg&quot;). |callback| will be
-		/// executed after the dialog is dismissed or immediately if another dialog is
-		/// already pending. The dialog will be initiated asynchronously on the UI
-		/// thread.
+		/// Returns true (1) if this browser can execute the specified zoom command.
+		/// This function can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool CanZoom(CefZoomCommand command)
+		{
+			return SafeCall(NativeInstance->CanZoom(command) != 0);
+		}
+
+		/// <summary>
+		/// Execute a zoom command in this browser. If called on the UI thread the
+		/// change will be applied immediately. Otherwise, the change will be applied
+		/// asynchronously on the UI thread.
+		/// </summary>
+		public unsafe virtual void Zoom(CefZoomCommand command)
+		{
+			NativeInstance->Zoom(command);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Call to run a file chooser dialog. Only a single file chooser dialog may
+		/// be pending at any given time. |mode| represents the type of dialog to
+		/// display. |title| to the title to be used for the dialog and may be NULL to
+		/// show the default title (&quot;Open&quot; or &quot;Save&quot; depending on the mode).
+		/// |default_file_path| is the path with optional directory and/or file name
+		/// component that will be initially selected in the dialog. |accept_filters|
+		/// are used to restrict the selectable file types and may any combination of
+		/// (a) valid lower-cased MIME types (e.g. &quot;text/*&quot; or &quot;image/*&quot;), (b)
+		/// individual file extensions (e.g. &quot;.txt&quot; or &quot;.png&quot;), or (c) combined
+		/// description and file extension delimited using &quot;|&quot; and &quot;;&quot; (e.g. &quot;Image
+		/// Types|.png;.gif;.jpg&quot;). |callback| will be executed after the dialog is
+		/// dismissed or immediately if another dialog is already pending. The dialog
+		/// will be initiated asynchronously on the UI thread.
 		/// </summary>
 		public unsafe virtual void RunFileDialog(CefFileDialogMode mode, string title, string defaultFilePath, CefStringList acceptFilters, CefRunFileDialogCallback callback)
 		{
@@ -303,13 +404,13 @@ namespace CefNet
 		/// not sent and not accepted during download. Images with density independent
 		/// pixel (DIP) sizes larger than |max_image_size| are filtered out from the
 		/// image results. Versions of the image at different scale factors may be
-		/// downloaded up to the maximum scale factor supported by the system. If there
-		/// are no image results
+		/// downloaded up to the maximum scale factor supported by the system. If
+		/// there are no image results
 		/// &lt;
-		/// = |max_image_size| then the smallest image is resized
-		/// to |max_image_size| and is the only result. A |max_image_size| of 0 means
-		/// unlimited. If |bypass_cache| is true (1) then |image_url| is requested from
-		/// the server even if it is present in the browser cache.
+		/// = |max_image_size| then the smallest image is
+		/// resized to |max_image_size| and is the only result. A |max_image_size| of
+		/// 0 means unlimited. If |bypass_cache| is true (1) then |image_url| is
+		/// requested from the server even if it is present in the browser cache.
 		/// </summary>
 		public unsafe virtual void DownloadImage(string imageUrl, bool isFavicon, uint maxImageSize, bool bypassCache, CefDownloadImageCallback callback)
 		{
@@ -341,7 +442,7 @@ namespace CefNet
 			fixed (char* s0 = path)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = path != null ? path.Length : 0 };
-				NativeInstance->PrintToPdf(&cstr0, (cef_pdf_print_settings_t*)&settings, (callback != null) ? callback.GetNativeInstance() : null);
+				NativeInstance->PrintToPdf(&cstr0, settings.GetNativeInstance(), (callback != null) ? callback.GetNativeInstance() : null);
 			}
 			GC.KeepAlive(this);
 		}
@@ -350,9 +451,9 @@ namespace CefNet
 		/// Search for |searchText|. |forward| indicates whether to search forward or
 		/// backward within the page. |matchCase| indicates whether the search should
 		/// be case-sensitive. |findNext| indicates whether this is the first request
-		/// or a follow-up. The search will be restarted if |searchText| or |matchCase|
-		/// change. The search will be stopped if |searchText| is NULL. The
-		/// cef_find_handler_t instance, if any, returned via
+		/// or a follow-up. The search will be restarted if |searchText| or
+		/// |matchCase| change. The search will be stopped if |searchText| is NULL.
+		/// The cef_find_handler_t instance, if any, returned via
 		/// cef_client_t::GetFindHandler will be called to report find results.
 		/// </summary>
 		public unsafe virtual void Find(string searchText, bool forward, bool matchCase, bool findNext)
@@ -378,10 +479,10 @@ namespace CefNet
 		/// Open developer tools (DevTools) in its own browser. The DevTools browser
 		/// will remain associated with this browser. If the DevTools browser is
 		/// already open then it will be focused, in which case the |windowInfo|,
-		/// |client| and |settings| parameters will be ignored. If |inspect_element_at|
-		/// is non-NULL then the element at the specified (x,y) location will be
-		/// inspected. The |windowInfo| parameter will be ignored if this browser is
-		/// wrapped in a cef_browser_view_t.
+		/// |client| and |settings| parameters will be ignored. If
+		/// |inspect_element_at| is non-NULL then the element at the specified (x,y)
+		/// location will be inspected. The |windowInfo| parameter will be ignored if
+		/// this browser is wrapped in a cef_browser_view_t.
 		/// </summary>
 		public unsafe virtual void ShowDevTools(CefWindowInfo windowInfo, CefClient client, CefBrowserSettings settings, CefPoint inspectElementAt)
 		{
@@ -406,13 +507,13 @@ namespace CefNet
 		/// protocol/ for details of supported functions and the expected &quot;params&quot;
 		/// dictionary contents. |message| will be copied if necessary. This function
 		/// will return true (1) if called on the UI thread and the message was
-		/// successfully submitted for validation, otherwise false (0). Validation will
-		/// be applied asynchronously and any messages that fail due to formatting
-		/// errors or missing parameters may be discarded without notification. Prefer
-		/// ExecuteDevToolsMethod if a more structured approach to message formatting
-		/// is desired.
-		/// Every valid function call will result in an asynchronous function result or
-		/// error message that references the sent message &quot;id&quot;. Event messages are
+		/// successfully submitted for validation, otherwise false (0). Validation
+		/// will be applied asynchronously and any messages that fail due to
+		/// formatting errors or missing parameters may be discarded without
+		/// notification. Prefer ExecuteDevToolsMethod if a more structured approach
+		/// to message formatting is desired.
+		/// Every valid function call will result in an asynchronous function result
+		/// or error message that references the sent message &quot;id&quot;. Event messages are
 		/// received while notifications are enabled (for example, between function
 		/// calls for &quot;Page.enable&quot; and &quot;Page.disable&quot;). All received messages will be
 		/// delivered to the observer(s) registered with AddDevToolsMessageObserver.
@@ -438,14 +539,15 @@ namespace CefNet
 		/// <summary>
 		/// Execute a function call over the DevTools protocol. This is a more
 		/// structured version of SendDevToolsMessage. |message_id| is an incremental
-		/// number that uniquely identifies the message (pass 0 to have the next number
-		/// assigned automatically based on previous values). |function| is the
-		/// function name. |params| are the function parameters, which may be NULL. See
-		/// the DevTools protocol documentation (linked above) for details of supported
-		/// functions and the expected |params| dictionary contents. This function will
-		/// return the assigned message ID if called on the UI thread and the message
-		/// was successfully submitted for validation, otherwise 0. See the
-		/// SendDevToolsMessage documentation for additional usage information.
+		/// number that uniquely identifies the message (pass 0 to have the next
+		/// number assigned automatically based on previous values). |function| is the
+		/// function name. |params| are the function parameters, which may be NULL.
+		/// See the DevTools protocol documentation (linked above) for details of
+		/// supported functions and the expected |params| dictionary contents. This
+		/// function will return the assigned message ID if called on the UI thread
+		/// and the message was successfully submitted for validation, otherwise 0.
+		/// See the SendDevToolsMessage documentation for additional usage
+		/// information.
 		/// </summary>
 		public unsafe virtual int ExecuteDevToolsMethod(int messageId, string method, CefDictionaryValue @params)
 		{
@@ -459,8 +561,8 @@ namespace CefNet
 		/// <summary>
 		/// Add an observer for DevTools protocol messages (function results and
 		/// events). The observer will remain registered until the returned
-		/// Registration object is destroyed. See the SendDevToolsMessage documentation
-		/// for additional usage information.
+		/// Registration object is destroyed. See the SendDevToolsMessage
+		/// documentation for additional usage information.
 		/// </summary>
 		public unsafe virtual CefRegistration AddDevToolsMessageObserver(CefDevToolsMessageObserver observer)
 		{
@@ -480,8 +582,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// If a misspelled word is currently selected in an editable node calling this
-		/// function will replace it with the specified |word|.
+		/// If a misspelled word is currently selected in an editable node calling
+		/// this function will replace it with the specified |word|.
 		/// </summary>
 		public unsafe virtual void ReplaceMisspelling(string word)
 		{
@@ -507,10 +609,10 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Notify the browser that the widget has been resized. The browser will first
-		/// call cef_render_handler_t::GetViewRect to get the new size and then call
-		/// cef_render_handler_t::OnPaint asynchronously with the updated regions. This
-		/// function is only used when window rendering is disabled.
+		/// Notify the browser that the widget has been resized. The browser will
+		/// first call cef_render_handler_t::GetViewRect to get the new size and then
+		/// call cef_render_handler_t::OnPaint asynchronously with the updated
+		/// regions. This function is only used when window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void WasResized()
 		{
@@ -530,12 +632,22 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Send a notification to the browser that the screen info has changed. The
-		/// browser will then call cef_render_handler_t::GetScreenInfo to update the
-		/// screen information with the new values. This simulates moving the webview
-		/// window from one display to another, or changing the properties of the
-		/// current display. This function is only used when window rendering is
-		/// disabled.
+		/// Notify the browser that screen information has changed. Updated
+		/// information will be sent to the renderer process to configure screen size
+		/// and position values used by CSS and JavaScript (window.deviceScaleFactor,
+		/// window.screenX/Y, window.outerWidth/Height, etc.). For background see
+		/// https://chromiumembedded.github.io/cef/general_usage#coordinate-systems
+		/// This function is used with (a) windowless rendering and (b) windowed
+		/// rendering with external (client-provided) root window.
+		/// With windowless rendering the browser will call
+		/// cef_render_handler_t::GetScreenInfo,
+		/// cef_render_handler_t::GetRootScreenRect and
+		/// cef_render_handler_t::GetViewRect. This simulates moving or resizing the
+		/// root window in the current display, moving the root window from one
+		/// display to another, or changing the properties of the current display.
+		/// With windowed rendering the browser will call
+		/// cef_display_handler_t::GetRootWindowScreenRect and use the associated
+		/// display properties.
 		/// </summary>
 		public unsafe virtual void NotifyScreenInfoChanged()
 		{
@@ -569,7 +681,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual void SendKeyEvent(CefKeyEvent @event)
 		{
-			NativeInstance->SendKeyEvent((cef_key_event_t*)&@event);
+			NativeInstance->SendKeyEvent(@event.GetNativeInstance());
 			GC.KeepAlive(this);
 		}
 
@@ -596,9 +708,10 @@ namespace CefNet
 		/// <summary>
 		/// Send a mouse wheel event to the browser. The |x| and |y| coordinates are
 		/// relative to the upper-left corner of the view. The |deltaX| and |deltaY|
-		/// values represent the movement delta in the X and Y directions respectively.
-		/// In order to scroll inside select popups with window rendering disabled
-		/// cef_render_handler_t::GetScreenPoint should be implemented properly.
+		/// values represent the movement delta in the X and Y directions
+		/// respectively. In order to scroll inside select popups with window
+		/// rendering disabled cef_render_handler_t::GetScreenPoint should be
+		/// implemented properly.
 		/// </summary>
 		public unsafe virtual void SendMouseWheelEvent(CefMouseEvent @event, int deltaX, int deltaY)
 		{
@@ -638,30 +751,36 @@ namespace CefNet
 		/// Begins a new composition or updates the existing composition. Blink has a
 		/// special node (a composition node) that allows the input function to change
 		/// text without affecting other DOM nodes. |text| is the optional text that
-		/// will be inserted into the composition node. |underlines| is an optional set
-		/// of ranges that will be underlined in the resulting text.
+		/// will be inserted into the composition node. |underlines| is an optional
+		/// set of ranges that will be underlined in the resulting text.
 		/// |replacement_range| is an optional range of the existing text that will be
-		/// replaced. |selection_range| is an optional range of the resulting text that
-		/// will be selected after insertion or replacement. The |replacement_range|
-		/// value is only used on OS X.
-		/// This function may be called multiple times as the composition changes. When
-		/// the client is done making changes the composition should either be canceled
-		/// or completed. To cancel the composition call ImeCancelComposition. To
-		/// complete the composition call either ImeCommitText or
-		/// ImeFinishComposingText. Completion is usually signaled when:
-		/// A. The client receives a WM_IME_COMPOSITION message with a GCS_RESULTSTR
+		/// replaced. |selection_range| is an optional range of the resulting text
+		/// that will be selected after insertion or replacement. The
+		/// |replacement_range| value is only used on OS X.
+		/// This function may be called multiple times as the composition changes.
+		/// When the client is done making changes the composition should either be
+		/// canceled or completed. To cancel the composition call
+		/// ImeCancelComposition. To complete the composition call either
+		/// ImeCommitText or ImeFinishComposingText. Completion is usually signaled
+		/// when:
+		/// 1. The client receives a WM_IME_COMPOSITION message with a GCS_RESULTSTR
 		/// flag (on Windows), or;
-		/// B. The client receives a &quot;commit&quot; signal of GtkIMContext (on Linux), or;
-		/// C. insertText of NSTextInput is called (on Mac).
+		/// 2. The client receives a &quot;commit&quot; signal of GtkIMContext (on Linux), or;
+		/// 3. insertText of NSTextInput is called (on Mac).
 		/// This function is only used when window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void ImeSetComposition(string text, CefCompositionUnderline[] underlines, CefRange replacementRange, CefRange selectionRange)
 		{
 			fixed (char* s0 = text)
-			fixed (CefCompositionUnderline* p2 = underlines)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = text != null ? text.Length : 0 };
-				NativeInstance->ImeSetComposition(&cstr0, new UIntPtr((uint)underlines.Length), (cef_composition_underline_t*)p2, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
+				cef_composition_underline_t* arr2 = (cef_composition_underline_t*)Marshal.AllocHGlobal(sizeof(cef_composition_underline_t) * underlines.Length);
+				for (int i = 0; i < underlines.Length; i++)
+				{
+					*(arr2 + i) = *underlines[i].GetNativeInstance();
+				}
+				NativeInstance->ImeSetComposition(&cstr0, new UIntPtr((uint)underlines.Length), arr2, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
+				Marshal.FreeHGlobal((IntPtr)arr2);
 			}
 			GC.KeepAlive(this);
 		}
@@ -686,9 +805,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Completes the existing composition by applying the current composition node
-		/// contents. If |keep_selection| is false (0) the current selection, if any,
-		/// will be discarded. See comments on ImeSetComposition for usage. This
+		/// Completes the existing composition by applying the current composition
+		/// node contents. If |keep_selection| is false (0) the current selection, if
+		/// any, will be discarded. See comments on ImeSetComposition for usage. This
 		/// function is only used when window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void ImeFinishComposingText(bool keepSelection)
@@ -698,9 +817,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Cancels the existing composition and discards the composition node contents
-		/// without applying them. See comments on ImeSetComposition for usage. This
-		/// function is only used when window rendering is disabled.
+		/// Cancels the existing composition and discards the composition node
+		/// contents without applying them. See comments on ImeSetComposition for
+		/// usage. This function is only used when window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void ImeCancelComposition()
 		{
@@ -726,8 +845,8 @@ namespace CefNet
 		/// <summary>
 		/// Call this function each time the mouse is moved across the web view during
 		/// a drag operation (after calling DragTargetDragEnter and before calling
-		/// DragTargetDragLeave/DragTargetDrop). This function is only used when window
-		/// rendering is disabled.
+		/// DragTargetDragLeave/DragTargetDrop). This function is only used when
+		/// window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void DragTargetDragOver(CefMouseEvent @event, CefDragOperationsMask allowedOps)
 		{
@@ -736,9 +855,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Call this function when the user drags the mouse out of the web view (after
-		/// calling DragTargetDragEnter). This function is only used when window
-		/// rendering is disabled.
+		/// Call this function when the user drags the mouse out of the web view
+		/// (after calling DragTargetDragEnter). This function is only used when
+		/// window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void DragTargetDragLeave()
 		{
@@ -778,9 +897,9 @@ namespace CefNet
 		/// Call this function when the drag operation started by a
 		/// cef_render_handler_t::StartDragging call has completed. This function may
 		/// be called immediately without first calling DragSourceEndedAt to cancel a
-		/// drag operation. If the web view is both the drag source and the drag target
-		/// then all DragTarget* functions should be called before DragSource* mthods.
-		/// This function is only used when window rendering is disabled.
+		/// drag operation. If the web view is both the drag source and the drag
+		/// target then all DragTarget* functions should be called before DragSource*
+		/// mthods. This function is only used when window rendering is disabled.
 		/// </summary>
 		public unsafe virtual void DragSourceSystemDragEnded()
 		{
@@ -790,12 +909,54 @@ namespace CefNet
 
 		/// <summary>
 		/// Enable notifications of auto resize via
-		/// cef_display_handler_t::OnAutoResize. Notifications are disabled by default.
-		/// |min_size| and |max_size| define the range of allowed sizes.
+		/// cef_display_handler_t::OnAutoResize. Notifications are disabled by
+		/// default. |min_size| and |max_size| define the range of allowed sizes.
 		/// </summary>
 		public unsafe virtual void SetAutoResizeEnabled(int enabled, CefSize minSize, CefSize maxSize)
 		{
 			NativeInstance->SetAutoResizeEnabled(enabled, (cef_size_t*)&minSize, (cef_size_t*)&maxSize);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Requests the renderer to exit browser fullscreen. In most cases exiting
+		/// window fullscreen should also exit browser fullscreen. With Alloy style
+		/// this function should be called in response to a user action such as
+		/// clicking the green traffic light button on MacOS
+		/// (cef_window_delegate_t::OnWindowFullscreenTransition callback) or pressing
+		/// the &quot;ESC&quot; key (cef_keyboard_handler_t::OnPreKeyEvent callback). With
+		/// Chrome style these standard exit actions are handled internally but
+		/// new/additional user actions can use this function. Set |will_cause_resize|
+		/// to true (1) if exiting browser fullscreen will cause a view resize.
+		/// </summary>
+		public unsafe virtual void ExitFullscreen(bool willCauseResize)
+		{
+			NativeInstance->ExitFullscreen(willCauseResize ? 1 : 0);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Returns true (1) if a Chrome command is supported and enabled. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. This function can only be called on the UI thread.
+		/// Only used with Chrome style.
+		/// </summary>
+		public unsafe virtual bool CanExecuteChromeCommand(int commandId)
+		{
+			return SafeCall(NativeInstance->CanExecuteChromeCommand(commandId) != 0);
+		}
+
+		/// <summary>
+		/// Execute a Chrome command. Use the cef_id_for_command_id_name() function
+		/// for version-safe mapping of command IDC names from cef_command_ids.h to
+		/// version-specific numerical |command_id| values. |disposition| provides
+		/// information about the intended command target. Only used with Chrome
+		/// style.
+		/// </summary>
+		public unsafe virtual void ExecuteChromeCommand(int commandId, CefWindowOpenDisposition disposition)
+		{
+			NativeInstance->ExecuteChromeCommand(commandId, disposition);
 			GC.KeepAlive(this);
 		}
 
@@ -811,27 +972,27 @@ namespace CefNet
 		/// <summary>
 		/// Set accessibility state for all frames. |accessibility_state| may be
 		/// default, enabled or disabled. If |accessibility_state| is STATE_DEFAULT
-		/// then accessibility will be disabled by default and the state may be further
-		/// controlled with the &quot;force-renderer-accessibility&quot; and &quot;disable-renderer-
-		/// accessibility&quot; command-line switches. If |accessibility_state| is
+		/// then accessibility will be disabled by default and the state may be
+		/// further controlled with the &quot;force-renderer-accessibility&quot; and &quot;disable-
+		/// renderer-accessibility&quot; command-line switches. If |accessibility_state| is
 		/// STATE_ENABLED then accessibility will be enabled. If |accessibility_state|
 		/// is STATE_DISABLED then accessibility will be completely disabled.
-		/// For windowed browsers accessibility will be enabled in Complete mode (which
-		/// corresponds to kAccessibilityModeComplete in Chromium). In this mode all
-		/// platform accessibility objects will be created and managed by Chromium&apos;s
-		/// internal implementation. The client needs only to detect the screen reader
-		/// and call this function appropriately. For example, on macOS the client can
-		/// handle the
+		/// For windowed browsers accessibility will be enabled in Complete mode
+		/// (which corresponds to kAccessibilityModeComplete in Chromium). In this
+		/// mode all platform accessibility objects will be created and managed by
+		/// Chromium&apos;s internal implementation. The client needs only to detect the
+		/// screen reader and call this function appropriately. For example, on macOS
+		/// the client can handle the
 		/// &quot;
-		/// AXEnhancedUserStructure&quot; accessibility attribute to detect
-		/// VoiceOver state changes and on Windows the client can handle WM_GETOBJECT
-		/// with OBJID_CLIENT to detect accessibility readers.
+		/// AXEnhancedUserStructure&quot; accessibility
+		/// attribute to detect VoiceOver state changes and on Windows the client can
+		/// handle WM_GETOBJECT with OBJID_CLIENT to detect accessibility readers.
 		/// For windowless browsers accessibility will be enabled in TreeOnly mode
 		/// (which corresponds to kAccessibilityModeWebContentsOnly in Chromium). In
-		/// this mode renderer accessibility is enabled, the full tree is computed, and
-		/// events are passed to CefAccessibiltyHandler, but platform accessibility
-		/// objects are not created. The client may implement platform accessibility
-		/// objects using CefAccessibiltyHandler callbacks if desired.
+		/// this mode renderer accessibility is enabled, the full tree is computed,
+		/// and events are passed to CefAccessibiltyHandler, but platform
+		/// accessibility objects are not created. The client may implement platform
+		/// accessibility objects using CefAccessibiltyHandler callbacks if desired.
 		/// </summary>
 		public unsafe virtual void SetAccessibilityState(CefState accessibilityState)
 		{

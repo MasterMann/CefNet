@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure the client can implement to provide a custom stream writer. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -69,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefWriteHandlerPrivate.AvoidWrite();
+		bool ICefWriteHandlerPrivate.AvoidWrite()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefWriteHandler), nameof(Write));
+		}
 
 		/// <summary>
 		/// Write raw binary data.
@@ -85,7 +88,7 @@ namespace CefNet
 		private unsafe delegate UIntPtr WriteDelegate(cef_write_handler_t* self, void* ptr, UIntPtr size, UIntPtr n);
 
 #endif // NET_LESS_5_0
-		// size_t (*)(_cef_write_handler_t* self, const void* ptr, size_t size, size_t n)*
+		// size_t (*)(_cef_write_handler_t* self, void const* ptr, size_t size, size_t n)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -99,12 +102,15 @@ namespace CefNet
 			return new UIntPtr((ulong)instance.Write(unchecked((IntPtr)ptr), (long)size, (long)n));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefWriteHandlerPrivate.AvoidSeek();
+		bool ICefWriteHandlerPrivate.AvoidSeek()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefWriteHandler), nameof(Seek));
+		}
 
 		/// <summary>
-		/// Seek to the specified offset position. |whence| may be any one of SEEK_CUR,
-		/// SEEK_END or SEEK_SET. Return zero on success and non-zero on failure.
+		/// Seek to the specified offset position. |whence| may be any one of
+		/// SEEK_CUR, SEEK_END or SEEK_SET. Return zero on success and non-zero on
+		/// failure.
 		/// </summary>
 		protected internal unsafe virtual int Seek(long offset, int whence)
 		{
@@ -116,7 +122,7 @@ namespace CefNet
 		private unsafe delegate int SeekDelegate(cef_write_handler_t* self, long offset, int whence);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_write_handler_t* self, int64 offset, int whence)*
+		// int (*)(_cef_write_handler_t* self, int64_t offset, int whence)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -143,7 +149,7 @@ namespace CefNet
 		private unsafe delegate long TellDelegate(cef_write_handler_t* self);
 
 #endif // NET_LESS_5_0
-		// int64 (*)(_cef_write_handler_t* self)*
+		// int64_t (*)(_cef_write_handler_t* self)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -186,8 +192,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Return true (1) if this handler performs work like accessing the file
-		/// system which may block. Used as a hint for determining the thread to access
-		/// the handler from.
+		/// system which may block. Used as a hint for determining the thread to
+		/// access the handler from.
 		/// </summary>
 		protected internal unsafe virtual bool MayBlock()
 		{

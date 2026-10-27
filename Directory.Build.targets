@@ -1,0 +1,6 @@
+<Project>
+
+  <!-- Samples and tests reference CefNet as a project, so they import the targets that the NuGet package provides. -->
+  <Import Project="$(MSBuildThisFileDirectory)CefNet/build/CefNet.targets" />
+
+</Project>

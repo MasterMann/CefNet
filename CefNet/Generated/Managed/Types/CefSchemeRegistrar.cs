@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure that manages custom scheme registrations.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -39,8 +40,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Register a custom scheme. This function should not be called for the built-
-		/// in HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
+		/// Register a custom scheme. This function should not be called for the
+		/// built-in HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
 		/// See cef_scheme_options_t for possible values for |options|.
 		/// This function may be called on any thread. It should only be called once
 		/// per unique |scheme_name| value. If |scheme_name| is already registered or

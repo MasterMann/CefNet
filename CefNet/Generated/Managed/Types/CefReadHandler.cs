@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure the client can implement to provide a custom stream reader. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -69,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefReadHandlerPrivate.AvoidRead();
+		bool ICefReadHandlerPrivate.AvoidRead()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefReadHandler), nameof(Read));
+		}
 
 		/// <summary>
 		/// Read raw binary data.
@@ -99,12 +102,15 @@ namespace CefNet
 			return new UIntPtr((ulong)instance.Read(unchecked((IntPtr)ptr), (long)size, (long)n));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefReadHandlerPrivate.AvoidSeek();
+		bool ICefReadHandlerPrivate.AvoidSeek()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefReadHandler), nameof(Seek));
+		}
 
 		/// <summary>
-		/// Seek to the specified offset position. |whence| may be any one of SEEK_CUR,
-		/// SEEK_END or SEEK_SET. Return zero on success and non-zero on failure.
+		/// Seek to the specified offset position. |whence| may be any one of
+		/// SEEK_CUR, SEEK_END or SEEK_SET. Return zero on success and non-zero on
+		/// failure.
 		/// </summary>
 		protected internal unsafe virtual int Seek(long offset, int whence)
 		{
@@ -116,7 +122,7 @@ namespace CefNet
 		private unsafe delegate int SeekDelegate(cef_read_handler_t* self, long offset, int whence);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_read_handler_t* self, int64 offset, int whence)*
+		// int (*)(_cef_read_handler_t* self, int64_t offset, int whence)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -143,7 +149,7 @@ namespace CefNet
 		private unsafe delegate long TellDelegate(cef_read_handler_t* self);
 
 #endif // NET_LESS_5_0
-		// int64 (*)(_cef_read_handler_t* self)*
+		// int64_t (*)(_cef_read_handler_t* self)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -186,8 +192,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Return true (1) if this handler performs work like accessing the file
-		/// system which may block. Used as a hint for determining the thread to access
-		/// the handler from.
+		/// system which may block. Used as a hint for determining the thread to
+		/// access the handler from.
 		/// </summary>
 		protected internal unsafe virtual bool MayBlock()
 		{

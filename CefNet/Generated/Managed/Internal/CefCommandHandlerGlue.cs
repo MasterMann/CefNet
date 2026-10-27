@@ -39,5 +39,45 @@ namespace CefNet.Internal
 			return _implementation.OnChromeCommand(browser, commandId, disposition);
 		}
 
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible()
+		{
+			return _implementation.AvoidIsChromeAppMenuItemVisible();
+		}
+
+		protected internal unsafe override bool IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
+		{
+			return _implementation.IsChromeAppMenuItemVisible(browser, commandId);
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled()
+		{
+			return _implementation.AvoidIsChromeAppMenuItemEnabled();
+		}
+
+		protected internal unsafe override bool IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
+		{
+			return _implementation.IsChromeAppMenuItemEnabled(browser, commandId);
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromePageActionIconVisible()
+		{
+			return _implementation.AvoidIsChromePageActionIconVisible();
+		}
+
+		protected internal unsafe override bool IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
+		{
+			return _implementation.IsChromePageActionIconVisible(iconType);
+		}
+
+		bool ICefCommandHandlerPrivate.AvoidIsChromeToolbarButtonVisible()
+		{
+			return _implementation.AvoidIsChromeToolbarButtonVisible();
+		}
+
+		protected internal unsafe override bool IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
+		{
+			return _implementation.IsChromeToolbarButtonVisible(buttonType);
+		}
+
 	}
 }

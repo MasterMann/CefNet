@@ -42,6 +42,8 @@ namespace CefNet
 		DocumentType = 8,
 
 		DocumentFragment = 9,
+
+		NumValues = 10,
 	}
 }
 

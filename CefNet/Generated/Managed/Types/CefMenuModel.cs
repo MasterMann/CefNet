@@ -25,6 +25,7 @@ namespace CefNet
 	/// command ids that have default implementations. All user-defined command ids
 	/// should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of
 	/// this structure can only be accessed on the browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -178,8 +179,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Insert a sub-menu in the menu at the specified |index|. The new sub-menu is
-		/// returned.
+		/// Insert a sub-menu in the menu at the specified |index|. The new sub-menu
+		/// is returned.
 		/// </summary>
 		public unsafe virtual CefMenuModel InsertSubMenuAt(long index, int commandId, string label)
 		{
@@ -253,7 +254,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Sets the label for the specified |command_id|. Returns true (1) on success.
+		/// Sets the label for the specified |command_id|. Returns true (1) on
+		/// success.
 		/// </summary>
 		public unsafe virtual bool SetLabel(int commandId, string label)
 		{
@@ -419,8 +421,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Returns true (1) if the specified |index| is checked. Only applies to check
-		/// and radio items.
+		/// Returns true (1) if the specified |index| is checked. Only applies to
+		/// check and radio items.
 		/// </summary>
 		public unsafe virtual bool IsCheckedAt(long index)
 		{
@@ -437,8 +439,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Check the specified |index|. Only applies to check and radio items. Returns
-		/// true (1) on success.
+		/// Check the specified |index|. Only applies to check and radio items.
+		/// Returns true (1) on success.
 		/// </summary>
 		public unsafe virtual bool SetCheckedAt(long index, bool @checked)
 		{
@@ -464,8 +466,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Set the keyboard accelerator for the specified |command_id|. |key_code| can
-		/// be any virtual key or character value. Returns true (1) on success.
+		/// Set the keyboard accelerator for the specified |command_id|. |key_code|
+		/// can be any virtual key or character value. Returns true (1) on success.
 		/// </summary>
 		public unsafe virtual bool SetAccelerator(int commandId, int keyCode, bool shiftPressed, bool ctrlPressed, bool altPressed)
 		{
@@ -543,9 +545,9 @@ namespace CefNet
 		/// <summary>
 		/// Set the explicit color for |command_id| and |index| to |color|. Specify a
 		/// |color| value of 0 to remove the explicit color. Specify an |index| value
-		/// of -1 to set the default color for items that do not have an explicit color
-		/// set. If no explicit color or default color is set for |color_type| then the
-		/// system color will be used. Returns true (1) on success.
+		/// of -1 to set the default color for items that do not have an explicit
+		/// color set. If no explicit color or default color is set for |color_type|
+		/// then the system color will be used. Returns true (1) on success.
 		/// </summary>
 		public unsafe virtual bool SetColorAt(int index, CefMenuColorType colorType, CefColor color)
 		{
@@ -567,9 +569,9 @@ namespace CefNet
 
 		/// <summary>
 		/// Returns in |color| the color that was explicitly set for |command_id| and
-		/// |color_type|. Specify an |index| value of -1 to return the default color in
-		/// |color|. If a color was not set then 0 will be returned in |color|. Returns
-		/// true (1) on success.
+		/// |color_type|. Specify an |index| value of -1 to return the default color
+		/// in |color|. If a color was not set then 0 will be returned in |color|.
+		/// Returns true (1) on success.
 		/// </summary>
 		public unsafe virtual bool GetColorAt(int index, CefMenuColorType colorType, ref CefColor color)
 		{
@@ -582,17 +584,14 @@ namespace CefNet
 		/// <summary>
 		/// Sets the font list for the specified |command_id|. If |font_list| is NULL
 		/// the system font will be used. Returns true (1) on success. The format is
-		/// &quot;
-		/// &lt;FONT
-		/// _FAMILY_LIST&gt;,[STYLES]
-		/// &lt;SIZE
-		/// &gt;&quot;, where: - FONT_FAMILY_LIST is a comma-
-		/// separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names (case-sensitive
-		/// &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where:
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		public unsafe virtual bool SetFontList(int commandId, string fontList)
 		{
@@ -605,26 +604,21 @@ namespace CefNet
 
 		/// <summary>
 		/// Sets the font list for the specified |index|. Specify an |index| value of
-		/// -1 to set the default font. If |font_list| is NULL the system font will be
-		/// used. Returns true (1) on success. The format is
-		/// &quot;
-		/// &lt;FONT
-		/// _FAMILY_LIST&gt;,[STYLES]
-		/// &lt;SIZE
-		/// &gt;&quot;, where: - FONT_FAMILY_LIST is a comma-
-		/// separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names (case-sensitive
-		/// &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// - 1 to set the default font. If |font_list| is NULL the system font will
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
-		public unsafe virtual bool SetFontListAt(int index, string fontList)
+		public unsafe virtual int SetFontListAt(int index, string fontList)
 		{
 			fixed (char* s1 = fontList)
 			{
 				var cstr1 = new cef_string_t { Str = s1, Length = fontList != null ? fontList.Length : 0 };
-				return SafeCall(NativeInstance->SetFontListAt(index, &cstr1) != 0);
+				return SafeCall(NativeInstance->SetFontListAt(index, &cstr1));
 			}
 		}
 	}

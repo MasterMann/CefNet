@@ -139,6 +139,8 @@ namespace CefNet.Wpf
 						requestContext = value as CefRequestContext;
 					if (propertyBag.TryGetValue(InitialPropertyKeys.ExtraInfo, out value))
 						extraInfo = value as CefDictionaryValue;
+					if (propertyBag.TryGetValue(InitialPropertyKeys.SharedTexture, out value))
+						windowInfo.SharedTextureEnabled = (bool)value;
 				}
 
 				if (initialUrl == null)
@@ -205,7 +207,7 @@ namespace CefNet.Wpf
 			if (this.ViewGlue != null)
 			{
 				SetState(State.Closing, true);
-				BrowserObject?.Host.CloseBrowser(true);
+				BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				this.ViewGlue = null;
 			}
 		}
@@ -464,7 +466,7 @@ namespace CefNet.Wpf
 			InitialPropertyBag = null;
 		}
 
-		bool IChromiumWebViewPrivate.GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		bool IChromiumWebViewPrivate.GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
 			return false;
 		}
@@ -775,7 +777,9 @@ namespace CefNet.Wpf
 				var k = new CefKeyEvent();
 				k.Type = CefKeyEventType.Char;
 				k.WindowsKeyCode = symbol;
-				k.NativeKeyCode = KeycodeConverter.VirtualKeyToNativeKeyCode(KeycodeConverter.CharacterToVirtualKey(symbol), modifiers, _lastKeydownIsExtendedKey);
+				k.NativeKeyCode = KeycodeConverter.TryCharacterToVirtualKey(symbol, out VirtualKeys key)
+					? KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, _lastKeydownIsExtendedKey)
+					: 0;
 				k.Modifiers = (uint)modifiers;
 				this.BrowserObject?.Host.SendKeyEvent(k);
 			}

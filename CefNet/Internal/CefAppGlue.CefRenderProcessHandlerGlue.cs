@@ -12,16 +12,20 @@ namespace CefNet.Internal
 			_application.OnWebKitInitialized();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnBrowserCreated();
+		internal bool AvoidOnBrowserCreated()
+		{
+			return !VirtualMethods.IsOverridden(_application, typeof(CefNetApplication), nameof(CefNetApplication.OnBrowserCreated));
+		}
 
 		public void OnBrowserCreated(CefBrowser browser, CefDictionaryValue extraInfo)
 		{
 			_application.OnBrowserCreated(browser, extraInfo);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnBrowserDestroyed();
+		internal bool AvoidOnBrowserDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(_application, typeof(CefNetApplication), nameof(CefNetApplication.OnBrowserDestroyed));
+		}
 
 		public void OnBrowserDestroyed(CefBrowser browser)
 		{
@@ -63,8 +67,10 @@ namespace CefNet.Internal
 			_application.OnUncaughtException(new CefUncaughtExceptionEventArgs(browser, frame, context, exception, stackTrace));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnFocusedNodeChanged();
+		internal bool AvoidOnFocusedNodeChanged()
+		{
+			return !VirtualMethods.IsOverridden(_application, typeof(CefNetApplication), nameof(CefNetApplication.OnFocusedNodeChanged));
+		}
 
 		public void OnFocusedNodeChanged(CefBrowser browser, CefFrame frame, CefDOMNode node)
 		{

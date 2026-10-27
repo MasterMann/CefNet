@@ -24,6 +24,7 @@ namespace CefNet.CApi
 	/// can be created on any valid CEF thread in either the browser or render
 	/// process. Once created the functions of the URL request object must be
 	/// accessed on the same thread that created it.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_urlrequest_t
@@ -110,8 +111,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns the response, or NULL if no response information is available.
-		/// Response information will only be available after the upload has completed.
-		/// The returned object is read-only and should not be modified.
+		/// Response information will only be available after the upload has
+		/// completed. The returned object is read-only and should not be modified.
 		/// </summary>
 		[NativeName("get_response")]
 		public unsafe cef_response_t* GetResponse()

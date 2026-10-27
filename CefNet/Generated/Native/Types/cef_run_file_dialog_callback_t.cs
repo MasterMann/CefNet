@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::RunFileDialog. The functions of
 	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_run_file_dialog_callback_t
@@ -36,9 +37,9 @@ namespace CefNet.CApi
 		public void* on_file_dialog_dismissed;
 
 		/// <summary>
-		/// Called asynchronously after the file dialog is dismissed. |file_paths| will
-		/// be a single value or a list of values depending on the dialog mode. If the
-		/// selection was cancelled |file_paths| will be NULL.
+		/// Called asynchronously after the file dialog is dismissed. |file_paths|
+		/// will be a single value or a list of values depending on the dialog mode.
+		/// If the selection was cancelled |file_paths| will be NULL.
 		/// </summary>
 		[NativeName("on_file_dialog_dismissed")]
 		public unsafe void OnFileDialogDismissed(cef_string_list_t file_paths)

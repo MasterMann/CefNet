@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to handle menu model events. The functions of this
 	/// structure will be called on the browser process UI thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_menu_model_delegate_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, const cef_point_t* screen_point)*
+		/// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, cef_point_t const* screen_point)*
 		/// </summary>
 		public void* mouse_outside_menu;
 

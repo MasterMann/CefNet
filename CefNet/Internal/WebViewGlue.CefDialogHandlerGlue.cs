@@ -12,8 +12,10 @@ namespace CefNet.Internal
 				this.DialogGlue = new CefDialogHandlerGlue(this);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnFileDialog();
+		internal bool AvoidOnFileDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFileDialog));
+		}
 
 		/// <summary>
 		/// Called to run a file chooser dialog.
@@ -46,7 +48,7 @@ namespace CefNet.Internal
 		/// To display a custom dialog return true and execute <paramref name="callback"/>
 		/// either inline or at a later time. To display the default dialog return false.
 		/// </returns>
-		internal protected virtual bool OnFileDialog(CefBrowser browser, CefFileDialogMode mode, string title, string defaultFilePath, CefStringList acceptFilters, CefFileDialogCallback callback)
+		internal protected virtual bool OnFileDialog(CefBrowser browser, CefFileDialogMode mode, string title, string defaultFilePath, CefStringList acceptFilters, CefStringList acceptExtensions, CefStringList acceptDescriptions, CefFileDialogCallback callback)
 		{
 			return false;
 		}

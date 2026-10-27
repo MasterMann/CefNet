@@ -29,6 +29,8 @@ namespace CefNet
 		Topright = 1,
 
 		Bottomcenter = 2,
+
+		NumValues = 3,
 	}
 }
 

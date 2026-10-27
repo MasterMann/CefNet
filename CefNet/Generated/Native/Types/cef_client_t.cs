@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Implement this structure to provide handler implementations.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_client_t
@@ -70,8 +71,8 @@ namespace CefNet.CApi
 		public void* get_context_menu_handler;
 
 		/// <summary>
-		/// Return the handler for context menus. If no handler is provided the default
-		/// implementation will be used.
+		/// Return the handler for context menus. If no handler is provided the
+		/// default implementation will be used.
 		/// </summary>
 		[NativeName("get_context_menu_handler")]
 		public unsafe cef_context_menu_handler_t* GetContextMenuHandler()
@@ -123,8 +124,9 @@ namespace CefNet.CApi
 		public void* get_download_handler;
 
 		/// <summary>
-		/// Return the handler for download events. If no handler is returned downloads
-		/// will not be allowed.
+		/// Return the handler for download events. If no handler is returned
+		/// downloads will be canceled with Alloy style and will proceed with default
+		/// handling with Chrome style.
 		/// </summary>
 		[NativeName("get_download_handler")]
 		public unsafe cef_download_handler_t* GetDownloadHandler()
@@ -349,9 +351,9 @@ namespace CefNet.CApi
 		public void* on_process_message_received;
 
 		/// <summary>
-		/// Called when a new message is received from a different process. Return true
-		/// (1) if the message was handled or false (0) otherwise.  It is safe to keep
-		/// a reference to |message| outside of this callback.
+		/// Called when a new message is received from a different process. Return
+		/// true (1) if the message was handled or false (0) otherwise.  It is safe to
+		/// keep a reference to |message| outside of this callback.
 		/// </summary>
 		[NativeName("on_process_message_received")]
 		public unsafe int OnProcessMessageReceived(cef_browser_t* browser, cef_frame_t* frame, CefProcessId source_process, cef_process_message_t* message)

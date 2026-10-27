@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used for managing cookies. The functions of this structure may be
 	/// called on any thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_cookie_manager_t
@@ -50,14 +51,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, int includeHttpOnly, _cef_cookie_visitor_t* visitor)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, int includeHttpOnly, _cef_cookie_visitor_t* visitor)*
 		/// </summary>
 		public void* visit_url_cookies;
 
 		/// <summary>
-		/// Visit a subset of cookies on the UI thread. The results are filtered by the
-		/// given url scheme, host, domain and path. If |includeHttpOnly| is true (1)
-		/// HTTP-only cookies will also be included in the results. The returned
+		/// Visit a subset of cookies on the UI thread. The results are filtered by
+		/// the given url scheme, host, domain and path. If |includeHttpOnly| is true
+		/// (1) HTTP-only cookies will also be included in the results. The returned
 		/// cookies are ordered by longest path, then by earliest creation date.
 		/// Returns false (0) if cookies cannot be accessed.
 		/// </summary>
@@ -71,14 +72,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, const const _cef_cookie_t* cookie, _cef_set_cookie_callback_t* callback)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, _cef_cookie_t const* cookie, _cef_set_cookie_callback_t* callback)*
 		/// </summary>
 		public void* set_cookie;
 
 		/// <summary>
 		/// Sets a cookie given a valid URL and explicit user-provided cookie
-		/// attributes. This function expects each attribute to be well-formed. It will
-		/// check for disallowed characters (e.g. the &apos;;&apos; character is disallowed
+		/// attributes. This function expects each attribute to be well-formed. It
+		/// will check for disallowed characters (e.g. the &apos;;&apos; character is disallowed
 		/// within the cookie value attribute) and fail without setting the cookie if
 		/// such characters are found. If |callback| is non-NULL it will be executed
 		/// asnychronously on the UI thread after the cookie has been set. Returns
@@ -94,7 +95,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, const cef_string_t* cookie_name, _cef_delete_cookies_callback_t* callback)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, cef_string_t const* cookie_name, _cef_delete_cookies_callback_t* callback)*
 		/// </summary>
 		public void* delete_cookies;
 
@@ -105,9 +106,9 @@ namespace CefNet.CApi
 		/// domain cookies) irrespective of path will be deleted. If |url| is NULL all
 		/// cookies for all hosts and domains will be deleted. If |callback| is non-
 		/// NULL it will be executed asnychronously on the UI thread after the cookies
-		/// have been deleted. Returns false (0) if a non-NULL invalid URL is specified
-		/// or if cookies cannot be accessed. Cookies can alternately be deleted using
-		/// the Visit*Cookies() functions.
+		/// have been deleted. Returns false (0) if a non-NULL invalid URL is
+		/// specified or if cookies cannot be accessed. Cookies can alternately be
+		/// deleted using the Visit*Cookies() functions.
 		/// </summary>
 		[NativeName("delete_cookies")]
 		public unsafe int DeleteCookies([Immutable]cef_string_t* url, [Immutable]cef_string_t* cookie_name, cef_delete_cookies_callback_t* callback)
@@ -124,9 +125,9 @@ namespace CefNet.CApi
 		public void* flush_store;
 
 		/// <summary>
-		/// Flush the backing store (if any) to disk. If |callback| is non-NULL it will
-		/// be executed asnychronously on the UI thread after the flush is complete.
-		/// Returns false (0) if cookies cannot be accessed.
+		/// Flush the backing store (if any) to disk. If |callback| is non-NULL it
+		/// will be executed asnychronously on the UI thread after the flush is
+		/// complete. Returns false (0) if cookies cannot be accessed.
 		/// </summary>
 		[NativeName("flush_store")]
 		public unsafe int FlushStore(cef_completion_callback_t* callback)

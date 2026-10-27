@@ -49,7 +49,7 @@ namespace CefNet.Internal
 		/// the same renderer process as the source browser.
 		/// </param>
 		/// <returns></returns>
-		internal protected virtual bool OnBeforePopup(CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition,
+		internal protected virtual bool OnBeforePopup(CefBrowser browser, CefFrame frame, int popupId, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition,
 			bool userGesture, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref int noJavascriptAccess)
 		{
 #if DEBUG
@@ -66,6 +66,34 @@ namespace CefNet.Internal
 				(client as CefClientGlue)?.NotifyPopupBrowserCreating();
 			}
 			return ea.Cancel;
+		}
+
+		internal bool AvoidOnBeforePopupAborted()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnBeforePopupAborted));
+		}
+
+		/// <summary>
+		/// Called when a popup announced by <see cref="OnBeforePopup"/> with <paramref name="popupId"/>
+		/// is not created, for example because it was blocked or its parent browser closed.
+		/// </summary>
+		internal protected virtual void OnBeforePopupAborted(CefBrowser browser, int popupId)
+		{
+
+		}
+
+		internal bool AvoidOnBeforeDevToolsPopup()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnBeforeDevToolsPopup));
+		}
+
+		/// <summary>
+		/// Called on the UI thread before a new DevTools popup browser is created.
+		/// Set <paramref name="useDefaultWindow"/> to nonzero to show DevTools in a default popup window.
+		/// </summary>
+		internal protected virtual void OnBeforeDevToolsPopup(CefBrowser browser, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref int useDefaultWindow)
+		{
+
 		}
 
 		internal bool AvoidOnAfterCreated()

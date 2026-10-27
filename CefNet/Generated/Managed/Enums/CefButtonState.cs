@@ -30,6 +30,8 @@ namespace CefNet
 		Pressed = 2,
 
 		Disabled = 3,
+
+		NumValues = 4,
 	}
 }
 

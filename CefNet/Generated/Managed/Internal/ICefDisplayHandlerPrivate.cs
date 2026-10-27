@@ -33,5 +33,7 @@ namespace CefNet.Internal
 		bool AvoidOnLoadingProgressChange();
 		bool AvoidOnCursorChange();
 		bool AvoidOnMediaAccessChange();
+		bool AvoidOnContentsBoundsChange();
+		bool AvoidGetRootWindowScreenRect();
 	}
 }

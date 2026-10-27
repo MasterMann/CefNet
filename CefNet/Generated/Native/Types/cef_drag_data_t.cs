@@ -19,8 +19,9 @@ using CefNet.WinApi;
 namespace CefNet.CApi
 {
 	/// <summary>
-	/// Structure used to represent drag data. The functions of this structure may be
-	/// called on any thread.
+	/// Structure used to represent drag data. The functions of this structure may
+	/// be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_drag_data_t
@@ -249,9 +250,9 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Write the contents of the file being dragged out of the web view into
-		/// |writer|. Returns the number of bytes sent to |writer|. If |writer| is NULL
-		/// this function will return the size of the file contents in bytes. Call
-		/// get_file_name() to get a suggested name for the file.
+		/// |writer|. Returns the number of bytes sent to |writer|. If |writer| is
+		/// NULL this function will return the size of the file contents in bytes.
+		/// Call get_file_name() to get a suggested name for the file.
 		/// </summary>
 		[NativeName("get_file_contents")]
 		public unsafe UIntPtr GetFileContents(cef_stream_writer_t* writer)
@@ -281,7 +282,25 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* url)*
+		/// int (*)(_cef_drag_data_t* self, cef_string_list_t paths)*
+		/// </summary>
+		public void* get_file_paths;
+
+		/// <summary>
+		/// Retrieve the list of file paths that are being dragged into the browser
+		/// window.
+		/// </summary>
+		[NativeName("get_file_paths")]
+		public unsafe int GetFilePaths(cef_string_list_t paths)
+		{
+			fixed (cef_drag_data_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_drag_data_t*, cef_string_list_t, int>)get_file_paths)(self, paths);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_link_url;
 
@@ -298,7 +317,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* title)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* title)*
 		/// </summary>
 		public void* set_link_title;
 
@@ -315,7 +334,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* data)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* data)*
 		/// </summary>
 		public void* set_link_metadata;
 
@@ -332,7 +351,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* text)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* text)*
 		/// </summary>
 		public void* set_fragment_text;
 
@@ -349,7 +368,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* html)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* html)*
 		/// </summary>
 		public void* set_fragment_html;
 
@@ -366,7 +385,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* base_url)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* base_url)*
 		/// </summary>
 		public void* set_fragment_base_url;
 
@@ -402,7 +421,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_data_t* self, const cef_string_t* path, const cef_string_t* display_name)*
+		/// void (*)(_cef_drag_data_t* self, cef_string_t const* path, cef_string_t const* display_name)*
 		/// </summary>
 		public void* add_file;
 

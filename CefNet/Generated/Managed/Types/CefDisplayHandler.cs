@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to browser display state.
 	/// The functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -52,6 +53,10 @@ namespace CefNet
 
 		private static readonly OnMediaAccessChangeDelegate fnOnMediaAccessChange = OnMediaAccessChangeImpl;
 
+		private static readonly OnContentsBoundsChangeDelegate fnOnContentsBoundsChange = OnContentsBoundsChangeImpl;
+
+		private static readonly GetRootWindowScreenRectDelegate fnGetRootWindowScreenRect = GetRootWindowScreenRectImpl;
+
 #endif // NET_LESS_5_0
 		internal static unsafe CefDisplayHandler Create(IntPtr instance)
 		{
@@ -73,6 +78,8 @@ namespace CefNet
 			self->on_loading_progress_change = (void*)Marshal.GetFunctionPointerForDelegate(fnOnLoadingProgressChange);
 			self->on_cursor_change = (void*)Marshal.GetFunctionPointerForDelegate(fnOnCursorChange);
 			self->on_media_access_change = (void*)Marshal.GetFunctionPointerForDelegate(fnOnMediaAccessChange);
+			self->on_contents_bounds_change = (void*)Marshal.GetFunctionPointerForDelegate(fnOnContentsBoundsChange);
+			self->get_root_window_screen_rect = (void*)Marshal.GetFunctionPointerForDelegate(fnGetRootWindowScreenRect);
 			#else
 			self->on_address_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_frame_t*, cef_string_t*, void>)&OnAddressChangeImpl;
 			self->on_title_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_string_t*, void>)&OnTitleChangeImpl;
@@ -85,6 +92,8 @@ namespace CefNet
 			self->on_loading_progress_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, double, void>)&OnLoadingProgressChangeImpl;
 			self->on_cursor_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, IntPtr, CefCursorType, cef_cursor_info_t*, int>)&OnCursorChangeImpl;
 			self->on_media_access_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, int, int, void>)&OnMediaAccessChangeImpl;
+			self->on_contents_bounds_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_rect_t*, int>)&OnContentsBoundsChangeImpl;
+			self->get_root_window_screen_rect = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_rect_t*, int>)&GetRootWindowScreenRectImpl;
 			#endif
 		}
 
@@ -93,8 +102,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnAddressChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnAddressChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnAddressChange));
+		}
 
 		/// <summary>
 		/// Called when a frame&apos;s address has changed.
@@ -108,7 +119,7 @@ namespace CefNet
 		private unsafe delegate void OnAddressChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* url);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* url)*
+		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* url)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -124,8 +135,10 @@ namespace CefNet
 			instance.OnAddressChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefString.Read(url));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnTitleChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnTitleChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnTitleChange));
+		}
 
 		/// <summary>
 		/// Called when the page title changes.
@@ -139,7 +152,7 @@ namespace CefNet
 		private unsafe delegate void OnTitleChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_string_t* title);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_string_t* title)*
+		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_string_t const* title)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -154,8 +167,10 @@ namespace CefNet
 			instance.OnTitleChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(title));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnFaviconUrlChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnFaviconUrlChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnFaviconUrlChange));
+		}
 
 		/// <summary>
 		/// Called when the page icon changes.
@@ -184,15 +199,21 @@ namespace CefNet
 			instance.OnFaviconUrlChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefStringList.Wrap(icon_urls));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnFullscreenModeChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnFullscreenModeChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnFullscreenModeChange));
+		}
 
 		/// <summary>
 		/// Called when web content in the page has toggled fullscreen mode. If
 		/// |fullscreen| is true (1) the content will automatically be sized to fill
 		/// the browser content area. If |fullscreen| is false (0) the content will
-		/// automatically return to its original size and position. The client is
-		/// responsible for resizing the browser if desired.
+		/// automatically return to its original size and position. With Alloy style
+		/// the client is responsible for triggering the fullscreen transition (for
+		/// example, by calling cef_window_t::SetFullscreen when using Views). With
+		/// Chrome style the fullscreen transition will be triggered automatically.
+		/// The cef_window_delegate_t::OnWindowFullscreenTransition function will be
+		/// called during the fullscreen transition for notification purposes.
 		/// </summary>
 		protected internal unsafe virtual void OnFullscreenModeChange(CefBrowser browser, bool fullscreen)
 		{
@@ -218,8 +239,10 @@ namespace CefNet
 			instance.OnFullscreenModeChange(CefBrowser.Wrap(CefBrowser.Create, browser), fullscreen != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnTooltip();
+		bool ICefDisplayHandlerPrivate.AvoidOnTooltip()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnTooltip));
+		}
 
 		/// <summary>
 		/// Called when the browser is about to display a tooltip. |text| contains the
@@ -259,8 +282,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnStatusMessage();
+		bool ICefDisplayHandlerPrivate.AvoidOnStatusMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnStatusMessage));
+		}
 
 		/// <summary>
 		/// Called when the browser receives a status message. |value| contains the
@@ -275,7 +300,7 @@ namespace CefNet
 		private unsafe delegate void OnStatusMessageDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_string_t* value);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_string_t* value)*
+		// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_string_t const* value)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -290,8 +315,10 @@ namespace CefNet
 			instance.OnStatusMessage(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(value));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnConsoleMessage();
+		bool ICefDisplayHandlerPrivate.AvoidOnConsoleMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnConsoleMessage));
+		}
 
 		/// <summary>
 		/// Called to display a console message. Return true (1) to stop the message
@@ -307,7 +334,7 @@ namespace CefNet
 		private unsafe delegate int OnConsoleMessageDelegate(cef_display_handler_t* self, cef_browser_t* browser, CefLogSeverity level, cef_string_t* message, cef_string_t* source, int line);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_log_severity_t level, const cef_string_t* message, const cef_string_t* source, int line)*
+		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_log_severity_t level, cef_string_t const* message, cef_string_t const* source, int line)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -322,13 +349,15 @@ namespace CefNet
 			return instance.OnConsoleMessage(CefBrowser.Wrap(CefBrowser.Create, browser), level, CefString.Read(message), CefString.Read(source), line) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnAutoResize();
+		bool ICefDisplayHandlerPrivate.AvoidOnAutoResize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnAutoResize));
+		}
 
 		/// <summary>
 		/// Called when auto-resize is enabled via
 		/// cef_browser_host_t::SetAutoResizeEnabled and the contents have auto-
-		/// resized. |new_size| will be the desired size in view coordinates. Return
+		/// resized. |new_size| will be the desired size in DIP coordinates. Return
 		/// true (1) if the resize was handled or false (0) for default handling.
 		/// </summary>
 		protected internal unsafe virtual bool OnAutoResize(CefBrowser browser, CefSize newSize)
@@ -341,7 +370,7 @@ namespace CefNet
 		private unsafe delegate int OnAutoResizeDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_size_t* new_size);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_size_t* new_size)*
+		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_size_t const* new_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -356,8 +385,10 @@ namespace CefNet
 			return instance.OnAutoResize(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefSize*)new_size) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnLoadingProgressChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnLoadingProgressChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnLoadingProgressChange));
+		}
 
 		/// <summary>
 		/// Called when the overall page loading progress has changed. |progress|
@@ -387,8 +418,10 @@ namespace CefNet
 			instance.OnLoadingProgressChange(CefBrowser.Wrap(CefBrowser.Create, browser), progress);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnCursorChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnCursorChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnCursorChange));
+		}
 
 		/// <summary>
 		/// Called when the browser&apos;s cursor has changed. If |type| is CT_CUSTOM then
@@ -406,7 +439,7 @@ namespace CefNet
 		private unsafe delegate int OnCursorChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, IntPtr cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, HCURSOR cursor, cef_cursor_type_t type, const cef_cursor_info_t* custom_cursor_info)*
+		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_cursor_handle_t cursor, cef_cursor_type_t type, cef_cursor_info_t const* custom_cursor_info)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -421,8 +454,10 @@ namespace CefNet
 			return instance.OnCursorChange(CefBrowser.Wrap(CefBrowser.Create, browser), cursor, type, *(CefCursorInfo*)custom_cursor_info) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnMediaAccessChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnMediaAccessChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnMediaAccessChange));
+		}
 
 		/// <summary>
 		/// Called when the browser&apos;s access to an audio and/or video source has
@@ -450,6 +485,91 @@ namespace CefNet
 				return;
 			}
 			instance.OnMediaAccessChange(CefBrowser.Wrap(CefBrowser.Create, browser), has_video_access != 0, has_audio_access != 0);
+		}
+
+		bool ICefDisplayHandlerPrivate.AvoidOnContentsBoundsChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnContentsBoundsChange));
+		}
+
+		/// <summary>
+		/// Called when JavaScript is requesting new bounds via window.moveTo/By() or
+		/// window.resizeTo/By(). |new_bounds| are in DIP screen coordinates.
+		/// With Views-hosted browsers |new_bounds| are the desired bounds for the
+		/// containing cef_window_t and may be passed directly to
+		/// cef_window_t::SetBounds. With external (client-provided) parent on macOS
+		/// and Windows |new_bounds| are the desired frame bounds for the containing
+		/// root window. With other non-Views browsers |new_bounds| are the desired
+		/// bounds for the browser content only unless the client implements either
+		/// cef_display_handler_t::GetRootWindowScreenRect for windowed browsers or
+		/// cef_render_handler_t::GetWindowScreenRect for windowless browsers. Clients
+		/// may expand browser content bounds to window bounds using OS-specific or
+		/// cef_display_t functions.
+		/// Return true (1) if this function was handled or false (0) for default
+		/// handling. Default move/resize behavior is only provided with Views-hosted
+		/// Chrome style browsers.
+		/// </summary>
+		protected internal unsafe virtual bool OnContentsBoundsChange(CefBrowser browser, CefRect newBounds)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int OnContentsBoundsChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* new_bounds);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_rect_t const* new_bounds)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int OnContentsBoundsChangeImpl(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* new_bounds)
+		{
+			var instance = GetInstance((IntPtr)self) as CefDisplayHandler;
+			if (instance == null || ((ICefDisplayHandlerPrivate)instance).AvoidOnContentsBoundsChange())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				return default;
+			}
+			return instance.OnContentsBoundsChange(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRect*)new_bounds) ? 1 : 0;
+		}
+
+		bool ICefDisplayHandlerPrivate.AvoidGetRootWindowScreenRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(GetRootWindowScreenRect));
+		}
+
+		/// <summary>
+		/// Called to retrieve the external (client-provided) root window rectangle in
+		/// screen DIP coordinates. Only called for windowed browsers on Windows and
+		/// Linux. Return true (1) if the rectangle was provided. Return false (0) to
+		/// use the root window bounds on Windows or the browser content bounds on
+		/// Linux. For additional usage details see
+		/// cef_browser_host_t::NotifyScreenInfoChanged.
+		/// </summary>
+		protected internal unsafe virtual bool GetRootWindowScreenRect(CefBrowser browser, ref CefRect rect)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int GetRootWindowScreenRectDelegate(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* rect);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_rect_t* rect)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int GetRootWindowScreenRectImpl(cef_display_handler_t* self, cef_browser_t* browser, cef_rect_t* rect)
+		{
+			var instance = GetInstance((IntPtr)self) as CefDisplayHandler;
+			if (instance == null || ((ICefDisplayHandlerPrivate)instance).AvoidGetRootWindowScreenRect())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
+				return default;
+			}
+			return instance.GetRootWindowScreenRect(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefRect*)rect) ? 1 : 0;
 		}
 	}
 }

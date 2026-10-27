@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure that creates cef_resource_handler_t instances for handling scheme
 	/// requests. The functions of this structure will always be called on the IO
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_scheme_handler_factory_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// _cef_resource_handler_t* (*)(_cef_scheme_handler_factory_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* scheme_name, _cef_request_t* request)*
+		/// _cef_resource_handler_t* (*)(_cef_scheme_handler_factory_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* scheme_name, _cef_request_t* request)*
 		/// </summary>
 		public void* create;
 
@@ -40,9 +41,9 @@ namespace CefNet.CApi
 		/// Return a new resource handler instance to handle the request or an NULL
 		/// reference to allow default handling of the request. |browser| and |frame|
 		/// will be the browser window and frame respectively that originated the
-		/// request or NULL if the request did not originate from a browser window (for
-		/// example, if the request came from cef_urlrequest_t). The |request| object
-		/// passed to this function cannot be modified.
+		/// request or NULL if the request did not originate from a browser window
+		/// (for example, if the request came from cef_urlrequest_t). The |request|
+		/// object passed to this function cannot be modified.
 		/// </summary>
 		[NativeName("create")]
 		public unsafe cef_resource_handler_t* Create(cef_browser_t* browser, cef_frame_t* frame, [Immutable]cef_string_t* scheme_name, cef_request_t* request)

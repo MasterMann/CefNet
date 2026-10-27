@@ -31,7 +31,7 @@ namespace CefGen
 		{
 			get
 			{
-				return ((IParameterSymbol)Symbol).Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+				return ((IParameterSymbol)Symbol).Type.ToCefDisplayString();
 			}
 		}
 	}

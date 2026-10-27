@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events when window rendering is disabled.
 	/// The functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -100,7 +101,7 @@ namespace CefNet
 			self->on_popup_show = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, int, void>)&OnPopupShowImpl;
 			self->on_popup_size = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_rect_t*, void>)&OnPopupSizeImpl;
 			self->on_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, void*, int, int, void>)&OnPaintImpl;
-			self->on_accelerated_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, void*, void>)&OnAcceleratedPaintImpl;
+			self->on_accelerated_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, cef_accelerated_paint_info_t*, void>)&OnAcceleratedPaintImpl;
 			self->get_touch_handle_size = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefHorizontalAlignment, cef_size_t*, void>)&GetTouchHandleSizeImpl;
 			self->on_touch_handle_state_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_touch_handle_state_t*, void>)&OnTouchHandleStateChangedImpl;
 			self->start_dragging = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_drag_data_t*, CefDragOperationsMask, int, int, int>)&StartDraggingImpl;
@@ -148,8 +149,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetRootScreenRect();
+		bool ICefRenderHandlerPrivate.AvoidGetRootScreenRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetRootScreenRect));
+		}
 
 		/// <summary>
 		/// Called to retrieve the root window rectangle in screen DIP coordinates.
@@ -181,8 +184,10 @@ namespace CefNet
 			return instance.GetRootScreenRect(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefRect*)rect) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetViewRect();
+		bool ICefRenderHandlerPrivate.AvoidGetViewRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetViewRect));
+		}
 
 		/// <summary>
 		/// Called to retrieve the view rectangle in screen DIP coordinates. This
@@ -212,14 +217,16 @@ namespace CefNet
 			instance.GetViewRect(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefRect*)rect);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetScreenPoint();
+		bool ICefRenderHandlerPrivate.AvoidGetScreenPoint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetScreenPoint));
+		}
 
 		/// <summary>
 		/// Called to retrieve the translation from view DIP coordinates to screen
-		/// coordinates. Windows/Linux should provide screen device (pixel) coordinates
-		/// and MacOS should provide screen DIP coordinates. Return true (1) if the
-		/// requested coordinates were provided.
+		/// coordinates. Windows/Linux should provide screen device (pixel)
+		/// coordinates and MacOS should provide screen DIP coordinates. Return true
+		/// (1) if the requested coordinates were provided.
 		/// </summary>
 		protected internal unsafe virtual bool GetScreenPoint(CefBrowser browser, int viewX, int viewY, ref int screenX, ref int screenY)
 		{
@@ -246,18 +253,20 @@ namespace CefNet
 			return instance.GetScreenPoint(CefBrowser.Wrap(CefBrowser.Create, browser), viewX, viewY, ref *screenX, ref *screenY) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetScreenInfo();
+		bool ICefRenderHandlerPrivate.AvoidGetScreenInfo()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetScreenInfo));
+		}
 
 		/// <summary>
 		/// Called to allow the client to fill in the CefScreenInfo object with
-		/// appropriate values. Return true (1) if the |screen_info| structure has been
-		/// modified.
+		/// appropriate values. Return true (1) if the |screen_info| structure has
+		/// been modified.
 		/// If the screen info rectangle is left NULL the rectangle from GetViewRect
 		/// will be used. If the rectangle is still NULL or invalid popups may not be
 		/// drawn correctly.
 		/// </summary>
-		protected internal unsafe virtual bool GetScreenInfo(CefBrowser browser, ref CefScreenInfo screenInfo)
+		protected internal unsafe virtual bool GetScreenInfo(CefBrowser browser, CefScreenInfo screenInfo)
 		{
 			return default;
 		}
@@ -279,11 +288,13 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return default;
 			}
-			return instance.GetScreenInfo(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefScreenInfo*)screen_info) ? 1 : 0;
+			return instance.GetScreenInfo(CefBrowser.Wrap(CefBrowser.Create, browser), new CefScreenInfo(screen_info)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPopupShow();
+		bool ICefRenderHandlerPrivate.AvoidOnPopupShow()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPopupShow));
+		}
 
 		/// <summary>
 		/// Called when the browser wants to show or hide the popup widget. The popup
@@ -313,8 +324,10 @@ namespace CefNet
 			instance.OnPopupShow(CefBrowser.Wrap(CefBrowser.Create, browser), show != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPopupSize();
+		bool ICefRenderHandlerPrivate.AvoidOnPopupSize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPopupSize));
+		}
 
 		/// <summary>
 		/// Called when the browser wants to move or resize the popup widget. |rect|
@@ -329,7 +342,7 @@ namespace CefNet
 		private unsafe delegate void OnPopupSizeDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_rect_t* rect);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_rect_t* rect)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_rect_t const* rect)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -344,8 +357,10 @@ namespace CefNet
 			instance.OnPopupSize(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRect*)rect);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPaint();
+		bool ICefRenderHandlerPrivate.AvoidOnPaint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPaint));
+		}
 
 		/// <summary>
 		/// Called when an element should be painted. Pixel values passed to this
@@ -353,9 +368,9 @@ namespace CefNet
 		/// CefScreenInfo.device_scale_factor returned from GetScreenInfo. |type|
 		/// indicates whether the element is the view or the popup widget. |buffer|
 		/// contains the pixel data for the whole image. |dirtyRects| contains the set
-		/// of rectangles in pixel coordinates that need to be repainted. |buffer| will
-		/// be |width|*|height|*4 bytes in size and represents a BGRA image with an
-		/// upper-left origin. This function is only called when
+		/// of rectangles in pixel coordinates that need to be repainted. |buffer|
+		/// will be |width|*|height|*4 bytes in size and represents a BGRA image with
+		/// an upper-left origin. This function is only called when
 		/// cef_window_tInfo::shared_texture_enabled is set to false (0).
 		/// </summary>
 		protected internal unsafe virtual void OnPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, IntPtr buffer, int width, int height)
@@ -367,7 +382,7 @@ namespace CefNet
 		private unsafe delegate void OnPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* buffer, int width, int height);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, const void* buffer, int width, int height)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, cef_rect_t const* dirtyRects, void const* buffer, int width, int height)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -387,32 +402,42 @@ namespace CefNet
 			instance.OnPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, unchecked((IntPtr)buffer), width, height);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnAcceleratedPaint();
+		bool ICefRenderHandlerPrivate.AvoidOnAcceleratedPaint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnAcceleratedPaint));
+		}
 
 		/// <summary>
 		/// Called when an element has been rendered to the shared texture handle.
 		/// |type| indicates whether the element is the view or the popup widget.
 		/// |dirtyRects| contains the set of rectangles in pixel coordinates that need
-		/// to be repainted. |shared_handle| is the handle for a D3D11 Texture2D that
-		/// can be accessed via ID3D11Device using the OpenSharedResource function.
-		/// This function is only called when cef_window_tInfo::shared_texture_enabled
-		/// is set to true (1), and is currently only supported on Windows.
+		/// to be repainted. |info| contains the shared handle; on Windows it is a
+		/// HANDLE to a texture that can be opened with D3D11 OpenSharedResource1 or
+		/// D3D12 OpenSharedHandle, on macOS it is an IOSurface pointer that can be
+		/// opened with Metal or OpenGL, and on Linux it contains several planes, each
+		/// with an fd to the underlying system native buffer.
+		/// The underlying implementation uses a pool to deliver frames. As a result,
+		/// the handle may differ every frame depending on how many frames are in-
+		/// progress. The handle&apos;s resource cannot be cached and cannot be accessed
+		/// outside of this callback. It should be reopened each time this callback is
+		/// executed and the contents should be copied to a texture owned by the
+		/// client application. The contents of |info| will be released back to the
+		/// pool after this callback returns.
 		/// </summary>
-		protected internal unsafe virtual void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, IntPtr sharedHandle)
+		protected internal unsafe virtual void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, CefAcceleratedPaintInfo info)
 		{
 		}
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnAcceleratedPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle);
+		private unsafe delegate void OnAcceleratedPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, cef_accelerated_paint_info_t* info);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, void* shared_handle)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, cef_rect_t const* dirtyRects, cef_accelerated_paint_info_t const* info)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnAcceleratedPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle)
+		private static unsafe void OnAcceleratedPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, cef_accelerated_paint_info_t* info)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderHandler;
 			if (instance == null || ((ICefRenderHandlerPrivate)instance).AvoidOnAcceleratedPaint())
@@ -425,11 +450,16 @@ namespace CefNet
 			{
 				obj_dirtyRects[i] = *(CefRect*)(dirtyRects + i);
 			}
-			instance.OnAcceleratedPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, unchecked((IntPtr)shared_handle));
+			var obj_info = new CefAcceleratedPaintInfo(info);
+			instance.OnAcceleratedPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, obj_info);
+			obj_info.Invalidate();
+			
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize();
+		bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetTouchHandleSize));
+		}
 
 		/// <summary>
 		/// Called to retrieve the size of the touch handle for the specified
@@ -459,8 +489,10 @@ namespace CefNet
 			instance.GetTouchHandleSize(CefBrowser.Wrap(CefBrowser.Create, browser), orientation, ref *(CefSize*)size);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnTouchHandleStateChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnTouchHandleStateChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnTouchHandleStateChanged));
+		}
 
 		/// <summary>
 		/// Called when touch handle state is updated. The client is responsible for
@@ -475,7 +507,7 @@ namespace CefNet
 		private unsafe delegate void OnTouchHandleStateChangedDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_touch_handle_state_t* state);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_touch_handle_state_t* state)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_touch_handle_state_t const* state)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -487,11 +519,13 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return;
 			}
-			instance.OnTouchHandleStateChanged(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefTouchHandleState*)state);
+			instance.OnTouchHandleStateChanged(CefBrowser.Wrap(CefBrowser.Create, browser), new CefTouchHandleState(state));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidStartDragging();
+		bool ICefRenderHandlerPrivate.AvoidStartDragging()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(StartDragging));
+		}
 
 		/// <summary>
 		/// Called when the user starts dragging content in the web view. Contextual
@@ -531,8 +565,10 @@ namespace CefNet
 			return instance.StartDragging(CefBrowser.Wrap(CefBrowser.Create, browser), CefDragData.Wrap(CefDragData.Create, drag_data), allowed_ops, x, y) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidUpdateDragCursor();
+		bool ICefRenderHandlerPrivate.AvoidUpdateDragCursor()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(UpdateDragCursor));
+		}
 
 		/// <summary>
 		/// Called when the web view wants to update the mouse cursor during a drag
@@ -564,8 +600,10 @@ namespace CefNet
 			instance.UpdateDragCursor(CefBrowser.Wrap(CefBrowser.Create, browser), operation);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnScrollOffsetChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnScrollOffsetChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnScrollOffsetChanged));
+		}
 
 		/// <summary>
 		/// Called when the scroll offset has changed.
@@ -594,8 +632,10 @@ namespace CefNet
 			instance.OnScrollOffsetChanged(CefBrowser.Wrap(CefBrowser.Create, browser), x, y);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnImeCompositionRangeChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnImeCompositionRangeChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnImeCompositionRangeChanged));
+		}
 
 		/// <summary>
 		/// Called when the IME composition range has changed. |selected_range| is the
@@ -611,7 +651,7 @@ namespace CefNet
 		private unsafe delegate void OnImeCompositionRangeChangedDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_range_t* selected_range, UIntPtr character_boundsCount, cef_rect_t* character_bounds);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_range_t* selected_range, size_t character_boundsCount, const cef_rect_t* character_bounds)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_range_t const* selected_range, size_t character_boundsCount, cef_rect_t const* character_bounds)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -631,8 +671,10 @@ namespace CefNet
 			instance.OnImeCompositionRangeChanged(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRange*)selected_range, obj_character_bounds);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnTextSelectionChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnTextSelectionChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnTextSelectionChanged));
+		}
 
 		/// <summary>
 		/// Called when text selection has changed for the specified |browser|.
@@ -648,7 +690,7 @@ namespace CefNet
 		private unsafe delegate void OnTextSelectionChangedDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_string_t* selected_text, cef_range_t* selected_range);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_string_t* selected_text, const cef_range_t* selected_range)*
+		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_string_t const* selected_text, cef_range_t const* selected_range)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -663,14 +705,16 @@ namespace CefNet
 			instance.OnTextSelectionChanged(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(selected_text), *(CefRange*)selected_range);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnVirtualKeyboardRequested();
+		bool ICefRenderHandlerPrivate.AvoidOnVirtualKeyboardRequested()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnVirtualKeyboardRequested));
+		}
 
 		/// <summary>
 		/// Called when an on-screen keyboard should be shown or hidden for the
-		/// specified |browser|. |input_mode| specifies what kind of keyboard should be
-		/// opened. If |input_mode| is CEF_TEXT_INPUT_MODE_NONE, any existing keyboard
-		/// for this browser should be hidden.
+		/// specified |browser|. |input_mode| specifies what kind of keyboard should
+		/// be opened. If |input_mode| is CEF_TEXT_INPUT_MODE_NONE, any existing
+		/// keyboard for this browser should be hidden.
 		/// </summary>
 		protected internal unsafe virtual void OnVirtualKeyboardRequested(CefBrowser browser, CefTextInputMode inputMode)
 		{

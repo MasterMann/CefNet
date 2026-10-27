@@ -64,7 +64,7 @@ namespace CefGen
 		{
 			bool flags = false;
 			var decl = new CodeEnum(GetClassName(@enum.Name));
-			decl.Type = @enum.IntegerType.GetDisplayName();
+			decl.Type = @enum.IntegerType.GetCName();
 			if (decl.Type != "int" && decl.Type != "unsigned int")
 			{
 				Console.WriteLine(decl.Type);
@@ -168,8 +168,13 @@ namespace CefGen
 
 			if (sourceFile.EndsWith("_capi.h"))
 			{
+				// include/capi[/views]/name_capi.h is generated from include[/views]/name.h.
 				string fname = Path.GetFileName(sourceFile);
-				fname = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(sourceFile)), fname.Remove(fname.Length - 7) + ".h");
+				string capiDir = Path.GetDirectoryName(sourceFile);
+				string subDir = Path.GetFileName(capiDir) == "capi" ? string.Empty : Path.GetFileName(capiDir);
+				while (Path.GetFileName(capiDir) != "capi")
+					capiDir = Path.GetDirectoryName(capiDir);
+				fname = Path.Combine(Path.GetDirectoryName(capiDir), subDir, fname.Remove(fname.Length - 7) + ".h");
 				if (File.Exists(fname))
 				{
 					string cppClassName = className.EndsWith("_t") ? className.Remove(className.Length - 2).ToUpperCamel() : className.ToUpperCamel();
@@ -228,9 +233,14 @@ namespace CefGen
 			var decl = new CodeClass(GetClassName(@class.Name));
 			decl.Attributes = CodeAttributes.Public | CodeAttributes.Static | CodeAttributes.Partial;
 			decl.Comments.AddVSDocComment(@class.Comment, "summary");
-			decl.Members.Add(new CodeField("string", "ApiHash") { Value = "\"" + @class.ApiHash + "\"", Attributes = CodeAttributes.Public | CodeAttributes.Static | CodeAttributes.ReadOnly });
+			decl.Members.Add(new CodeField("int", "ApiVersion") { Value = @class.ApiVersion.ToString(), Attributes = CodeAttributes.Public | CodeAttributes.Static | CodeAttributes.ReadOnly });
+			decl.Members.Add(new CodeField("string", "ApiHash")
+			{
+				Value = "OperatingSystem.IsWindows() ? \"" + @class.ApiHashWindows + "\" : OperatingSystem.IsMacOS() ? \"" + @class.ApiHashMacOS + "\" : \"" + @class.ApiHashLinux + "\"",
+				Attributes = CodeAttributes.Public | CodeAttributes.Static | CodeAttributes.ReadOnly
+			});
 
-			foreach (CppFunction fn in @class.Functions.OrderBy(f => f.Name))
+			foreach (CppFunction fn in @class.ApiFunctions.OrderBy(f => f.Name))
 			{
 				if (fn.Name == "cef_get_xdisplay")
 					continue;
@@ -290,10 +300,20 @@ namespace CefGen
 
 		private void DefineField(CodeType typeDecl, CppField field)
 		{
+			if (field.Type is CppArrayType arrayType)
+			{
+				DefineArrayField(typeDecl, field, arrayType);
+				return;
+			}
+
 			CodeMethod caller = null;
 
 			TypeDesc fieldType = GetTypeDesc(field.Type);
-			var fld = new CodeField(ResolveCefType(fieldType.ToString()), field.Name.EscapeName());
+			string fieldTypeName = fieldType.ToString();
+			// Constness does not affect the layout of a data field.
+			while (fieldTypeName.StartsWith("const "))
+				fieldTypeName = fieldTypeName.Substring(6);
+			var fld = new CodeField(ResolveCefType(fieldTypeName), field.Name.EscapeName());
 			if (fieldType.IsCallable)
 			{
 				fld.Attributes = CodeAttributes.Public;// | CodeAttributes.ReadOnly;
@@ -327,7 +347,7 @@ namespace CefGen
 					CppParameter arg = @params[i];
 					if (i == 0 && arg.Name == "self")
 					{
-						string argTypeName = ResolveCefType(arg.Type.GetDisplayName());
+						string argTypeName = ResolveCefType(arg.Type.GetCName());
 						if (argTypeName == typeDecl.Name + "*")
 						{
 							caller.HasThisArg = true;
@@ -373,6 +393,26 @@ namespace CefGen
 			{
 				typeDecl.Members.Add(caller);
 			}
+		}
+
+		/// <summary>
+		/// Emits a fixed-length C array as a nested inline array struct, which keeps the
+		/// native layout for any element type, including structs.
+		/// </summary>
+		private void DefineArrayField(CodeType typeDecl, CppField field, CppArrayType arrayType)
+		{
+			string elementType = ResolveCefType(GetTypeDesc(arrayType.ElementType).ToString());
+			var arrayDecl = new CodeStruct(field.Name.ToUpperCamel() + "Array");
+			arrayDecl.Attributes = CodeAttributes.Public;
+			var inlineArray = new CustomCodeAttribute("InlineArray");
+			inlineArray.Parameters.Add(arrayType.Size.ToString());
+			arrayDecl.CustomAttributes.Add(inlineArray);
+			arrayDecl.Members.Add(new CodeField(elementType, "_element0") { Attributes = CodeAttributes.Private });
+			typeDecl.Members.Add(arrayDecl);
+
+			var fld = new CodeField(arrayDecl.Name, field.Name.EscapeName()) { Attributes = CodeAttributes.Public };
+			fld.Comments.AddVSDocComment(field.Comment, "summary");
+			typeDecl.Members.Add(fld);
 		}
 
 		private string GetNativeDelegate(CodeMethod caller, CodeType typeDecl)

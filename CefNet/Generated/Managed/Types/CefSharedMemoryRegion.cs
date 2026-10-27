@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure that wraps platform-dependent share memory region mapping.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -34,9 +34,9 @@ namespace CefNet.Internal
 			return _implementation.AvoidGetAudioParameters();
 		}
 
-		protected internal unsafe override bool GetAudioParameters(CefBrowser browser, ref CefAudioParameters @params)
+		protected internal unsafe override bool GetAudioParameters(CefBrowser browser, CefAudioParameters @params)
 		{
-			return _implementation.GetAudioParameters(browser, ref @params);
+			return _implementation.GetAudioParameters(browser, @params);
 		}
 
 		bool ICefAudioHandlerPrivate.AvoidOnAudioStreamStarted()

@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure to implement to be notified of asynchronous completion via
 	/// cef_cookie_manager_t::delete_cookies().
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_delete_cookies_callback_t

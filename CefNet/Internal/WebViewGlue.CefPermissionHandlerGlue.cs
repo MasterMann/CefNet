@@ -37,8 +37,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnShowPermissionPrompt();
+		internal bool AvoidOnShowPermissionPrompt()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnShowPermissionPrompt));
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal bool OnShowPermissionPrompt(CefBrowser browser, ulong promptId, string requestingOrigin, uint requestedPermissions, CefPermissionPromptCallback callback)

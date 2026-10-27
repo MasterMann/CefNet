@@ -26,7 +26,7 @@ namespace CefNet.CApi
 		public UIntPtr length;
 
 		/// <summary>
-		/// void (*)(char16* str)*
+		/// void (*)(char16_t* str)*
 		/// </summary>
 		public void* dtor;
 

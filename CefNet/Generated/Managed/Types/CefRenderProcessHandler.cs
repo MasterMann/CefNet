@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure used to implement render process callbacks. The functions of this
 	/// structure will be called on the render process main thread (TID_RENDERER)
 	/// unless otherwise indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -73,9 +74,9 @@ namespace CefNet
 			self->on_browser_created = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_dictionary_value_t*, void>)&OnBrowserCreatedImpl;
 			self->on_browser_destroyed = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, void>)&OnBrowserDestroyedImpl;
 			self->get_load_handler = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_load_handler_t*>)&GetLoadHandlerImpl;
-			self->on_context_created = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, void>)&OnContextCreatedImpl;
-			self->on_context_released = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, void>)&OnContextReleasedImpl;
-			self->on_uncaught_exception = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, cef_v8exception_t*, cef_v8stack_trace_t*, void>)&OnUncaughtExceptionImpl;
+			self->on_context_created = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, void>)&OnContextCreatedImpl;
+			self->on_context_released = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, void>)&OnContextReleasedImpl;
+			self->on_uncaught_exception = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, cef_v8_exception_t*, cef_v8_stack_trace_t*, void>)&OnUncaughtExceptionImpl;
 			self->on_focused_node_changed = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_domnode_t*, void>)&OnFocusedNodeChangedImpl;
 			self->on_process_message_received = (delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, CefProcessId, cef_process_message_t*, int>)&OnProcessMessageReceivedImpl;
 			#endif
@@ -112,8 +113,10 @@ namespace CefNet
 			instance.OnWebKitInitialized();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserCreated();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnBrowserCreated));
+		}
 
 		/// <summary>
 		/// Called after a browser has been created. When browsing cross-origin a new
@@ -149,8 +152,10 @@ namespace CefNet
 			instance.OnBrowserCreated(CefBrowser.Wrap(CefBrowser.Create, browser), CefDictionaryValue.Wrap(CefDictionaryValue.Create, extra_info));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserDestroyed();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnBrowserDestroyed));
+		}
 
 		/// <summary>
 		/// Called before a browser is destroyed.
@@ -209,16 +214,18 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnContextCreated();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnContextCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnContextCreated));
+		}
 
 		/// <summary>
 		/// Called immediately after the V8 context for a frame has been created. To
 		/// retrieve the JavaScript &apos;window&apos; object use the
-		/// cef_v8context_t::get_global() function. V8 handles can only be accessed
+		/// cef_v8_context_t::get_global() function. V8 handles can only be accessed
 		/// from the thread on which they are created. A task runner for posting tasks
 		/// on the associated thread can be retrieved via the
-		/// cef_v8context_t::get_task_runner() function.
+		/// cef_v8_context_t::get_task_runner() function.
 		/// </summary>
 		protected internal unsafe virtual void OnContextCreated(CefBrowser browser, CefFrame frame, CefV8Context context)
 		{
@@ -226,14 +233,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnContextCreatedDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context);
+		private unsafe delegate void OnContextCreatedDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context)*
+		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnContextCreatedImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context)
+		private static unsafe void OnContextCreatedImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderProcessHandler;
 			if (instance == null || ((ICefRenderProcessHandlerPrivate)instance).AvoidOnContextCreated())
@@ -246,8 +253,10 @@ namespace CefNet
 			instance.OnContextCreated(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnContextReleased();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnContextReleased()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnContextReleased));
+		}
 
 		/// <summary>
 		/// Called immediately before the V8 context for a frame is released. No
@@ -259,14 +268,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnContextReleasedDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context);
+		private unsafe delegate void OnContextReleasedDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context)*
+		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnContextReleasedImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context)
+		private static unsafe void OnContextReleasedImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderProcessHandler;
 			if (instance == null || ((ICefRenderProcessHandlerPrivate)instance).AvoidOnContextReleased())
@@ -279,13 +288,15 @@ namespace CefNet
 			instance.OnContextReleased(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnUncaughtException();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnUncaughtException()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnUncaughtException));
+		}
 
 		/// <summary>
 		/// Called for global uncaught exceptions in a frame. Execution of this
 		/// callback is disabled by default. To enable set
-		/// CefSettings.uncaught_exception_stack_size &gt; 0.
+		/// cef_settings_t.uncaught_exception_stack_size &gt; 0.
 		/// </summary>
 		protected internal unsafe virtual void OnUncaughtException(CefBrowser browser, CefFrame frame, CefV8Context context, CefV8Exception exception, CefV8StackTrace stackTrace)
 		{
@@ -293,14 +304,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnUncaughtExceptionDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context, cef_v8exception_t* exception, cef_v8stack_trace_t* stackTrace);
+		private unsafe delegate void OnUncaughtExceptionDelegate(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context, cef_v8_exception_t* exception, cef_v8_stack_trace_t* stackTrace);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context, _cef_v8exception_t* exception, _cef_v8stack_trace_t* stackTrace)*
+		// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context, _cef_v8_exception_t* exception, _cef_v8_stack_trace_t* stackTrace)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnUncaughtExceptionImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context, cef_v8exception_t* exception, cef_v8stack_trace_t* stackTrace)
+		private static unsafe void OnUncaughtExceptionImpl(cef_render_process_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context, cef_v8_exception_t* exception, cef_v8_stack_trace_t* stackTrace)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderProcessHandler;
 			if (instance == null || ((ICefRenderProcessHandlerPrivate)instance).AvoidOnUncaughtException())
@@ -315,16 +326,18 @@ namespace CefNet
 			instance.OnUncaughtException(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context), CefV8Exception.Wrap(CefV8Exception.Create, exception), CefV8StackTrace.Wrap(CefV8StackTrace.Create, stackTrace));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnFocusedNodeChanged();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnFocusedNodeChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnFocusedNodeChanged));
+		}
 
 		/// <summary>
 		/// Called when a new node in the the browser gets focus. The |node| value may
 		/// be NULL if no specific node has gained focus. The node object passed to
-		/// this function represents a snapshot of the DOM at the time this function is
-		/// executed. DOM objects are only valid for the scope of this function. Do not
-		/// keep references to or attempt to access any DOM objects outside the scope
-		/// of this function.
+		/// this function represents a snapshot of the DOM at the time this function
+		/// is executed. DOM objects are only valid for the scope of this function. Do
+		/// not keep references to or attempt to access any DOM objects outside the
+		/// scope of this function.
 		/// </summary>
 		protected internal unsafe virtual void OnFocusedNodeChanged(CefBrowser browser, CefFrame frame, CefDOMNode node)
 		{
@@ -352,13 +365,15 @@ namespace CefNet
 			instance.OnFocusedNodeChanged(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefDOMNode.Wrap(CefDOMNode.Create, node));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnProcessMessageReceived();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnProcessMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnProcessMessageReceived));
+		}
 
 		/// <summary>
-		/// Called when a new message is received from a different process. Return true
-		/// (1) if the message was handled or false (0) otherwise. It is safe to keep a
-		/// reference to |message| outside of this callback.
+		/// Called when a new message is received from a different process. Return
+		/// true (1) if the message was handled or false (0) otherwise. It is safe to
+		/// keep a reference to |message| outside of this callback.
 		/// </summary>
 		protected internal unsafe virtual bool OnProcessMessageReceived(CefBrowser browser, CefFrame frame, CefProcessId sourceProcess, CefProcessMessage message)
 		{

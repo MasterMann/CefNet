@@ -24,6 +24,40 @@ namespace CefNet.Unsafe
 
 		AccessibilityHandler,
 
+		ApiVersionTest,
+
+		ApiVersionTestRefPtrClient,
+
+		ApiVersionTestRefPtrClientChild,
+
+		ApiVersionTestRefPtrClientChildV2,
+
+		ApiVersionTestRefPtrLibrary,
+
+		ApiVersionTestRefPtrLibraryChild,
+
+		ApiVersionTestRefPtrLibraryChildChild,
+
+		ApiVersionTestRefPtrLibraryChildChildV1,
+
+		ApiVersionTestRefPtrLibraryChildChildV2,
+
+		ApiVersionTestScopedClient,
+
+		ApiVersionTestScopedClientChild,
+
+		ApiVersionTestScopedClientChildV2,
+
+		ApiVersionTestScopedLibrary,
+
+		ApiVersionTestScopedLibraryChild,
+
+		ApiVersionTestScopedLibraryChildChild,
+
+		ApiVersionTestScopedLibraryChildChildV1,
+
+		ApiVersionTestScopedLibraryChildChildV2,
+
 		App,
 
 		AudioHandler,
@@ -59,6 +93,12 @@ namespace CefNet.Unsafe
 		CommandLine,
 
 		CompletionCallback,
+
+		Component,
+
+		ComponentUpdateCallback,
+
+		ComponentUpdater,
 
 		ContextMenuHandler,
 
@@ -102,10 +142,6 @@ namespace CefNet.Unsafe
 
 		EndTracingCallback,
 
-		Extension,
-
-		ExtensionHandler,
-
 		FileDialogCallback,
 
 		FillLayout,
@@ -117,8 +153,6 @@ namespace CefNet.Unsafe
 		Frame,
 
 		FrameHandler,
-
-		GetExtensionResourceCallback,
 
 		Image,
 
@@ -183,6 +217,12 @@ namespace CefNet.Unsafe
 		PostData,
 
 		PostDataElement,
+
+		PreferenceManager,
+
+		PreferenceObserver,
+
+		PreferenceRegistrar,
 
 		PrintDialogCallback,
 
@@ -252,6 +292,8 @@ namespace CefNet.Unsafe
 
 		SetCookieCallback,
 
+		SettingObserver,
+
 		SharedMemoryRegion,
 
 		SharedProcessMessageBuilder,
@@ -263,6 +305,8 @@ namespace CefNet.Unsafe
 		StringVisitor,
 
 		Task,
+
+		TaskManager,
 
 		TaskRunner,
 
@@ -304,9 +348,13 @@ namespace CefNet.Unsafe
 
 		UrlRequestClient,
 
+		UnresponsiveProcessCallback,
+
 		V8Accessor,
 
 		V8ArrayBufferReleaseCallback,
+
+		V8BackingStore,
 
 		V8Context,
 

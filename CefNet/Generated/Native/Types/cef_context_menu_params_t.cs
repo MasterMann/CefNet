@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Provides information about the context menu state. The functions of this
 	/// structure can only be accessed on browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_context_menu_params_t
@@ -129,7 +130,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns the source URL, if any, for the element that the context menu was
-		/// invoked on. Example of elements with source URLs are img, audio, and video.
+		/// invoked on. Example of elements with source URLs are img, audio, and
+		/// video.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		[NativeName("get_source_url")]
@@ -147,8 +149,8 @@ namespace CefNet.CApi
 		public void* has_image_contents;
 
 		/// <summary>
-		/// Returns true (1) if the context menu was invoked on an image which has non-
-		/// NULL contents.
+		/// Returns true (1) if the context menu was invoked on an image which has
+		/// non-NULL contents.
 		/// </summary>
 		[NativeName("has_image_contents")]
 		public unsafe int HasImageContents()
@@ -184,7 +186,8 @@ namespace CefNet.CApi
 		public void* get_page_url;
 
 		/// <summary>
-		/// Returns the URL of the top level page that the context menu was invoked on.
+		/// Returns the URL of the top level page that the context menu was invoked
+		/// on.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		[NativeName("get_page_url")]
@@ -313,8 +316,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns true (1) if suggestions exist, false (0) otherwise. Fills in
-		/// |suggestions| from the spell check service for the misspelled word if there
-		/// is one.
+		/// |suggestions| from the spell check service for the misspelled word if
+		/// there is one.
 		/// </summary>
 		[NativeName("get_dictionary_suggestions")]
 		public unsafe int GetDictionarySuggestions(cef_string_list_t suggestions)

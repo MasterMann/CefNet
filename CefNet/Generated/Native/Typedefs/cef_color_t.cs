@@ -25,7 +25,7 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_color_t
 	{
-		public uint Base;
+		public UInt32 Base;
 	}
 }
 

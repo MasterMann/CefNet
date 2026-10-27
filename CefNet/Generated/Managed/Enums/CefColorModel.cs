@@ -94,6 +94,8 @@ namespace CefNet
 		/// Used in canon printer ppds
 		/// </summary>
 		ProcesscolormodelRgb = 20,
+
+		NumValues = 21,
 	}
 }
 

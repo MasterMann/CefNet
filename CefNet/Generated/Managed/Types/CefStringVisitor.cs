@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Implement this structure to receive string values asynchronously.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -52,8 +53,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefStringVisitorPrivate.AvoidVisit();
+		bool ICefStringVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefStringVisitor), nameof(Visit));
+		}
 
 		/// <summary>
 		/// Method that will be executed.
@@ -67,7 +70,7 @@ namespace CefNet
 		private unsafe delegate void VisitDelegate(cef_string_visitor_t* self, cef_string_t* @string);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_string_visitor_t* self, const cef_string_t* string)*
+		// void (*)(_cef_string_visitor_t* self, cef_string_t const* string)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

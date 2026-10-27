@@ -20,12 +20,17 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Screen information used when window rendering is disabled. This structure is
-	/// passed as a parameter to CefRenderHandler::GetScreenInfo and should be filled
-	/// in by the client.
+	/// passed as a parameter to CefRenderHandler::GetScreenInfo and should be
+	/// filled in by the client.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_screen_info_t
 	{
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
 		/// <summary>
 		/// Device scale factor. Specifies the ratio between physical and logical
 		/// pixels.

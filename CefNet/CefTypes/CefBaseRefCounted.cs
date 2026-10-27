@@ -147,18 +147,20 @@ namespace CefNet
 				{
 					ws = GetWrapperStructPtr(instance);
 					if (ws != null && UnsafeRefCounted.TryGetValue(ws->cppObject, out WeakReference<CefBaseRefCounted> weakRef)
-						&& weakRef.TryGetTarget(out wrapper))
+						&& weakRef.TryGetTarget(out wrapper) && wrapper is TClass cachedWrapper)
 					{
 						((cef_base_ref_counted_t*)instance)->Release();
-						return (TClass)wrapper;
+						return cachedWrapper;
 					}
 				}
 
+				// A views object can be cached as a base type (CefView) and later requested as a derived
+				// type (CefWindow) at the same address; then a new wrapper of the requested type replaces it.
 				if (RefCounted.TryGetValue(key, out RefCountedReference reference)
-					&& reference.Instance.TryGetTarget(out wrapper))
+					&& reference.Instance.TryGetTarget(out wrapper) && wrapper is TClass cachedTypedWrapper)
 				{
 					((cef_base_ref_counted_t*)instance)->Release();
-					return (TClass)wrapper;
+					return cachedTypedWrapper;
 				}
 #if DEBUG
 				else if (CefStructure.IsAllocated(key))
@@ -196,7 +198,18 @@ namespace CefNet
 		/// Initializes a new instance of <see cref="CefBaseRefCounted{T}"/>.
 		/// </summary>
 		public unsafe CefBaseRefCounted()
-			: base(Allocate(sizeof(T)))
+			: this(sizeof(T))
+		{
+
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="CefBaseRefCounted{T}"/> with a native structure
+		/// of the specified size, which a derived structure (such as a views delegate) can extend.
+		/// </summary>
+		/// <param name="size">The size of the native structure, at least the size of <typeparamref name="T"/>.</param>
+		protected unsafe CefBaseRefCounted(int size)
+			: base(Allocate(Math.Max(size, sizeof(T))))
 		{
 			var reference = new RefCountedReference(new WeakReference<CefBaseRefCounted>(this));
 			GlobalSyncRoot.EnterWriteLock();

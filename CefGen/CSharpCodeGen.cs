@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -91,6 +91,11 @@ namespace CefGen
 			else if (attributes.HasFlag(CodeAttributes.Private))
 			{
 				Output.Write("private ");
+			}
+
+			if (attributes.HasFlag(CodeAttributes.New))
+			{
+				Output.Write("new ");
 			}
 
 			if (attributes.HasFlag(CodeAttributes.Static))
@@ -352,7 +357,15 @@ namespace CefGen
 			Output.Write("(");
 			Output.Write(string.Join(", ", ctorDecl.Parameters.Select(arg => GetClrTypeName(arg.Type) + " " + arg.Name)));
 			Output.Write(")");
-			if (ctorDecl.BaseArgs.Count > 0)
+			if (ctorDecl.ThisArgs.Count > 0)
+			{
+				Output.WriteLine();
+				WriteIndent(1);
+				Output.Write(": this(");
+				Output.Write(string.Join(", ", ctorDecl.ThisArgs));
+				Output.Write(")");
+			}
+			else if (ctorDecl.BaseArgs.Count > 0)
 			{
 				Output.WriteLine();
 				WriteIndent(1);
@@ -520,6 +533,8 @@ namespace CefGen
 				case "HMENU":
 				case "HINSTANCE":
 				case "HCURSOR":
+				case "cef_window_handle_t":
+				case "cef_cursor_handle_t":
 				case "time_t":
 				case "pthread_t":
 					return "IntPtr";
@@ -546,6 +561,31 @@ namespace CefGen
 				case "const char*":
 				case "XDisplay*":
 					return "IntPtr";
+				case "cef_event_handle_t":
+					return "CefEventHandle";
+				case "int8_t":
+					return "sbyte";
+				case "uint8_t":
+					return "byte";
+				case "int16_t":
+					return "short";
+				case "uint16_t":
+					return "UInt16";
+				case "int32_t":
+					return "int";
+				case "uint32_t":
+					return "UInt32";
+				case "intptr_t":
+					return "IntPtr";
+				case "uintptr_t":
+					return "UIntPtr";
+				case "int64_t":
+					return "long";
+				case "uint64_t":
+					return "ulong";
+				case "char16_t":
+				case "wchar_t":
+					return "char";
 
 			}
 			if (type.EndsWith('*'))

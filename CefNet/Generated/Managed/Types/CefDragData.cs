@@ -21,8 +21,9 @@ using CefNet.Internal;
 namespace CefNet
 {
 	/// <summary>
-	/// Structure used to represent drag data. The functions of this structure may be
-	/// called on any thread.
+	/// Structure used to represent drag data. The functions of this structure may
+	/// be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -254,9 +255,9 @@ namespace CefNet
 
 		/// <summary>
 		/// Write the contents of the file being dragged out of the web view into
-		/// |writer|. Returns the number of bytes sent to |writer|. If |writer| is NULL
-		/// this function will return the size of the file contents in bytes. Call
-		/// get_file_name() to get a suggested name for the file.
+		/// |writer|. Returns the number of bytes sent to |writer|. If |writer| is
+		/// NULL this function will return the size of the file contents in bytes.
+		/// Call get_file_name() to get a suggested name for the file.
 		/// </summary>
 		public unsafe virtual long GetFileContents(CefStreamWriter writer)
 		{
@@ -270,6 +271,15 @@ namespace CefNet
 		public unsafe virtual int GetFileNames(CefStringList names)
 		{
 			return SafeCall(NativeInstance->GetFileNames(names.GetNativeInstance()));
+		}
+
+		/// <summary>
+		/// Retrieve the list of file paths that are being dragged into the browser
+		/// window.
+		/// </summary>
+		public unsafe virtual int GetFilePaths(CefStringList paths)
+		{
+			return SafeCall(NativeInstance->GetFilePaths(paths.GetNativeInstance()));
 		}
 
 		/// <summary>

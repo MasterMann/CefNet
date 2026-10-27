@@ -77,15 +77,14 @@ namespace CefGen
 		{
 			if (symbol.TypeKind != TypeKind.Struct)
 				return false;
-
 			ImmutableArray<ISymbol> members = symbol.GetMembers();
-			if (members.Length > 0)
+			if (members.Length > 0 && members[0] is IFieldSymbol field)
 			{
-				var field = members[0] as IFieldSymbol;
-				if (field != null)
-				{
-					return field.Type.Name == "cef_base_ref_counted_t";
-				}
+				// A ref-counted structure starts with its base: cef_base_ref_counted_t or another
+				// ref-counted structure (cef_window_t -> cef_panel_t -> cef_view_t).
+				if (field.Type.Name == "cef_base_ref_counted_t")
+					return true;
+				return field.Name == "base" && field.Type is INamedTypeSymbol baseType && IsRefCountedTypeSymbol(baseType);
 			}
 			return false;
 		}
@@ -150,7 +149,7 @@ namespace CefGen
 			AddFilesToSyntaxTrees(syntaxTrees, Path.Combine(basePath, "Native"));
 			AddFilesToSyntaxTrees(syntaxTrees, Path.Combine(basePath, "Managed", "Enums"));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet { public struct CefEventHandle { } }")));
-			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.CApi { public struct cef_main_args_t { } public struct cef_window_info_t { } }")));
+			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.CApi { public struct cef_main_args_t { } public struct cef_window_info_t { } public struct cef_accelerated_paint_info_t { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.WinApi { public struct MSG { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace System { [AttributeUsage(AttributeTargets.Parameter)] sealed class ImmutableAttribute : Attribute { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace System { [AttributeUsage(AttributeTargets.Method)] sealed class NativeNameAttribute : Attribute { public NativeNameAttribute(string name) { } } }")));
@@ -159,6 +158,7 @@ namespace CefGen
 			{
 					MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
 					MetadataReference.CreateFromFile(typeof(HashSet<>).GetTypeInfo().Assembly.Location),
+					MetadataReference.CreateFromFile(typeof(System.Collections.Concurrent.ConcurrentDictionary<,>).GetTypeInfo().Assembly.Location),
 			};
 
 			CSharpCompilation compilation = CSharpCompilation.Create(

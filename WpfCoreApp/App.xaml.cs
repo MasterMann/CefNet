@@ -26,7 +26,7 @@ namespace WpfCoreApp
 		{
 			base.OnStartup(e);
 
-			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef");
+			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef", "windows");
 			bool externalMessagePump = e.Args.Contains("--external-message-pump");
 
 			var settings = new CefSettings();

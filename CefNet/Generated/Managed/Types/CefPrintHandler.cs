@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle printing on Linux. Each browser will have
 	/// only one print job in progress at a time. The functions of this structure
 	/// will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -74,14 +75,17 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidOnPrintStart();
+		bool ICefPrintHandlerPrivate.AvoidOnPrintStart()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(OnPrintStart));
+		}
 
 		/// <summary>
-		/// Called when printing has started for the specified |browser|. This function
-		/// will be called before the other OnPrint*() functions and irrespective of
-		/// how printing was initiated (e.g. cef_browser_host_t::print(), JavaScript
-		/// window.print() or PDF extension print button).
+		/// Called when printing has started for the specified |browser|. This
+		/// function will be called before the other OnPrint*() functions and
+		/// irrespective of how printing was initiated (e.g.
+		/// cef_browser_host_t::print(), JavaScript window.print() or PDF extension
+		/// print button).
 		/// </summary>
 		protected internal unsafe virtual void OnPrintStart(CefBrowser browser)
 		{
@@ -107,8 +111,10 @@ namespace CefNet
 			instance.OnPrintStart(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidOnPrintSettings();
+		bool ICefPrintHandlerPrivate.AvoidOnPrintSettings()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(OnPrintSettings));
+		}
 
 		/// <summary>
 		/// Synchronize |settings| with client state. If |get_defaults| is true (1)
@@ -140,8 +146,10 @@ namespace CefNet
 			instance.OnPrintSettings(CefBrowser.Wrap(CefBrowser.Create, browser), CefPrintSettings.Wrap(CefPrintSettings.Create, settings), get_defaults != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidOnPrintDialog();
+		bool ICefPrintHandlerPrivate.AvoidOnPrintDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(OnPrintDialog));
+		}
 
 		/// <summary>
 		/// Show the print dialog. Execute |callback| once the dialog is dismissed.
@@ -174,8 +182,10 @@ namespace CefNet
 			return instance.OnPrintDialog(CefBrowser.Wrap(CefBrowser.Create, browser), has_selection != 0, CefPrintDialogCallback.Wrap(CefPrintDialogCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidOnPrintJob();
+		bool ICefPrintHandlerPrivate.AvoidOnPrintJob()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(OnPrintJob));
+		}
 
 		/// <summary>
 		/// Send the print job to the printer. Execute |callback| once the job is
@@ -192,7 +202,7 @@ namespace CefNet
 		private unsafe delegate int OnPrintJobDelegate(cef_print_handler_t* self, cef_browser_t* browser, cef_string_t* document_name, cef_string_t* pdf_file_path, cef_print_job_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, const cef_string_t* document_name, const cef_string_t* pdf_file_path, _cef_print_job_callback_t* callback)*
+		// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, cef_string_t const* document_name, cef_string_t const* pdf_file_path, _cef_print_job_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -208,8 +218,10 @@ namespace CefNet
 			return instance.OnPrintJob(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(document_name), CefString.Read(pdf_file_path), CefPrintJobCallback.Wrap(CefPrintJobCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidOnPrintReset();
+		bool ICefPrintHandlerPrivate.AvoidOnPrintReset()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(OnPrintReset));
+		}
 
 		/// <summary>
 		/// Reset client state related to printing.
@@ -238,8 +250,10 @@ namespace CefNet
 			instance.OnPrintReset(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPrintHandlerPrivate.AvoidGetPdfPaperSize();
+		bool ICefPrintHandlerPrivate.AvoidGetPdfPaperSize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPrintHandler), nameof(GetPdfPaperSize));
+		}
 
 		/// <summary>
 		/// Return the PDF paper size in device units. Used in combination with

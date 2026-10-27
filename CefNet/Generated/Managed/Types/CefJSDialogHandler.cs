@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to JavaScript dialogs. The
 	/// functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -65,8 +66,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnJSDialog();
+		bool ICefJSDialogHandlerPrivate.AvoidOnJSDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnJSDialog));
+		}
 
 		/// <summary>
 		/// Called to run a JavaScript dialog. If |origin_url| is non-NULL it can be
@@ -77,13 +80,13 @@ namespace CefNet
 		/// preferable to immediately executing the callback as this is used to detect
 		/// presumably malicious behavior like spamming alert messages in
 		/// onbeforeunload). Set |suppress_message| to false (0) and return false (0)
-		/// to use the default implementation (the default implementation will show one
-		/// modal dialog at a time and suppress any additional dialog requests until
-		/// the displayed dialog is dismissed). Return true (1) if the application will
-		/// use a custom dialog or if the callback has been executed immediately.
-		/// Custom dialogs may be either modal or modeless. If a custom dialog is used
-		/// the application must execute |callback| once the custom dialog is
-		/// dismissed.
+		/// to use the default implementation (the default implementation will show
+		/// one modal dialog at a time and suppress any additional dialog requests
+		/// until the displayed dialog is dismissed). Return true (1) if the
+		/// application will use a custom dialog or if the callback has been executed
+		/// immediately. Custom dialogs may be either modal or modeless. If a custom
+		/// dialog is used the application must execute |callback| once the custom
+		/// dialog is dismissed.
 		/// </summary>
 		protected internal unsafe virtual bool OnJSDialog(CefBrowser browser, string originUrl, CefJSDialogType dialogType, string messageText, string defaultPromptText, CefJSDialogCallback callback, ref int suppressMessage)
 		{
@@ -95,7 +98,7 @@ namespace CefNet
 		private unsafe delegate int OnJSDialogDelegate(cef_jsdialog_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, CefJSDialogType dialog_type, cef_string_t* message_text, cef_string_t* default_prompt_text, cef_jsdialog_callback_t* callback, int* suppress_message);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, const cef_string_t* origin_url, cef_jsdialog_type_t dialog_type, const cef_string_t* message_text, const cef_string_t* default_prompt_text, _cef_jsdialog_callback_t* callback, int* suppress_message)*
+		// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, cef_string_t const* origin_url, cef_jsdialog_type_t dialog_type, cef_string_t const* message_text, cef_string_t const* default_prompt_text, _cef_jsdialog_callback_t* callback, int* suppress_message)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -111,16 +114,18 @@ namespace CefNet
 			return instance.OnJSDialog(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(origin_url), dialog_type, CefString.Read(message_text), CefString.Read(default_prompt_text), CefJSDialogCallback.Wrap(CefJSDialogCallback.Create, callback), ref *suppress_message) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnBeforeUnloadDialog();
+		bool ICefJSDialogHandlerPrivate.AvoidOnBeforeUnloadDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnBeforeUnloadDialog));
+		}
 
 		/// <summary>
-		/// Called to run a dialog asking the user if they want to leave a page. Return
-		/// false (0) to use the default dialog implementation. Return true (1) if the
-		/// application will use a custom dialog or if the callback has been executed
-		/// immediately. Custom dialogs may be either modal or modeless. If a custom
-		/// dialog is used the application must execute |callback| once the custom
-		/// dialog is dismissed.
+		/// Called to run a dialog asking the user if they want to leave a page.
+		/// Return false (0) to use the default dialog implementation. Return true (1)
+		/// if the application will use a custom dialog or if the callback has been
+		/// executed immediately. Custom dialogs may be either modal or modeless. If a
+		/// custom dialog is used the application must execute |callback| once the
+		/// custom dialog is dismissed.
 		/// </summary>
 		protected internal unsafe virtual bool OnBeforeUnloadDialog(CefBrowser browser, string messageText, bool isReload, CefJSDialogCallback callback)
 		{
@@ -132,7 +137,7 @@ namespace CefNet
 		private unsafe delegate int OnBeforeUnloadDialogDelegate(cef_jsdialog_handler_t* self, cef_browser_t* browser, cef_string_t* message_text, int is_reload, cef_jsdialog_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, const cef_string_t* message_text, int is_reload, _cef_jsdialog_callback_t* callback)*
+		// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, cef_string_t const* message_text, int is_reload, _cef_jsdialog_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -148,13 +153,15 @@ namespace CefNet
 			return instance.OnBeforeUnloadDialog(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(message_text), is_reload != 0, CefJSDialogCallback.Wrap(CefJSDialogCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnResetDialogState();
+		bool ICefJSDialogHandlerPrivate.AvoidOnResetDialogState()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnResetDialogState));
+		}
 
 		/// <summary>
-		/// Called to cancel any pending dialogs and reset any saved dialog state. Will
-		/// be called due to events like page navigation irregardless of whether any
-		/// dialogs are currently pending.
+		/// Called to cancel any pending dialogs and reset any saved dialog state.
+		/// Will be called due to events like page navigation irregardless of whether
+		/// any dialogs are currently pending.
 		/// </summary>
 		protected internal unsafe virtual void OnResetDialogState(CefBrowser browser)
 		{
@@ -180,8 +187,10 @@ namespace CefNet
 			instance.OnResetDialogState(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnDialogClosed();
+		bool ICefJSDialogHandlerPrivate.AvoidOnDialogClosed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnDialogClosed));
+		}
 
 		/// <summary>
 		/// Called when the dialog is closed.

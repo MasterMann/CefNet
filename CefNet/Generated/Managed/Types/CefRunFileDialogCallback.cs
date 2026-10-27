@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::RunFileDialog. The functions of
 	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,13 +54,15 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRunFileDialogCallbackPrivate.AvoidOnFileDialogDismissed();
+		bool ICefRunFileDialogCallbackPrivate.AvoidOnFileDialogDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRunFileDialogCallback), nameof(OnFileDialogDismissed));
+		}
 
 		/// <summary>
-		/// Called asynchronously after the file dialog is dismissed. |file_paths| will
-		/// be a single value or a list of values depending on the dialog mode. If the
-		/// selection was cancelled |file_paths| will be NULL.
+		/// Called asynchronously after the file dialog is dismissed. |file_paths|
+		/// will be a single value or a list of values depending on the dialog mode.
+		/// If the selection was cancelled |file_paths| will be NULL.
 		/// </summary>
 		protected internal unsafe virtual void OnFileDialogDismissed(CefStringList filePaths)
 		{

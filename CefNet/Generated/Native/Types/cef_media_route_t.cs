@@ -21,9 +21,10 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Represents the route between a media source and sink. Instances of this
 	/// object are created via cef_media_router_t::CreateRoute and retrieved via
-	/// cef_media_observer_t::OnRoutes. Contains the status and metadata of a routing
-	/// operation. The functions of this structure may be called on any browser
-	/// process thread unless otherwise indicated.
+	/// cef_media_observer_t::OnRoutes. Contains the status and metadata of a
+	/// routing operation. The functions of this structure may be called on any
+	/// browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_route_t
@@ -86,7 +87,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_media_route_t* self, const void* message, size_t message_size)*
+		/// void (*)(_cef_media_route_t* self, void const* message, size_t message_size)*
 		/// </summary>
 		public void* send_route_message;
 

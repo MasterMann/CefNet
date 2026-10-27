@@ -14,39 +14,19 @@ namespace CefNet
 		/// Returns the direct sub-frames of the current frame.
 		/// </summary>
 		/// <returns>The direct sub-frames of the current frame.</returns>
-		public unsafe CefFrame[] GetFrames()
+		public CefFrame[] GetFrames()
 		{
-			long frameid = this.Identifier;
+			string frameid = this.Identifier;
 			CefBrowser browser = this.Browser;
 			if (browser is null)
-			{
-#if NET45
-				return new CefFrame[0];
-#else
 				return Array.Empty<CefFrame>();
-#endif
-			}
 
-			long[] ids = browser.GetFrameIdentifiers();
-			var frames = new List<CefFrame>(ids.Length);
-			foreach (long fid in ids)
+			var frames = new List<CefFrame>();
+			foreach (string fid in browser.GetFrameIdentifiers())
 			{
-				cef_frame_t* frame = browser.NativeInstance->GetFrameByIdent(fid);
-				if (frame == null)
-					continue;
-
-				cef_frame_t* parent = frame->GetParent();
-				if (parent != null)
-				{
-					long parentid = parent->GetIdentifier();
-					((cef_base_ref_counted_t*)parent)->Release();
-					if (parentid == frameid)
-					{
-						frames.Add(CefFrame.Wrap<CefFrame>(f => new CefFrame((cef_frame_t*)f), frame));
-						continue;
-					}
-				}
-				((cef_base_ref_counted_t*)frame)->Release();
+				CefFrame frame = browser.GetFrameByIdentifier(fid);
+				if (frame is not null && frame.Parent?.Identifier == frameid)
+					frames.Add(frame);
 			}
 			GC.KeepAlive(browser);
 			return frames.ToArray();
@@ -62,11 +42,11 @@ namespace CefNet
 			return this == frame;
 		}
 
-		public unsafe override int GetHashCode()
+		public override int GetHashCode()
 		{
 			if (CefApi.UseUnsafeImplementation)
 				return _instance.GetHashCode();
-			return IsDisposed ? 0 : NativeInstance->GetIdentifier().GetHashCode();
+			return IsDisposed ? 0 : (Identifier?.GetHashCode() ?? 0);
 		}
 
 #pragma warning restore CS1591

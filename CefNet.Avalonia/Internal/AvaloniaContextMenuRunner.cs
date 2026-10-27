@@ -29,8 +29,8 @@ namespace CefNet.Internal
 				throw new InvalidOperationException();
 
 			Menu = new ContextMenu();
-			Menu.MenuClosed += Menu_Closed;
-			Build(Model, (AvaloniaList<object>)Menu.Items);
+			Menu.Closed += Menu_Closed;
+			Build(Model, Menu.Items);
 		}
 
 		private void Menu_Closed(object sender, RoutedEventArgs e)
@@ -54,7 +54,7 @@ namespace CefNet.Internal
 			get { return _completionSource?.Task; }
 		}
 
-		private void Build(MenuModel model, AvaloniaList<object> menu)
+		private void Build(MenuModel model, ItemCollection menu)
 		{
 			int count = model.Count;
 			for (int i = 0; i < count; i++)
@@ -82,7 +82,7 @@ namespace CefNet.Internal
 						menuItem = new MenuItem();
 						if (model.IsEnabledAt(i))
 						{
-							Build(model.GetSubMenuAt(i), (AvaloniaList<object>)menuItem.Items);
+							Build(model.GetSubMenuAt(i), menuItem.Items);
 						}
 						break;
 					default:
@@ -107,7 +107,7 @@ namespace CefNet.Internal
 			{
 				try
 				{
-					Menu.PlacementMode = PlacementMode.Pointer;
+					Menu.Placement = PlacementMode.Pointer;
 					Menu.PlacementRect = new Rect(point.X, point.Y, 1, 1);
 					Menu.Open(control);
 				}

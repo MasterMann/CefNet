@@ -19,15 +19,19 @@ using CefNet.WinApi;
 namespace CefNet
 {
 	/// <summary>
-	/// Supported Chrome toolbar types.
+	/// Chrome toolbar types.
 	/// </summary>
 	public enum CefChromeToolbarType
 	{
+		Unknown = 0,
+
 		None = 1,
 
 		Normal = 2,
 
 		Location = 3,
+
+		NumValues = 4,
 	}
 }
 

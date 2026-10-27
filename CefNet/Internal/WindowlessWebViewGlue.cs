@@ -16,7 +16,7 @@ namespace CefNet.Internal
 		}
 
 		/// <inheritdoc />
-		internal protected override bool OnFileDialog(CefBrowser browser, CefFileDialogMode mode, string title, string defaultFilePath, CefStringList acceptFilters, CefFileDialogCallback callback)
+		internal protected override bool OnFileDialog(CefBrowser browser, CefFileDialogMode mode, string title, string defaultFilePath, CefStringList acceptFilters, CefStringList acceptExtensions, CefStringList acceptDescriptions, CefFileDialogCallback callback)
 		{
 			callback.Cancel();
 			return true;

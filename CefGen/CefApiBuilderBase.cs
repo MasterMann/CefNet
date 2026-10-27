@@ -111,7 +111,7 @@ namespace CefGen
 
 		protected TypeDesc GetTypeDesc(CppType type)
 		{
-			var t = new TypeDesc(type.GetDisplayName(), type);
+			var t = new TypeDesc(type.GetCName(), type);
 			if (type is CppPointerType pointerType)
 			{
 				t.FunctionTypeRef = pointerType.ElementType as CppFunctionType;

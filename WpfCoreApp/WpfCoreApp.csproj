@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

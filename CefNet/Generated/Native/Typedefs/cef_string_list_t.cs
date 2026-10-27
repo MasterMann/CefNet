@@ -24,7 +24,7 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_string_list_t
 	{
-		public void* Base;
+		public _cef_string_list_t* Base;
 	}
 }
 

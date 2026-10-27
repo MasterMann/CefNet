@@ -21,14 +21,62 @@ using CefNet.Internal;
 namespace CefNet
 {
 	/// <summary>
-	/// Structure representing the audio parameters for setting up the audio handler.
+	/// Structure representing the audio parameters for setting up the audio
+	/// handler.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefAudioParameters
+	public unsafe partial class CefAudioParameters : IDisposable
 	{
-		private cef_audio_parameters_t _instance;
+		private cef_audio_parameters_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefAudioParameters()
+		{
+			_disposable = true;
+			_instance = (cef_audio_parameters_t*)CefStructure.Allocate(sizeof(cef_audio_parameters_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_audio_parameters_t));
+		}
+
+		internal static unsafe CefAudioParameters Create(IntPtr instance)
+		{
+			return new CefAudioParameters((cef_audio_parameters_t*)instance);
+		}
+
+		public CefAudioParameters(cef_audio_parameters_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_audio_parameters_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_audio_parameters_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Layout of the audio channels
@@ -37,11 +85,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.channel_layout;
+				return _instance->channel_layout;
 			}
 			set
 			{
-				_instance.channel_layout = value;
+				_instance->channel_layout = value;
 			}
 		}
 
@@ -52,11 +100,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.sample_rate;
+				return _instance->sample_rate;
 			}
 			set
 			{
-				_instance.sample_rate = value;
+				_instance->sample_rate = value;
 			}
 		}
 
@@ -67,22 +115,32 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.frames_per_buffer;
+				return _instance->frames_per_buffer;
 			}
 			set
 			{
-				_instance.frames_per_buffer = value;
+				_instance->frames_per_buffer = value;
 			}
 		}
 
-		public static implicit operator CefAudioParameters(cef_audio_parameters_t instance)
+		public void Dispose()
 		{
-			return new CefAudioParameters { _instance = instance };
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator cef_audio_parameters_t(CefAudioParameters instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return instance._instance;
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefAudioParameters()
+		{
+			Dispose(false);
 		}
 	}
 }

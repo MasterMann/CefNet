@@ -43,6 +43,12 @@ namespace CefNet
 		/// already exists.
 		/// </summary>
 		Save = 3,
+
+		/// <summary>
+		/// Allows picking a nonexistent file, and prompts to overwrite if the file
+		/// already exists.
+		/// </summary>
+		NumValues = 4,
 	}
 }
 

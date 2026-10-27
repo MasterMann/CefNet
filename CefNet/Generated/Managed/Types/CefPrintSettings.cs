@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure representing print settings.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to focus. The functions of
 	/// this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_focus_handler_t
@@ -36,10 +37,11 @@ namespace CefNet.CApi
 		public void* on_take_focus;
 
 		/// <summary>
-		/// Called when the browser component is about to loose focus. For instance, if
-		/// focus was on the last HTML element and the user pressed the TAB key. |next|
-		/// will be true (1) if the browser is giving focus to the next component and
-		/// false (0) if the browser is giving focus to the previous component.
+		/// Called when the browser component is about to loose focus. For instance,
+		/// if focus was on the last HTML element and the user pressed the TAB key.
+		/// |next| will be true (1) if the browser is giving focus to the next
+		/// component and false (0) if the browser is giving focus to the previous
+		/// component.
 		/// </summary>
 		[NativeName("on_take_focus")]
 		public unsafe void OnTakeFocus(cef_browser_t* browser, int next)

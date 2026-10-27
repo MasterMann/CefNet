@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure to implement for visiting cookie values. The functions of this
 	/// structure will always be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCookieVisitorPrivate.AvoidVisit();
+		bool ICefCookieVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCookieVisitor), nameof(Visit));
+		}
 
 		/// <summary>
 		/// Method that will be called once for each cookie. |count| is the 0-based
@@ -73,7 +76,7 @@ namespace CefNet
 		private unsafe delegate int VisitDelegate(cef_cookie_visitor_t* self, cef_cookie_t* cookie, int count, int total, int* deleteCookie);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_cookie_visitor_t* self, const const _cef_cookie_t* cookie, int count, int total, int* deleteCookie)*
+		// int (*)(_cef_cookie_visitor_t* self, _cef_cookie_t const* cookie, int count, int total, int* deleteCookie)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -84,7 +87,7 @@ namespace CefNet
 			{
 				return default;
 			}
-			return instance.Visit(*(CefCookie*)cookie, count, total, ref *deleteCookie) ? 1 : 0;
+			return instance.Visit(new CefCookie(cookie), count, total, ref *deleteCookie) ? 1 : 0;
 		}
 	}
 }

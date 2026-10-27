@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Callback structure used to select a client certificate for authentication.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_select_client_certificate_callback_t
@@ -30,7 +31,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_select_client_certificate_callback_t* self, _cef_x509certificate_t* cert)*
+		/// void (*)(_cef_select_client_certificate_callback_t* self, _cef_x509_certificate_t* cert)*
 		/// </summary>
 		public void* select;
 
@@ -39,11 +40,11 @@ namespace CefNet.CApi
 		/// NULL value means that no client certificate should be used.
 		/// </summary>
 		[NativeName("select")]
-		public unsafe void Select(cef_x509certificate_t* cert)
+		public unsafe void Select(cef_x509_certificate_t* cert)
 		{
 			fixed (cef_select_client_certificate_callback_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_select_client_certificate_callback_t*, cef_x509certificate_t*, void>)select)(self, cert);
+				((delegate* unmanaged[Stdcall]<cef_select_client_certificate_callback_t*, cef_x509_certificate_t*, void>)select)(self, cert);
 			}
 		}
 	}

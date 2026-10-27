@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback structure for cef_request_context_t::ResolveHost.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -52,8 +53,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResolveCallbackPrivate.AvoidOnResolveCompleted();
+		bool ICefResolveCallbackPrivate.AvoidOnResolveCompleted()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResolveCallback), nameof(OnResolveCompleted));
+		}
 
 		/// <summary>
 		/// Called on the UI thread after the ResolveHost request has completed.

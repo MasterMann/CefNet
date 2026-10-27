@@ -122,7 +122,7 @@ namespace WinFormsCoreApp
 			{
 				var settings = new CefPdfPrintSettings
 				{
-					HeaderFooterUrl = SelectedView.GetMainFrame().Url
+					DisplayHeaderFooter = true
 				};
 				try
 				{
@@ -300,10 +300,8 @@ namespace WinFormsCoreApp
 			if (this.SelectedView == null)
 				return;
 
-			SelectedView.Navigate("https://cefnet.github.io/winsize.html");
-			//SelectedView.Navigate("http://internet.yandex.ru");
-			//SelectedView.Navigate("http://cefnet.github.io/crossiframe.html");
-			//SelectedView.Navigate("http://cefnet.github.io/iframepage.html");
+			if (Uri.TryCreate(txtAddress.Text, UriKind.Absolute, out Uri url))
+				SelectedView.Navigate(url.AbsoluteUri);
 			//SelectedView.Navigate("http://cefnet.github.io/openpage.html", "http://example.com");
 			//SelectedView.Navigate("http://yandex.ru/");
 
@@ -376,9 +374,9 @@ namespace WinFormsCoreApp
 			}
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
+		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			base.OnClosing(e);
+			base.OnFormClosing(e);
 			if(!e.Cancel)
 			{
 				e.Cancel = !tabs.CloseAllTabs(false);

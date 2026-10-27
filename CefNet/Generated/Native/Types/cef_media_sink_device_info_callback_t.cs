@@ -19,8 +19,9 @@ using CefNet.WinApi;
 namespace CefNet.CApi
 {
 	/// <summary>
-	/// Callback structure for cef_media_sink_t::GetDeviceInfo. The functions of this
-	/// structure will be called on the browser process UI thread.
+	/// Callback structure for cef_media_sink_t::GetDeviceInfo. The functions of
+	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_sink_device_info_callback_t
@@ -31,13 +32,13 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_media_sink_device_info_callback_t* self, const const _cef_media_sink_device_info_t* device_info)*
+		/// void (*)(_cef_media_sink_device_info_callback_t* self, _cef_media_sink_device_info_t const* device_info)*
 		/// </summary>
 		public void* on_media_sink_device_info;
 
 		/// <summary>
-		/// Method that will be executed asyncronously once device information has been
-		/// retrieved.
+		/// Method that will be executed asyncronously once device information has
+		/// been retrieved.
 		/// </summary>
 		[NativeName("on_media_sink_device_info")]
 		public unsafe void OnMediaSinkDeviceInfo([Immutable]cef_media_sink_device_info_t* device_info)

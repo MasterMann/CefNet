@@ -27,17 +27,22 @@ namespace CefNet
 		/// <summary>
 		/// Supports tasks and timers.
 		/// </summary>
-		Default = 0,
+		TypeDefault = 0,
 
 		/// <summary>
 		/// Supports tasks, timers and native UI events (e.g. Windows messages).
 		/// </summary>
-		UI = 1,
+		TypeUI = 1,
 
 		/// <summary>
 		/// Supports tasks, timers and asynchronous IO events.
 		/// </summary>
-		IO = 2,
+		TypeIO = 2,
+
+		/// <summary>
+		/// Supports tasks, timers and asynchronous IO events.
+		/// </summary>
+		NumValues = 3,
 	}
 }
 

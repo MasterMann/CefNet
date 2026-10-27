@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::DownloadImage. The functions of
 	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDownloadImageCallbackPrivate.AvoidOnDownloadImageFinished();
+		bool ICefDownloadImageCallbackPrivate.AvoidOnDownloadImageFinished()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDownloadImageCallback), nameof(OnDownloadImageFinished));
+		}
 
 		/// <summary>
 		/// Method that will be executed when the image download has completed.
@@ -71,7 +74,7 @@ namespace CefNet
 		private unsafe delegate void OnDownloadImageFinishedDelegate(cef_download_image_callback_t* self, cef_string_t* image_url, int http_status_code, cef_image_t* image);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_download_image_callback_t* self, const cef_string_t* image_url, int http_status_code, _cef_image_t* image)*
+		// void (*)(_cef_download_image_callback_t* self, cef_string_t const* image_url, int http_status_code, _cef_image_t* image)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

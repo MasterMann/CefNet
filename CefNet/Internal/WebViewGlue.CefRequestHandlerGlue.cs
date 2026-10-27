@@ -103,9 +103,36 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		internal protected virtual void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status)
+		internal protected virtual void OnRenderProcessTerminated(CefBrowser browser, CefTerminationStatus status, int errorCode, string errorString)
 		{
-			WebView.RaiseRenderProcessTerminated(new RenderProcessTerminatedEventArgs(status));
+			WebView.RaiseRenderProcessTerminated(new RenderProcessTerminatedEventArgs(status, errorCode, errorString));
+		}
+
+		internal bool AvoidOnRenderProcessUnresponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnRenderProcessUnresponsive));
+		}
+
+		/// <summary>
+		/// Called when the render process becomes unresponsive. Return false for the default
+		/// behavior (keep waiting), or true and execute <paramref name="callback"/> to wait or terminate.
+		/// </summary>
+		internal protected virtual bool OnRenderProcessUnresponsive(CefBrowser browser, CefUnresponsiveProcessCallback callback)
+		{
+			return false;
+		}
+
+		internal bool AvoidOnRenderProcessResponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnRenderProcessResponsive));
+		}
+
+		/// <summary>
+		/// Called when the render process becomes responsive after previously being unresponsive.
+		/// </summary>
+		internal protected virtual void OnRenderProcessResponsive(CefBrowser browser)
+		{
+
 		}
 
 		internal bool AvoidOnDocumentAvailableInMainFrame()

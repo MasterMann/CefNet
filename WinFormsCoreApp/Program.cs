@@ -29,7 +29,7 @@ namespace WinFormsCoreApp
 			Application.SetCompatibleTextRenderingDefault(false);
 
 
-			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef");
+			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef", "windows");
 			bool externalMessagePump = args.Contains("--external-message-pump");
 
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

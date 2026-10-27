@@ -47,8 +47,8 @@
       </MenuItem>
     </Menu>
     <DockPanel DockPanel.Dock="Top" Name="controlsPanel">
-      <Button Content=" &lt; " Margin="2,2,0,0" />
-      <Button Content=" &gt; " Margin="2,2,0,0" />
+      <Button Content=" &lt; " Margin="2,2,0,0" Click="BackButton_Click" />
+      <Button Content=" &gt; " Margin="2,2,0,0" Click="ForwardButton_Click" />
       <Button Content="Go" Margin="2,2,0,0" Click="NavigateButton_Click"/>
       <TextBox Name="txtAddress" Margin="2,2,0,0" KeyDown="txtAddress_KeyDown" />
     </DockPanel>

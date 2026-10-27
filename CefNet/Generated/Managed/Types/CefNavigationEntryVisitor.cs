@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::GetNavigationEntries. The
 	/// functions of this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -53,15 +54,17 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefNavigationEntryVisitorPrivate.AvoidVisit();
+		bool ICefNavigationEntryVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefNavigationEntryVisitor), nameof(Visit));
+		}
 
 		/// <summary>
-		/// Method that will be executed. Do not keep a reference to |entry| outside of
-		/// this callback. Return true (1) to continue visiting entries or false (0) to
-		/// stop. |current| is true (1) if this entry is the currently loaded
-		/// navigation entry. |index| is the 0-based index of this entry and |total| is
-		/// the total number of entries.
+		/// Method that will be executed. Do not keep a reference to |entry| outside
+		/// of this callback. Return true (1) to continue visiting entries or false
+		/// (0) to stop. |current| is true (1) if this entry is the currently loaded
+		/// navigation entry. |index| is the 0-based index of this entry and |total|
+		/// is the total number of entries.
 		/// </summary>
 		protected internal unsafe virtual bool Visit(CefNavigationEntry entry, bool current, int index, int total)
 		{

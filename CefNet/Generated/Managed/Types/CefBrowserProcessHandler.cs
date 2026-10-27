@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure used to implement browser process callbacks. The functions of this
 	/// structure will be called on the browser process main thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -31,13 +32,19 @@ namespace CefNet
 	public unsafe partial class CefBrowserProcessHandler : CefBaseRefCounted<cef_browser_process_handler_t>, ICefBrowserProcessHandlerPrivate
 	{
 #if NET_LESS_5_0
+		private static readonly OnRegisterCustomPreferencesDelegate fnOnRegisterCustomPreferences = OnRegisterCustomPreferencesImpl;
+
 		private static readonly OnContextInitializedDelegate fnOnContextInitialized = OnContextInitializedImpl;
 
 		private static readonly OnBeforeChildProcessLaunchDelegate fnOnBeforeChildProcessLaunch = OnBeforeChildProcessLaunchImpl;
 
+		private static readonly OnAlreadyRunningAppRelaunchDelegate fnOnAlreadyRunningAppRelaunch = OnAlreadyRunningAppRelaunchImpl;
+
 		private static readonly OnScheduleMessagePumpWorkDelegate fnOnScheduleMessagePumpWork = OnScheduleMessagePumpWorkImpl;
 
 		private static readonly GetDefaultClientDelegate fnGetDefaultClient = GetDefaultClientImpl;
+
+		private static readonly GetDefaultRequestContextHandlerDelegate fnGetDefaultRequestContextHandler = GetDefaultRequestContextHandlerImpl;
 
 #endif // NET_LESS_5_0
 		internal static unsafe CefBrowserProcessHandler Create(IntPtr instance)
@@ -49,21 +56,73 @@ namespace CefNet
 		{
 			cef_browser_process_handler_t* self = this.NativeInstance;
 			#if NET_LESS_5_0
+			self->on_register_custom_preferences = (void*)Marshal.GetFunctionPointerForDelegate(fnOnRegisterCustomPreferences);
 			self->on_context_initialized = (void*)Marshal.GetFunctionPointerForDelegate(fnOnContextInitialized);
 			self->on_before_child_process_launch = (void*)Marshal.GetFunctionPointerForDelegate(fnOnBeforeChildProcessLaunch);
+			self->on_already_running_app_relaunch = (void*)Marshal.GetFunctionPointerForDelegate(fnOnAlreadyRunningAppRelaunch);
 			self->on_schedule_message_pump_work = (void*)Marshal.GetFunctionPointerForDelegate(fnOnScheduleMessagePumpWork);
 			self->get_default_client = (void*)Marshal.GetFunctionPointerForDelegate(fnGetDefaultClient);
+			self->get_default_request_context_handler = (void*)Marshal.GetFunctionPointerForDelegate(fnGetDefaultRequestContextHandler);
 			#else
+			self->on_register_custom_preferences = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, CefPreferencesType, cef_preference_registrar_t*, void>)&OnRegisterCustomPreferencesImpl;
 			self->on_context_initialized = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, void>)&OnContextInitializedImpl;
 			self->on_before_child_process_launch = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_command_line_t*, void>)&OnBeforeChildProcessLaunchImpl;
+			self->on_already_running_app_relaunch = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_command_line_t*, cef_string_t*, int>)&OnAlreadyRunningAppRelaunchImpl;
 			self->on_schedule_message_pump_work = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, long, void>)&OnScheduleMessagePumpWorkImpl;
 			self->get_default_client = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_client_t*>)&GetDefaultClientImpl;
+			self->get_default_request_context_handler = (delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_request_context_handler_t*>)&GetDefaultRequestContextHandlerImpl;
 			#endif
 		}
 
 		public CefBrowserProcessHandler(cef_browser_process_handler_t* instance)
 			: base((cef_base_ref_counted_t*)instance)
 		{
+		}
+
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnRegisterCustomPreferences()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnRegisterCustomPreferences));
+		}
+
+		/// <summary>
+		/// Provides an opportunity to register custom preferences prior to global and
+		/// request context initialization.
+		/// If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be
+		/// accessed via cef_preference_manager_t::GetGlobalPreferences after
+		/// OnContextInitialized is called. Global preferences are registered a single
+		/// time at application startup. See related cef_settings_t.cache_path
+		/// configuration.
+		/// If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be
+		/// accessed via the cef_request_context_t after
+		/// cef_request_context_handler_t::OnRequestContextInitialized is called.
+		/// Request context preferences are registered each time a new
+		/// cef_request_context_t is created. It is intended but not required that all
+		/// request contexts have the same registered preferences. See related
+		/// cef_request_context_settings_t.cache_path configuration.
+		/// Do not keep a reference to the |registrar| object. This function is called
+		/// on the browser process UI thread.
+		/// </summary>
+		protected internal unsafe virtual void OnRegisterCustomPreferences(CefPreferencesType type, CefPreferenceRegistrar registrar)
+		{
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate void OnRegisterCustomPreferencesDelegate(cef_browser_process_handler_t* self, CefPreferencesType type, cef_preference_registrar_t* registrar);
+
+#endif // NET_LESS_5_0
+		// void (*)(_cef_browser_process_handler_t* self, cef_preferences_type_t type, _cef_preference_registrar_t* registrar)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe void OnRegisterCustomPreferencesImpl(cef_browser_process_handler_t* self, CefPreferencesType type, cef_preference_registrar_t* registrar)
+		{
+			var instance = GetInstance((IntPtr)self) as CefBrowserProcessHandler;
+			if (instance == null || ((ICefBrowserProcessHandlerPrivate)instance).AvoidOnRegisterCustomPreferences())
+			{
+				return;
+			}
+			instance.OnRegisterCustomPreferences(type, CefPreferenceRegistrar.Wrap(CefPreferenceRegistrar.Create, registrar));
 		}
 
 		/// <summary>
@@ -93,8 +152,10 @@ namespace CefNet
 			instance.OnContextInitialized();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnBeforeChildProcessLaunch();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnBeforeChildProcessLaunch()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnBeforeChildProcessLaunch));
+		}
 
 		/// <summary>
 		/// Called before a child process is launched. Will be called on the browser
@@ -127,23 +188,71 @@ namespace CefNet
 			instance.OnBeforeChildProcessLaunch(CefCommandLine.Wrap(CefCommandLine.Create, command_line));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnAlreadyRunningAppRelaunch()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnAlreadyRunningAppRelaunch));
+		}
 
 		/// <summary>
-		/// Called from any thread when work has been scheduled for the browser process
-		/// main (UI) thread. This callback is used in combination with CefSettings.
-		/// external_message_pump and cef_do_message_loop_work() in cases where the CEF
-		/// message loop must be integrated into an existing application message loop
-		/// (see additional comments and warnings on CefDoMessageLoopWork). This
-		/// callback should schedule a cef_do_message_loop_work() call to happen on the
-		/// main (UI) thread. |delay_ms| is the requested delay in milliseconds. If
-		/// |delay_ms| is
+		/// Implement this function to provide app-specific behavior when an already
+		/// running app is relaunched with the same CefSettings.root_cache_path value.
+		/// For example, activate an existing app window or create a new app window.
+		/// |command_line| will be read-only. Do not keep a reference to
+		/// |command_line| outside of this function. Return true (1) if the relaunch
+		/// is handled or false (0) for default relaunch behavior. Default behavior
+		/// will create a new default styled Chrome window.
+		/// To avoid cache corruption only a single app instance is allowed to run for
+		/// a given CefSettings.root_cache_path value. On relaunch the app checks a
+		/// process singleton lock and then forwards the new launch arguments to the
+		/// already running app process before exiting early. Client apps should
+		/// therefore check the cef_initialize() return value for early exit before
+		/// proceeding.
+		/// This function will be called on the browser process UI thread.
+		/// </summary>
+		protected internal unsafe virtual bool OnAlreadyRunningAppRelaunch(CefCommandLine commandLine, string currentDirectory)
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate int OnAlreadyRunningAppRelaunchDelegate(cef_browser_process_handler_t* self, cef_command_line_t* command_line, cef_string_t* current_directory);
+
+#endif // NET_LESS_5_0
+		// int (*)(_cef_browser_process_handler_t* self, _cef_command_line_t* command_line, cef_string_t const* current_directory)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe int OnAlreadyRunningAppRelaunchImpl(cef_browser_process_handler_t* self, cef_command_line_t* command_line, cef_string_t* current_directory)
+		{
+			var instance = GetInstance((IntPtr)self) as CefBrowserProcessHandler;
+			if (instance == null || ((ICefBrowserProcessHandlerPrivate)instance).AvoidOnAlreadyRunningAppRelaunch())
+			{
+				ReleaseIfNonNull((cef_base_ref_counted_t*)command_line);
+				return default;
+			}
+			return instance.OnAlreadyRunningAppRelaunch(CefCommandLine.Wrap(CefCommandLine.Create, command_line), CefString.Read(current_directory)) ? 1 : 0;
+		}
+
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnScheduleMessagePumpWork));
+		}
+
+		/// <summary>
+		/// Called from any thread when work has been scheduled for the browser
+		/// process main (UI) thread. This callback is used in combination with
+		/// cef_settings_t.external_message_pump and cef_do_message_loop_work() in
+		/// cases where the CEF message loop must be integrated into an existing
+		/// application message loop (see additional comments and warnings on
+		/// CefDoMessageLoopWork). This callback should schedule a
+		/// cef_do_message_loop_work() call to happen on the main (UI) thread.
+		/// |delay_ms| is the requested delay in milliseconds. If |delay_ms| is
 		/// &lt;
-		/// = 0 then the call should happen reasonably soon. If
-		/// |delay_ms| is &gt; 0 then the call should be scheduled to happen after the
-		/// specified delay and any currently pending scheduled call should be
-		/// cancelled.
+		/// = 0
+		/// then the call should happen reasonably soon. If |delay_ms| is &gt; 0 then the
+		/// call should be scheduled to happen after the specified delay and any
+		/// currently pending scheduled call should be cancelled.
 		/// </summary>
 		protected internal unsafe virtual void OnScheduleMessagePumpWork(long delayMs)
 		{
@@ -154,7 +263,7 @@ namespace CefNet
 		private unsafe delegate void OnScheduleMessagePumpWorkDelegate(cef_browser_process_handler_t* self, long delay_ms);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_browser_process_handler_t* self, int64 delay_ms)*
+		// void (*)(_cef_browser_process_handler_t* self, int64_t delay_ms)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -169,11 +278,12 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Return the default client for use with a newly created browser window. If
-		/// null is returned the browser will be unmanaged (no callbacks will be
-		/// executed for that browser) and application shutdown will be blocked until
-		/// the browser window is closed manually. This function is currently only used
-		/// with the chrome runtime.
+		/// Return the default client for use with a newly created browser window
+		/// (cef_browser_t object). If null is returned the cef_browser_t will be
+		/// unmanaged (no callbacks will be executed for that cef_browser_t) and
+		/// application shutdown will be blocked until the browser window is closed
+		/// manually. This function is currently only used with Chrome style when
+		/// creating new browser windows via Chrome UI.
 		/// </summary>
 		protected internal unsafe virtual CefClient GetDefaultClient()
 		{
@@ -197,6 +307,40 @@ namespace CefNet
 				return default;
 			}
 			CefClient rv = instance.GetDefaultClient();
+			if (rv == null)
+				return null;
+			return (rv != null) ? rv.GetNativeInstance() : null;
+		}
+
+		/// <summary>
+		/// Return the default handler for use with a new user or incognito profile
+		/// (cef_request_context_t object). If null is returned the
+		/// cef_request_context_t will be unmanaged (no callbacks will be executed for
+		/// that cef_request_context_t). This function is currently only used with
+		/// Chrome style when creating new browser windows via Chrome UI.
+		/// </summary>
+		protected internal unsafe virtual CefRequestContextHandler GetDefaultRequestContextHandler()
+		{
+			return default;
+		}
+
+#if NET_LESS_5_0
+		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
+		private unsafe delegate cef_request_context_handler_t* GetDefaultRequestContextHandlerDelegate(cef_browser_process_handler_t* self);
+
+#endif // NET_LESS_5_0
+		// _cef_request_context_handler_t* (*)(_cef_browser_process_handler_t* self)*
+#if !NET_LESS_5_0
+		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+#endif
+		private static unsafe cef_request_context_handler_t* GetDefaultRequestContextHandlerImpl(cef_browser_process_handler_t* self)
+		{
+			var instance = GetInstance((IntPtr)self) as CefBrowserProcessHandler;
+			if (instance == null)
+			{
+				return default;
+			}
+			CefRequestContextHandler rv = instance.GetDefaultRequestContextHandler();
 			if (rv == null)
 				return null;
 			return (rv != null) ? rv.GetNativeInstance() : null;

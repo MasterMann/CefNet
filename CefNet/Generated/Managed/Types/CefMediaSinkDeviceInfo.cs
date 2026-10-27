@@ -26,25 +26,66 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefMediaSinkDeviceInfo : IDisposable
+	public unsafe partial class CefMediaSinkDeviceInfo : IDisposable
 	{
-		private cef_media_sink_device_info_t _instance;
+		private cef_media_sink_device_info_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefMediaSinkDeviceInfo()
+		{
+			_disposable = true;
+			_instance = (cef_media_sink_device_info_t*)CefStructure.Allocate(sizeof(cef_media_sink_device_info_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_media_sink_device_info_t));
+		}
+
+		internal static unsafe CefMediaSinkDeviceInfo Create(IntPtr instance)
+		{
+			return new CefMediaSinkDeviceInfo((cef_media_sink_device_info_t*)instance);
+		}
+
+		public CefMediaSinkDeviceInfo(cef_media_sink_device_info_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_media_sink_device_info_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_media_sink_device_info_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		public string IpAddress
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.ip_address)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->ip_address);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.ip_address)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->ip_address, value);
 			}
 		}
 
@@ -52,11 +93,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.port;
+				return _instance->port;
 			}
 			set
 			{
-				_instance.port = value;
+				_instance->port = value;
 			}
 		}
 
@@ -64,34 +105,34 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.model_name)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->model_name);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.model_name)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->model_name, value);
 			}
 		}
 
 		public void Dispose()
 		{
-			IpAddress = null;
-			ModelName = null;
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator CefMediaSinkDeviceInfo(cef_media_sink_device_info_t instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return new CefMediaSinkDeviceInfo { _instance = instance };
+			if (_disposable && _instance != null)
+			{
+				IpAddress = null;
+				ModelName = null;
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
-		public static implicit operator cef_media_sink_device_info_t(CefMediaSinkDeviceInfo instance)
+		~CefMediaSinkDeviceInfo()
 		{
-			return instance._instance;
+			Dispose(false);
 		}
 	}
 }

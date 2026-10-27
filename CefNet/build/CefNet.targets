@@ -1,0 +1,12 @@
+<Project>
+
+  <!--
+    Executables that reference CefNet get a manifest declaring Windows 10 compatibility, which
+    Chromium requires, unless the project sets its own ApplicationManifest (which must then
+    declare Windows 10 compatibility itself) or sets CefNetApplicationManifest to false.
+  -->
+  <PropertyGroup Condition="'$(ApplicationManifest)' == '' and '$(CefNetApplicationManifest)' != 'false' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'WinExe')">
+    <ApplicationManifest>$(MSBuildThisFileDirectory)CefNet.app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+</Project>

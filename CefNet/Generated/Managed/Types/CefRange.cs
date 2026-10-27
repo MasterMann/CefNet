@@ -30,7 +30,7 @@ namespace CefNet
 	{
 		private cef_range_t _instance;
 
-		public int From
+		public uint From
 		{
 			get
 			{
@@ -42,7 +42,7 @@ namespace CefNet
 			}
 		}
 
-		public int To
+		public uint To
 		{
 			get
 			{

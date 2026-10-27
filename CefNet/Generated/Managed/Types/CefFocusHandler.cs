@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to focus. The functions of
 	/// this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -61,14 +62,17 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnTakeFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnTakeFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnTakeFocus));
+		}
 
 		/// <summary>
-		/// Called when the browser component is about to loose focus. For instance, if
-		/// focus was on the last HTML element and the user pressed the TAB key. |next|
-		/// will be true (1) if the browser is giving focus to the next component and
-		/// false (0) if the browser is giving focus to the previous component.
+		/// Called when the browser component is about to loose focus. For instance,
+		/// if focus was on the last HTML element and the user pressed the TAB key.
+		/// |next| will be true (1) if the browser is giving focus to the next
+		/// component and false (0) if the browser is giving focus to the previous
+		/// component.
 		/// </summary>
 		protected internal unsafe virtual void OnTakeFocus(CefBrowser browser, bool next)
 		{
@@ -94,8 +98,10 @@ namespace CefNet
 			instance.OnTakeFocus(CefBrowser.Wrap(CefBrowser.Create, browser), next != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnSetFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnSetFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnSetFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component is requesting focus. |source| indicates
@@ -127,8 +133,10 @@ namespace CefNet
 			return instance.OnSetFocus(CefBrowser.Wrap(CefBrowser.Create, browser), source) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnGotFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnGotFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnGotFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component has received focus.

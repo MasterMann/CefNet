@@ -26,6 +26,7 @@ namespace CefNet
 	/// can be created on any valid CEF thread in either the browser or render
 	/// process. Once created the functions of the URL request object must be
 	/// accessed on the same thread that created it.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -90,8 +91,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Gets the response, or NULL if no response information is available.
-		/// Response information will only be available after the upload has completed.
-		/// The returned object is read-only and should not be modified.
+		/// Response information will only be available after the upload has
+		/// completed. The returned object is read-only and should not be modified.
 		/// </summary>
 		public unsafe virtual CefResponse Response
 		{

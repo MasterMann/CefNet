@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Default application manifest for Windows executables that use CefNet.
+  Chromium supports Windows 10 and later only. An executable without this compatibility
+  declaration runs in a Windows 8 compatibility mode, where CEF's GPU process crashes as soon
+  as a native Chromium window (DevTools, CEF Views) is created.
+-->
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <!-- Replaces the SDK default manifest, so keep its execution level. -->
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 and Windows 11 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+</assembly>

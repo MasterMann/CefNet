@@ -105,7 +105,7 @@ namespace CefNet
 
 		private static void AssertApiVersion()
 		{
-			string hash = CefApi.CefApiHash(CefApiHashType.Universal);
+			string hash = CefApi.CefApiHash(CefApiHashType.Platform);
 			if (CefApi.ApiHash.Equals(hash, StringComparison.OrdinalIgnoreCase))
 				return;
 
@@ -117,6 +117,24 @@ namespace CefNet
 				assemblyVersion.Major,
 				assemblyVersion.Minor
 			));
+		}
+
+		/// <summary>
+		/// Chromium requires Windows 10 compatibility in the application manifest; without it,
+		/// the GPU process crashes when native Chromium windows (DevTools, CEF Views) are created.
+		/// </summary>
+		private static void WarnIfNotWindows10Compatible()
+		{
+			if (!PlatformInfo.IsWindows || Environment.OSVersion.Version.Major < 10)
+				return;
+
+			var versionInfo = new NativeMethods.OSVERSIONINFOW { dwOSVersionInfoSize = Marshal.SizeOf<NativeMethods.OSVERSIONINFOW>() };
+			if (NativeMethods.GetVersionExW(ref versionInfo) && versionInfo.dwMajorVersion < 10)
+			{
+				Trace.TraceWarning("The application manifest does not declare Windows 10 compatibility "
+					+ "(supportedOS {8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}). CEF requires it; native Chromium "
+					+ "windows such as DevTools may fail. CefNet adds a suitable manifest unless the project sets ApplicationManifest.");
+			}
 		}
 
 		private static string InitializeDllPath(string cefPath)
@@ -192,40 +210,31 @@ namespace CefNet
 		/// <exception cref="InvalidOperationException"></exception>
 		public void Initialize(string path, CefSettings settings)
 		{
-			if (PlatformInfo.IsWindows)
-			{
-				if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
-					throw new InvalidOperationException("The calling thread must be STA");
-			}
+			//if (PlatformInfo.IsWindows)
+			//{
+			//	if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+			//		throw new InvalidOperationException("The calling thread must be STA");
+			//}
 
 			if (IsInitialized)
 				throw new InvalidOperationException("CEF already initialized. You must call Initialize once per application process.");
 
 			path = InitializeDllPath(path);
 
-			if (PlatformInfo.IsWindows)
+			try
 			{
-				const int LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
-				_cefLibHandle = NativeMethods.LoadLibraryEx(path, IntPtr.Zero, LOAD_WITH_ALTERED_SEARCH_PATH);
-				if (IntPtr.Zero == _cefLibHandle)
-					throw new DllNotFoundException(string.Format("Can't load '{0}' (error: {1}).", path, Marshal.GetLastWin32Error()));
+				_cefLibHandle = NativeLibrary.Load(path);
 			}
-			else if (PlatformInfo.IsLinux || PlatformInfo.IsMacOS)
+			catch (DllNotFoundException e)
 			{
-				const int RTLD_NOW = 2;
-				_cefLibHandle = NativeMethods.dlopen(path, RTLD_NOW);
-				if (IntPtr.Zero == _cefLibHandle)
-					throw new DllNotFoundException(string.Format("Can't load '{0}'.", path));
-			}
-			else
-			{
-				throw new PlatformNotSupportedException();
+				throw new DllNotFoundException(string.Format("Can't load '{0}'.", path), e);
 			}
 
 			if (!TryInitializeDllImportResolver(_cefLibHandle) && PlatformInfo.IsMacOS)
 				throw new NotSupportedException("Requires .NET Core 3.0 or later.");
 
 			AssertApiVersion();
+			WarnIfNotWindows10Compatible();
 
 			OnBeforeInitalize(EventArgs.Empty);
 
@@ -480,8 +489,8 @@ namespace CefNet
 				if (args.GetType(0) != CefValueType.Binary)
 					return;
 				XrayHandle handle = XrayHandle.FromCfxBinaryValue(args.GetBinary(0));
-				if ((int)(handle.frame >> 32) != (int)(e.Frame.Identifier >> 32))
-					return; // Mismatch process IDs
+				if (handle.frame != XrayHandle.GetFrameKey(e.Frame.Identifier))
+					return; // The handle belongs to another frame
 				handle.Release();
 			}
 		}
@@ -745,6 +754,51 @@ namespace CefNet
 		protected internal virtual CefClient GetDefaultClient()
 		{
 			return null;
+		}
+
+		/// <summary>
+		/// Returns the default handler for use with a new user or incognito profile,
+		/// or null to use no handler. Only used with Chrome style.
+		/// </summary>
+		protected internal virtual CefRequestContextHandler GetDefaultRequestContextHandler()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Called when an application relaunch is requested while an instance already runs with
+		/// the same root cache path. Return true if the relaunch was handled, or false for the
+		/// default behavior (create a new default-styled Chrome window).
+		/// </summary>
+		/// <param name="commandLine">The command line of the relaunched process.</param>
+		/// <param name="currentDirectory">The working directory of the relaunched process.</param>
+		protected internal virtual bool OnAlreadyRunningAppRelaunch(CefCommandLine commandLine, string currentDirectory)
+		{
+			return false;
+		}
+
+		/// <summary>
+		/// Provides an opportunity to register custom preferences prior to global and
+		/// request context initialization.
+		/// If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be
+		/// accessed via CefPreferenceManager::GetGlobalPreferences after
+		/// OnContextInitialized is called. Global preferences are registered a single
+		/// time at application startup. See related cef_settings_t.cache_path and
+		/// cef_settings_t.persist_user_preferences configuration.
+		/// If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be
+		/// accessed via the CefRequestContext after
+		/// cef_request_context_handler_t::OnRequestContextInitialized is called.
+		/// Request context preferences are registered each time a new
+		/// cef_request_context_t is created. It is intended but not required that all
+		/// request contexts have the same registered preferences. See related
+		/// CefRequestContextSettings.cache_path and
+		/// CefRequestContextSettings.persist_user_preferences configuration.
+		/// Do not keep a reference to the |registrar| object. This function is called
+		/// on the browser process UI thread.
+		/// </summary>
+		protected internal virtual void OnRegisterCustomPreferences(CefPreferencesType type, CefPreferenceRegistrar registrar)
+		{
+			
 		}
 	}
 }

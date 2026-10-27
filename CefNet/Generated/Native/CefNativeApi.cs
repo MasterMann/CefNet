@@ -20,33 +20,36 @@ namespace CefNet.CApi
 {
 	public static partial class CefNativeApi
 	{
-		public static readonly string ApiHash = "44197292401010f8fce5b053733edd8642d01095";
+		public static readonly int ApiVersion = 15600;
+
+		public static readonly string ApiHash = OperatingSystem.IsWindows() ? "8f211699a44daedd96ae2a89bbf3a8f2abc229f3" : OperatingSystem.IsMacOS() ? "e01e9208f887490aa249d57f56761ab9c0c3f7ac" : "6dc09eb2834fe5b61d7d8c42bbb8d8c27a2bb1b6";
 
 		/// <summary>
 		/// Add an entry to the cross-origin access whitelist.
 		/// The same-origin policy restricts how scripts hosted from different origins
-		/// (scheme + domain + port) can communicate. By default, scripts can only access
-		/// resources with the same origin. Scripts hosted on the HTTP and HTTPS schemes
-		/// (but no other schemes) can use the &quot;Access-Control-Allow-Origin&quot; header to
-		/// allow cross-origin requests. For example, https://source.example.com can make
-		/// XMLHttpRequest requests on http://target.example.com if the
-		/// http://target.example.com request returns an &quot;Access-Control-Allow-Origin:
-		/// https://source.example.com&quot; response header.
+		/// (scheme + domain + port) can communicate. By default, scripts can only
+		/// access resources with the same origin. Scripts hosted on the HTTP and HTTPS
+		/// schemes (but no other schemes) can use the &quot;Access-Control-Allow-Origin&quot;
+		/// header to allow cross-origin requests. For example,
+		/// https://source.example.com can make XMLHttpRequest requests on
+		/// http://target.example.com if the http://target.example.com request returns
+		/// an &quot;Access-Control-Allow-Origin: https://source.example.com&quot; response
+		/// header.
 		/// Scripts in separate frames or iframes and hosted from the same protocol and
 		/// domain suffix can execute cross-origin JavaScript if both pages set the
 		/// document.domain value to the same domain suffix. For example,
 		/// scheme://foo.example.com and scheme://bar.example.com can communicate using
 		/// JavaScript if both domains set document.domain=&quot;example.com&quot;.
-		/// This function is used to allow access to origins that would otherwise violate
-		/// the same-origin policy. Scripts hosted underneath the fully qualified
-		/// |source_origin| URL (like http://www.example.com) will be allowed access to
-		/// all resources hosted on the specified |target_protocol| and |target_domain|.
-		/// If |target_domain| is non-NULL and |allow_target_subdomains| if false (0)
-		/// only exact domain matches will be allowed. If |target_domain| contains a top-
-		/// level domain component (like &quot;example.com&quot;) and |allow_target_subdomains| is
-		/// true (1) sub-domain matches will be allowed. If |target_domain| is NULL and
-		/// |allow_target_subdomains| if true (1) all domains and IP addresses will be
-		/// allowed.
+		/// This function is used to allow access to origins that would otherwise
+		/// violate the same-origin policy. Scripts hosted underneath the fully
+		/// qualified |source_origin| URL (like http://www.example.com) will be allowed
+		/// access to all resources hosted on the specified |target_protocol| and
+		/// |target_domain|. If |target_domain| is non-NULL and
+		/// |allow_target_subdomains| is false (0) only exact domain matches will be
+		/// allowed. If |target_domain| contains a top- level domain component (like
+		/// &quot;example.com&quot;) and |allow_target_subdomains| is true (1) sub-domain matches
+		/// will be allowed. If |target_domain| is NULL and |allow_target_subdomains| if
+		/// true (1) all domains and IP addresses will be allowed.
 		/// This function cannot be used to bypass the restrictions on local or display
 		/// isolated schemes. See the comments on CefRegisterCustomScheme for more
 		/// information.
@@ -55,25 +58,39 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_origin_whitelist_capi.h as
-		/// int cef_add_cross_origin_whitelist_entry(const cef_string_t* source_origin, const cef_string_t* target_protocol, const cef_string_t* target_domain, int allow_target_subdomains)
+		/// int cef_add_cross_origin_whitelist_entry(cef_string_t const * source_origin, cef_string_t const * target_protocol, cef_string_t const * target_domain, int allow_target_subdomains)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_add_cross_origin_whitelist_entry(cef_string_t* source_origin, cef_string_t* target_protocol, cef_string_t* target_domain, int allow_target_subdomains);
 
 		/// <summary>
-		/// Returns CEF API hashes for the libcef library. The returned string is owned
-		/// by the library and should not be freed. The |entry| parameter describes which
-		/// hash value will be returned:
+		/// Configures the CEF API version and returns API hashes for the libcef
+		/// library. The returned string is owned by the library and should not be
+		/// freed. The |version| parameter should be CEF_API_VERSION and any changes to
+		/// this value will be ignored after the first call to this method. The |entry|
+		/// parameter describes which hash value will be returned:
 		/// 0 - CEF_API_HASH_PLATFORM
-		/// 1 - CEF_API_HASH_UNIVERSAL
+		/// 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)
 		/// 2 - CEF_COMMIT_HASH (from cef_version.h)
+		/// 3 - CEF_SANDBOX_COMPAT_HASH (from cef_version.h, Windows only)
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/cef_api_hash.h as
-		/// const char* cef_api_hash(int entry)
+		/// char const * cef_api_hash(int version, int entry)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern IntPtr cef_api_hash(int entry);
+		public static unsafe extern IntPtr cef_api_hash(int version, int entry);
+
+		/// <summary>
+		/// Returns the CEF API version that was configured by the first call to
+		/// cef_api_hash().
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_api_hash.h as
+		/// int cef_api_version()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern int cef_api_version();
 
 		/// <summary>
 		/// Decodes the base64 encoded string |data|. The returned value will be NULL if
@@ -81,10 +98,10 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// _cef_binary_value_t* cef_base64decode(const cef_string_t* data)
+		/// _cef_binary_value_t * cef_base64_decode(cef_string_t const * data)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_binary_value_t* cef_base64decode(cef_string_t* data);
+		public static unsafe extern cef_binary_value_t* cef_base64_decode(cef_string_t* data);
 
 		/// <summary>
 		/// Encodes |data| as a base64 string.
@@ -92,10 +109,10 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_base64encode(const void* data, size_t data_size)
+		/// cef_string_userfree_t cef_base64_encode(void const * data, size_t data_size)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_string_userfree_t cef_base64encode(void* data, UIntPtr data_size);
+		public static unsafe extern cef_string_userfree_t cef_base64_encode(void* data, UIntPtr data_size);
 
 		/// <summary>
 		/// Retrieve the current system time.
@@ -116,13 +133,15 @@ namespace CefNet.CApi
 		/// |categories| is a comma-delimited list of category wildcards. A category can
 		/// have an optional &apos;-&apos; prefix to make it an excluded category. Having both
 		/// included and excluded categories in the same list is not supported.
-		/// Example: &quot;test_MyTest*&quot; Example: &quot;test_MyTest*,test_OtherStuff&quot; Example:
-		/// &quot;-excluded_category1,-excluded_category2&quot;
+		/// Examples:
+		/// - &quot;test_MyTest*&quot;
+		/// - &quot;test_MyTest*,test_OtherStuff&quot;
+		/// - &quot;-excluded_category1,-excluded_category2&quot;
 		/// This function must be called on the browser process UI thread.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_trace_capi.h as
-		/// int cef_begin_tracing(const cef_string_t* categories, _cef_completion_callback_t* callback)
+		/// int cef_begin_tracing(cef_string_t const * categories, _cef_completion_callback_t * callback)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_begin_tracing(cef_string_t* categories, cef_completion_callback_t* callback);
@@ -133,7 +152,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_values_capi.h as
-		/// cef_binary_value_t* cef_binary_value_create(const void* data, size_t data_size)
+		/// cef_binary_value_t * cef_binary_value_create(void const * data, size_t data_size)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_binary_value_t* cef_binary_value_create(void* data, UIntPtr data_size);
@@ -144,13 +163,13 @@ namespace CefNet.CApi
 		/// created on the UI thread. If |request_context| is NULL the global request
 		/// context will be used. This function can be called on any browser process
 		/// thread and will not block. The optional |extra_info| parameter provides an
-		/// opportunity to specify extra information specific to the created browser that
-		/// will be passed to cef_render_process_handler_t::on_browser_created() in the
-		/// render process.
+		/// opportunity to specify extra information specific to the created browser
+		/// that will be passed to cef_render_process_handler_t::on_browser_created() in
+		/// the render process.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_browser_capi.h as
-		/// int cef_browser_host_create_browser(const cef_window_info_t* windowInfo, _cef_client_t* client, const cef_string_t* url, const const _cef_browser_settings_t* settings, _cef_dictionary_value_t* extra_info, _cef_request_context_t* request_context)
+		/// int cef_browser_host_create_browser(cef_window_info_t const * windowInfo, _cef_client_t * client, cef_string_t const * url, _cef_browser_settings_t const * settings, _cef_dictionary_value_t * extra_info, _cef_request_context_t * request_context)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_browser_host_create_browser(cef_window_info_t* windowInfo, cef_client_t* client, cef_string_t* url, cef_browser_settings_t* settings, cef_dictionary_value_t* extra_info, cef_request_context_t* request_context);
@@ -165,10 +184,44 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_browser_capi.h as
-		/// cef_browser_t* cef_browser_host_create_browser_sync(const cef_window_info_t* windowInfo, _cef_client_t* client, const cef_string_t* url, const const _cef_browser_settings_t* settings, _cef_dictionary_value_t* extra_info, _cef_request_context_t* request_context)
+		/// cef_browser_t * cef_browser_host_create_browser_sync(cef_window_info_t const * windowInfo, _cef_client_t * client, cef_string_t const * url, _cef_browser_settings_t const * settings, _cef_dictionary_value_t * extra_info, _cef_request_context_t * request_context)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_browser_t* cef_browser_host_create_browser_sync(cef_window_info_t* windowInfo, cef_client_t* client, cef_string_t* url, cef_browser_settings_t* settings, cef_dictionary_value_t* extra_info, cef_request_context_t* request_context);
+
+		/// <summary>
+		/// Returns the browser (if any) with the specified identifier.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_browser_capi.h as
+		/// cef_browser_t * cef_browser_host_get_browser_by_identifier(int browser_id)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_browser_t* cef_browser_host_get_browser_by_identifier(int browser_id);
+
+		/// <summary>
+		/// Create a new BrowserView. The underlying cef_browser_t will not be created
+		/// until this view is added to the views hierarchy. The optional |extra_info|
+		/// parameter provides an opportunity to specify extra information specific to
+		/// the created browser that will be passed to
+		/// cef_render_process_handler_t::on_browser_created() in the render process.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_browser_view_capi.h as
+		/// cef_browser_view_t * cef_browser_view_create(_cef_client_t * client, cef_string_t const * url, _cef_browser_settings_t const * settings, _cef_dictionary_value_t * extra_info, _cef_request_context_t * request_context, _cef_browser_view_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_browser_view_t* cef_browser_view_create(cef_client_t* client, cef_string_t* url, cef_browser_settings_t* settings, cef_dictionary_value_t* extra_info, cef_request_context_t* request_context, cef_browser_view_delegate_t* @delegate);
+
+		/// <summary>
+		/// Returns the BrowserView associated with |browser|.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_browser_view_capi.h as
+		/// cef_browser_view_t * cef_browser_view_get_for_browser(_cef_browser_t * browser)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_browser_view_t* cef_browser_view_get_for_browser(cef_browser_t* browser);
 
 		/// <summary>
 		/// Remove all entries from the cross-origin access whitelist. Returns false (0)
@@ -184,9 +237,9 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Clear all scheme handler factories registered with the global request
 		/// context. Returns false (0) on error. This function may be called on any
-		/// thread in the browser process. Using this function is equivalent to calling c
-		/// ef_request_context_t::cef_request_context_get_global_context()-&gt;clear_scheme_
-		/// handler_factories().
+		/// thread in the browser process. Using this function is equivalent to calling
+		/// cef_request_context_t::cef_request_context_get_global_context()-
+		/// &gt;clear_scheme_handler_factories().
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_scheme_capi.h as
@@ -200,7 +253,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_command_line_capi.h as
-		/// cef_command_line_t* cef_command_line_create()
+		/// cef_command_line_t * cef_command_line_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_command_line_t* cef_command_line_create();
@@ -211,22 +264,33 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_command_line_capi.h as
-		/// cef_command_line_t* cef_command_line_get_global()
+		/// cef_command_line_t * cef_command_line_get_global()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_command_line_t* cef_command_line_get_global();
 
 		/// <summary>
+		/// Returns the global cef_component_updater_t singleton. Returns nullptr if
+		/// called from the incorrect thread.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_component_updater_capi.h as
+		/// cef_component_updater_t * cef_component_updater_get()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_component_updater_t* cef_component_updater_get();
+
+		/// <summary>
 		/// Returns the global cookie manager. By default data will be stored at
-		/// CefSettings.cache_path if specified or in memory otherwise. If |callback| is
-		/// non-NULL it will be executed asnychronously on the UI thread after the
+		/// cef_settings_t.cache_path if specified or in memory otherwise. If |callback|
+		/// is non-NULL it will be executed asnychronously on the UI thread after the
 		/// manager&apos;s storage has been initialized. Using this function is equivalent to
-		/// calling cef_request_context_t::cef_request_context_get_global_context()-&gt;GetD
-		/// efaultCookieManager().
+		/// calling cef_request_context_t::cef_request_context_get_global_context()-
+		/// &gt;GetDefaultCookieManager().
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_cookie_capi.h as
-		/// cef_cookie_manager_t* cef_cookie_manager_get_global_manager(_cef_completion_callback_t* callback)
+		/// cef_cookie_manager_t * cef_cookie_manager_get_global_manager(_cef_completion_callback_t * callback)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_cookie_manager_t* cef_cookie_manager_get_global_manager(cef_completion_callback_t* callback);
@@ -236,10 +300,8 @@ namespace CefNet.CApi
 		/// &quot;crash_reporter.cfg&quot;. On Windows and Linux this file must be placed next to
 		/// the main application executable. On macOS this file must be placed in the
 		/// top-level app bundle Resources directory (e.g.
-		/// &quot;
-		/// &lt;appname
-		/// &gt;.app/Contents/Resources&quot;). File contents are as follows:
-		/// # Comments start with a hash character and must be on their own line.
+		/// &quot;&lt;appname&gt;.app/Contents/Resources&quot;). File contents are as follows:
+		/// &lt;pre&gt;# Comments start with a hash character and must be on their own line.
 		/// [Config]
 		/// ProductName=
 		/// &lt;Value
@@ -281,21 +343,20 @@ namespace CefNet.CApi
 		/// [CrashKeys]
 		/// my_key1=&lt;small&gt;|medium|large&gt;
 		/// my_key2=&lt;small&gt;|medium|large&gt;
-		/// Config section:
+		/// &lt;/pre&gt;
+		/// &lt;b&gt;Config section:&lt;/b&gt;
 		/// If &quot;ProductName&quot; and/or &quot;ProductVersion&quot; are set then the specified values
-		/// will be included in the crash dump metadata. On macOS if these values are set
-		/// to NULL then they will be retrieved from the Info.plist file using the
+		/// will be included in the crash dump metadata. On macOS if these values are
+		/// set to NULL then they will be retrieved from the Info.plist file using the
 		/// &quot;CFBundleName&quot; and &quot;CFBundleShortVersionString&quot; keys respectively.
 		/// If &quot;AppName&quot; is set on Windows then crash report information (metrics,
 		/// database and dumps) will be stored locally on disk under the
-		/// &quot;C:@Users \
-		/// [CurrentUser]@AppData @Local \
-		/// [AppName]@User Data&quot; folder. On other
-		/// platforms the CefSettings.user_data_path value will be used.
+		/// &quot;C:\Users\[CurrentUser]\AppData\Local\[AppName]\User Data&quot; folder. On other
+		/// platforms the cef_settings_t.root_cache_path value will be used.
 		/// If &quot;ExternalHandler&quot; is set on Windows then the specified exe will be
 		/// launched as the crashpad-handler instead of re-launching the main process
 		/// exe. The value can be an absolute path or a path relative to the main exe
-		/// directory. On Linux the CefSettings.browser_subprocess_path value will be
+		/// directory. On Linux the cef_settings_t.browser_subprocess_path value will be
 		/// used. On macOS the existing subprocess app bundle will be used.
 		/// If &quot;BrowserCrashForwardingEnabled&quot; is set to true (1) on macOS then browser
 		/// process crashes will be forwarded to the system crash reporter. This results
@@ -310,26 +371,27 @@ namespace CefNet.CApi
 		/// 1. If &quot;MaxUploadsPerDay&quot; is set to a positive value then at most the
 		/// specified number of crashes will be uploaded in each 24 hour period.
 		/// 2. If crash upload fails due to a network or server error then an
-		/// incremental backoff delay up to a maximum of 24 hours will be applied for
-		/// retries.
+		/// incremental backoff delay up to a maximum of 24 hours will be applied
+		/// for retries.
 		/// 3. If a backoff delay is applied and &quot;MaxUploadsPerDay&quot; is &gt; 1 then the
 		/// &quot;MaxUploadsPerDay&quot; value will be reduced to 1 until the client is
 		/// restarted. This helps to avoid an upload flood when the network or
 		/// server error is resolved.
 		/// Rate limiting is not supported on Linux.
-		/// If &quot;MaxDatabaseSizeInMb&quot; is set to a positive value then crash report storage
-		/// on disk will be limited to that size in megabytes. For example, on Windows
-		/// each dump is about 600KB so a &quot;MaxDatabaseSizeInMb&quot; value of 20 equates to
-		/// about 34 crash reports stored on disk. Not supported on Linux.
-		/// If &quot;MaxDatabaseAgeInDays&quot; is set to a positive value then crash reports older
-		/// than the specified age in days will be deleted. Not supported on Linux.
-		/// CrashKeys section:
+		/// If &quot;MaxDatabaseSizeInMb&quot; is set to a positive value then crash report
+		/// storage on disk will be limited to that size in megabytes. For example, on
+		/// Windows each dump is about 600KB so a &quot;MaxDatabaseSizeInMb&quot; value of 20
+		/// equates to about 34 crash reports stored on disk. Not supported on Linux.
+		/// If &quot;MaxDatabaseAgeInDays&quot; is set to a positive value then crash reports
+		/// older than the specified age in days will be deleted. Not supported on
+		/// Linux.
+		/// &lt;b&gt;CrashKeys section:&lt;/b&gt;
 		/// A maximum of 26 crash keys of each size can be specified for use by the
 		/// application. Crash key values will be truncated based on the specified size
 		/// (small = 64 bytes, medium = 256 bytes, large = 1024 bytes). The value of
 		/// crash keys can be set from any thread or process using the
-		/// CefSetCrashKeyValue function. These key/value pairs will be sent to the crash
-		/// server along with the crash dump file.
+		/// CefSetCrashKeyValue function. These key/value pairs will be sent to the
+		/// crash server along with the crash dump file.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_crash_util_capi.h as
@@ -339,17 +401,6 @@ namespace CefNet.CApi
 		public static unsafe extern int cef_crash_reporting_enabled();
 
 		/// <summary>
-		/// Creates a new context object that shares storage with |other| and uses an
-		/// optional |handler|.
-		/// </summary>
-		/// <remarks>
-		/// Defined in include/capi/cef_request_context_capi.h as
-		/// cef_request_context_t* cef_create_context_shared(cef_request_context_t* other, _cef_request_context_handler_t* handler)
-		/// </remarks>
-		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_request_context_t* cef_create_context_shared(cef_request_context_t* other, cef_request_context_handler_t* handler);
-
-		/// <summary>
 		/// Creates a directory and all parent directories if they don&apos;t already exist.
 		/// Returns true (1) on successful creation or if the directory already exists.
 		/// The directory is only readable by the current user. Calling this function on
@@ -357,21 +408,21 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_create_directory(const cef_string_t* full_path)
+		/// int cef_create_directory(cef_string_t const * full_path)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_create_directory(cef_string_t* full_path);
 
 		/// <summary>
-		/// Creates a new directory. On Windows if |prefix| is provided the new directory
-		/// name is in the format of &quot;prefixyyyy&quot;. Returns true (1) on success and sets
-		/// |new_temp_path| to the full path of the directory that was created. The
-		/// directory is only readable by the current user. Calling this function on the
-		/// browser process UI or IO threads is not allowed.
+		/// Creates a new directory. On Windows if |prefix| is provided the new
+		/// directory name is in the format of &quot;prefixyyyy&quot;. Returns true (1) on success
+		/// and sets |new_temp_path| to the full path of the directory that was created.
+		/// The directory is only readable by the current user. Calling this function on
+		/// the browser process UI or IO threads is not allowed.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_create_new_temp_directory(const cef_string_t* prefix, cef_string_t* new_temp_path)
+		/// int cef_create_new_temp_directory(cef_string_t const * prefix, cef_string_t * new_temp_path)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_create_new_temp_directory(cef_string_t* prefix, cef_string_t* new_temp_path);
@@ -379,14 +430,14 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Creates a directory within another directory. Extra characters will be
 		/// appended to |prefix| to ensure that the new directory does not have the same
-		/// name as an existing directory. Returns true (1) on success and sets |new_dir|
-		/// to the full path of the directory that was created. The directory is only
-		/// readable by the current user. Calling this function on the browser process UI
-		/// or IO threads is not allowed.
+		/// name as an existing directory. Returns true (1) on success and sets
+		/// |new_dir| to the full path of the directory that was created. The directory
+		/// is only readable by the current user. Calling this function on the browser
+		/// process UI or IO threads is not allowed.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_create_temp_directory_in_directory(const cef_string_t* base_dir, const cef_string_t* prefix, cef_string_t* new_dir)
+		/// int cef_create_temp_directory_in_directory(cef_string_t const * base_dir, cef_string_t const * prefix, cef_string_t * new_dir)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_create_temp_directory_in_directory(cef_string_t* base_dir, cef_string_t* prefix, cef_string_t* new_dir);
@@ -398,7 +449,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// int cef_create_url(const const _cef_urlparts_t* parts, cef_string_t* url)
+		/// int cef_create_url(_cef_urlparts_t const * parts, cef_string_t * url)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_create_url(cef_urlparts_t* parts, cef_string_t* url);
@@ -418,14 +469,14 @@ namespace CefNet.CApi
 		/// Deletes the given path whether it&apos;s a file or a directory. If |path| is a
 		/// directory all contents will be deleted.  If |recursive| is true (1) any sub-
 		/// directories and their contents will also be deleted (equivalent to executing
-		/// &quot;rm -rf&quot;, so use with caution). On POSIX environments if |path| is a symbolic
-		/// link then only the symlink will be deleted. Returns true (1) on successful
-		/// deletion or if |path| does not exist. Calling this function on the browser
-		/// process UI or IO threads is not allowed.
+		/// &quot;rm -rf&quot;, so use with caution). On POSIX environments if |path| is a
+		/// symbolic link then only the symlink will be deleted. Returns true (1) on
+		/// successful deletion or if |path| does not exist. Calling this function on
+		/// the browser process UI or IO threads is not allowed.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_delete_file(const cef_string_t* path, int recursive)
+		/// int cef_delete_file(cef_string_t const * path, int recursive)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_delete_file(cef_string_t* path, int recursive);
@@ -435,7 +486,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_values_capi.h as
-		/// cef_dictionary_value_t* cef_dictionary_value_create()
+		/// cef_dictionary_value_t * cef_dictionary_value_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_dictionary_value_t* cef_dictionary_value_create();
@@ -446,24 +497,123 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_directory_exists(const cef_string_t* path)
+		/// int cef_directory_exists(cef_string_t const * path)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_directory_exists(cef_string_t* path);
+
+		/// <summary>
+		/// Convert |point| from pixel screen coordinates to DIP screen coordinates.
+		/// This function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_point_t cef_display_convert_screen_point_from_pixels(cef_point_t const * point)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_point_t cef_display_convert_screen_point_from_pixels(cef_point_t* point);
+
+		/// <summary>
+		/// Convert |point| from DIP screen coordinates to pixel screen coordinates.
+		/// This function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_point_t cef_display_convert_screen_point_to_pixels(cef_point_t const * point)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_point_t cef_display_convert_screen_point_to_pixels(cef_point_t* point);
+
+		/// <summary>
+		/// Convert |rect| from pixel screen coordinates to DIP screen coordinates. This
+		/// function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_rect_t cef_display_convert_screen_rect_from_pixels(cef_rect_t const * rect)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_rect_t cef_display_convert_screen_rect_from_pixels(cef_rect_t* rect);
+
+		/// <summary>
+		/// Convert |rect| from DIP screen coordinates to pixel screen coordinates. This
+		/// function is only used on Windows.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_rect_t cef_display_convert_screen_rect_to_pixels(cef_rect_t const * rect)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_rect_t cef_display_convert_screen_rect_to_pixels(cef_rect_t* rect);
+
+		/// <summary>
+		/// Returns all Displays. Mirrored displays are excluded; this function is
+		/// intended to return distinct, usable displays.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// void cef_display_get_alls(size_t * displaysCount, cef_display_t * * displays)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_display_get_alls(UIntPtr* displaysCount, cef_display_t** displays);
+
+		/// <summary>
+		/// Returns the total number of Displays. Mirrored displays are excluded; this
+		/// function is intended to return the number of distinct, usable displays.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// size_t cef_display_get_count()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern UIntPtr cef_display_get_count();
+
+		/// <summary>
+		/// Returns the Display that most closely intersects |bounds|.  Set
+		/// |input_pixel_coords| to true (1) if |bounds| is in pixel screen coordinates
+		/// instead of DIP screen coordinates.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_matching_bounds(cef_rect_t const * bounds, int input_pixel_coords)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_matching_bounds(cef_rect_t* bounds, int input_pixel_coords);
+
+		/// <summary>
+		/// Returns the Display nearest |point|. Set |input_pixel_coords| to true (1) if
+		/// |point| is in pixel screen coordinates instead of DIP screen coordinates.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_nearest_point(cef_point_t const * point, int input_pixel_coords)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_nearest_point(cef_point_t* point, int input_pixel_coords);
+
+		/// <summary>
+		/// Returns the primary Display.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_display_capi.h as
+		/// cef_display_t * cef_display_get_primary()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_display_t* cef_display_get_primary();
 
 		/// <summary>
 		/// Perform a single iteration of CEF message loop processing. This function is
 		/// provided for cases where the CEF message loop must be integrated into an
 		/// existing application message loop. Use of this function is not recommended
 		/// for most users; use either the cef_run_message_loop() function or
-		/// CefSettings.multi_threaded_message_loop if possible. When using this function
-		/// care must be taken to balance performance against excessive CPU usage. It is
-		/// recommended to enable the CefSettings.external_message_pump option when using
-		/// this function so that
+		/// cef_settings_t.multi_threaded_message_loop if possible. When using this
+		/// function care must be taken to balance performance against excessive CPU
+		/// usage. It is recommended to enable the cef_settings_t.external_message_pump
+		/// option when using this function so that
 		/// cef_browser_process_handler_t::on_schedule_message_pump_work() callbacks can
-		/// facilitate the scheduling process. This function should only be called on the
-		/// main application thread and only if cef_initialize() is called with a
-		/// CefSettings.multi_threaded_message_loop value of false (0). This function
+		/// facilitate the scheduling process. This function should only be called on
+		/// the main application thread and only if cef_initialize() is called with a
+		/// cef_settings_t.multi_threaded_message_loop value of false (0). This function
 		/// will not block.
 		/// </summary>
 		/// <remarks>
@@ -478,36 +628,24 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_drag_data_capi.h as
-		/// cef_drag_data_t* cef_drag_data_create()
+		/// cef_drag_data_t * cef_drag_data_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_drag_data_t* cef_drag_data_create();
-
-		/// <summary>
-		/// Call during process startup to enable High-DPI support on Windows 7 or newer.
-		/// Older versions of Windows should be left DPI-unaware because they do not
-		/// support DirectWrite and GDI fonts are kerned very badly.
-		/// </summary>
-		/// <remarks>
-		/// Defined in include/capi/cef_app_capi.h as
-		/// void cef_enable_highdpi_support()
-		/// </remarks>
-		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern void cef_enable_highdpi_support();
 
 		/// <summary>
 		/// Stop tracing events on all processes.
 		/// This function will fail and return false (0) if a previous call to
 		/// CefEndTracingAsync is already pending or if CefBeginTracing was not called.
 		/// |tracing_file| is the path at which tracing data will be written and
-		/// |callback| is the callback that will be executed once all processes have sent
-		/// their trace data. If |tracing_file| is NULL a new temporary file path will be
-		/// used. If |callback| is NULL no trace data will be written.
+		/// |callback| is the callback that will be executed once all processes have
+		/// sent their trace data. If |tracing_file| is NULL a new temporary file path
+		/// will be used. If |callback| is NULL no trace data will be written.
 		/// This function must be called on the browser process UI thread.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_trace_capi.h as
-		/// int cef_end_tracing(const cef_string_t* tracing_file, cef_end_tracing_callback_t* callback)
+		/// int cef_end_tracing(cef_string_t const * tracing_file, cef_end_tracing_callback_t * callback)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_end_tracing(cef_string_t* tracing_file, cef_end_tracing_callback_t* callback);
@@ -516,17 +654,17 @@ namespace CefNet.CApi
 		/// This function should be called from the application entry point function to
 		/// execute a secondary process. It can be used to run secondary processes from
 		/// the browser client executable (default behavior) or from a separate
-		/// executable specified by the CefSettings.browser_subprocess_path value. If
+		/// executable specified by the cef_settings_t.browser_subprocess_path value. If
 		/// called for the browser process (identified by no &quot;type&quot; command-line value)
 		/// it will return immediately with a value of -1. If called for a recognized
-		/// secondary process it will block until the process should exit and then return
-		/// the process exit code. The |application| parameter may be NULL. The
-		/// |windows_sandbox_info| parameter is only used on Windows and may be NULL (see
-		/// cef_sandbox_win.h for details).
+		/// secondary process it will block until the process should exit and then
+		/// return the process exit code. The |application| parameter may be NULL. The
+		/// |windows_sandbox_info| parameter is only used on Windows and may be NULL
+		/// (see cef_sandbox_win.h for details).
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_app_capi.h as
-		/// int cef_execute_process(const cef_main_args_t* args, cef_app_t* application, void* windows_sandbox_info)
+		/// int cef_execute_process(cef_main_args_t const * args, cef_app_t * application, void * windows_sandbox_info)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_execute_process(cef_main_args_t* args, cef_app_t* application, void* windows_sandbox_info);
@@ -535,16 +673,16 @@ namespace CefNet.CApi
 		/// This is a convenience function for formatting a URL in a concise and human-
 		/// friendly way to help users make security-related decisions (or in other
 		/// circumstances when people need to distinguish sites, origins, or otherwise-
-		/// simplified URLs from each other). Internationalized domain names (IDN) may be
-		/// presented in Unicode if the conversion is considered safe. The returned value
-		/// will (a) omit the path for standard schemes, excepting file and filesystem,
-		/// and (b) omit the port if it is the default for the scheme. Do not use this
-		/// for URLs which will be parsed or sent to other applications.
+		/// simplified URLs from each other). Internationalized domain names (IDN) may
+		/// be presented in Unicode if the conversion is considered safe. The returned
+		/// value will (a) omit the path for standard schemes, excepting file and
+		/// filesystem, and (b) omit the port if it is the default for the scheme. Do
+		/// not use this for URLs which will be parsed or sent to other applications.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_format_url_for_security_display(const cef_string_t* origin_url)
+		/// cef_string_userfree_t cef_format_url_for_security_display(cef_string_t const * origin_url)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_string_userfree_t cef_format_url_for_security_display(cef_string_t* origin_url);
@@ -560,14 +698,30 @@ namespace CefNet.CApi
 		public static unsafe extern uint cef_get_current_platform_thread_id();
 
 		/// <summary>
-		/// Get the extensions associated with the given mime type. This should be passed
-		/// in lower case. There could be multiple extensions for a given mime type, like
-		/// &quot;html,htm&quot; for &quot;text/html&quot;, or &quot;txt,text,html,...&quot; for &quot;text/*&quot;. Any existing
-		/// elements in the provided vector will not be erased.
+		/// This function can optionally be called on the main application thread after
+		/// CefInitialize to retrieve the initialization exit code. When CefInitialize
+		/// returns true (1) the exit code will be 0 (CEF_RESULT_CODE_NORMAL_EXIT).
+		/// Otherwise, see cef_resultcode_t for possible exit code values including
+		/// browser process initialization errors and normal early exit conditions (such
+		/// as CEF_RESULT_CODE_NORMAL_EXIT_PROCESS_NOTIFIED for process singleton
+		/// relaunch behavior).
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_app_capi.h as
+		/// int cef_get_exit_code()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern int cef_get_exit_code();
+
+		/// <summary>
+		/// Get the extensions associated with the given mime type. This should be
+		/// passed in lower case. There could be multiple extensions for a given mime
+		/// type, like &quot;html,htm&quot; for &quot;text/html&quot;, or &quot;txt,text,html,...&quot; for &quot;text/*&quot;.
+		/// Any existing elements in the provided vector will not be erased.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// void cef_get_extensions_for_mime_type(const cef_string_t* mime_type, cef_string_list_t extensions)
+		/// void cef_get_extensions_for_mime_type(cef_string_t const * mime_type, cef_string_list_t extensions)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_get_extensions_for_mime_type(cef_string_t* mime_type, cef_string_list_t extensions);
@@ -579,7 +733,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_get_mime_type(const cef_string_t* extension)
+		/// cef_string_userfree_t cef_get_mime_type(cef_string_t const * extension)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_string_userfree_t cef_get_mime_type(cef_string_t* extension);
@@ -590,46 +744,49 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_path_util_capi.h as
-		/// int cef_get_path(cef_path_key_t key, cef_string_t* path)
+		/// int cef_get_path(cef_path_key_t key, cef_string_t * path)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_get_path(CefPathKey key, cef_string_t* path);
 
 		/// <summary>
 		/// Get the temporary directory provided by the system.
-		/// WARNING: In general, you should use the temp directory variants below instead
-		/// of this function. Those variants will ensure that the proper permissions are
-		/// set so that other users on the system can&apos;t edit them while they&apos;re open
-		/// (which could lead to security issues).
+		/// WARNING: In general, you should use the temp directory variants below
+		/// instead of this function. Those variants will ensure that the proper
+		/// permissions are set so that other users on the system can&apos;t edit them while
+		/// they&apos;re open (which could lead to security issues).
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_get_temp_directory(cef_string_t* temp_dir)
+		/// int cef_get_temp_directory(cef_string_t * temp_dir)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_get_temp_directory(cef_string_t* temp_dir);
 
 		/// <summary>
-		/// Create a new cef_image_t. It will initially be NULL. Use the Add*() functions
-		/// to add representations at different scale factors.
+		/// Create a new cef_image_t. It will initially be NULL. Use the Add*()
+		/// functions to add representations at different scale factors.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_image_capi.h as
-		/// cef_image_t* cef_image_create()
+		/// cef_image_t * cef_image_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_image_t* cef_image_create();
 
 		/// <summary>
 		/// This function should be called on the main application thread to initialize
-		/// the CEF browser process. The |application| parameter may be NULL. A return
-		/// value of true (1) indicates that it succeeded and false (0) indicates that it
-		/// failed. The |windows_sandbox_info| parameter is only used on Windows and may
-		/// be NULL (see cef_sandbox_win.h for details).
+		/// the CEF browser process. The |application| parameter may be NULL. Returns
+		/// true (1) if initialization succeeds. Returns false (0) if initialization
+		/// fails or if early exit is desired (for example, due to process singleton
+		/// relaunch behavior). If this function returns false (0) then the application
+		/// should exit immediately without calling any other CEF functions except,
+		/// optionally, CefGetExitCode. The |windows_sandbox_info| parameter is only
+		/// used on Windows and may be NULL (see cef_sandbox_win.h for details).
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_app_capi.h as
-		/// int cef_initialize(const cef_main_args_t* args, const const _cef_settings_t* settings, cef_app_t* application, void* windows_sandbox_info)
+		/// int cef_initialize(cef_main_args_t const * args, _cef_settings_t const * settings, cef_app_t * application, void * windows_sandbox_info)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_initialize(cef_main_args_t* args, cef_settings_t* settings, cef_app_t* application, void* windows_sandbox_info);
@@ -655,17 +812,29 @@ namespace CefNet.CApi
 		public static unsafe extern int cef_is_rtl();
 
 		/// <summary>
+		/// Create a new LabelButton. A |delegate| must be provided to handle the button
+		/// click. |text| will be shown on the LabelButton and used as the default
+		/// accessible name.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_label_button_capi.h as
+		/// cef_label_button_t * cef_label_button_create(_cef_button_delegate_t * delegate, cef_string_t const * text)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_label_button_t* cef_label_button_create(cef_button_delegate_t* @delegate, cef_string_t* text);
+
+		/// <summary>
 		/// Launches the process specified via |command_line|. Returns true (1) upon
 		/// success. Must be called on the browser process TID_PROCESS_LAUNCHER thread.
-		/// Unix-specific notes: - All file descriptors open in the parent process will
-		/// be closed in the
+		/// Unix-specific notes:
+		/// - All file descriptors open in the parent process will be closed in the
 		/// child process except for stdin, stdout, and stderr.
-		/// - If the first argument on the command line does not contain a slash,
-		/// PATH will be searched. (See man execvp.)
+		/// - If the first argument on the command line does not contain a slash, PATH
+		/// will be searched. (See man execvp.)
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_process_util_capi.h as
-		/// int cef_launch_process(_cef_command_line_t* command_line)
+		/// int cef_launch_process(_cef_command_line_t * command_line)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_launch_process(cef_command_line_t* command_line);
@@ -675,7 +844,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_values_capi.h as
-		/// cef_list_value_t* cef_list_value_create()
+		/// cef_list_value_t * cef_list_value_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_list_value_t* cef_list_value_create();
@@ -683,41 +852,55 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Loads the existing &quot;Certificate Revocation Lists&quot; file that is managed by
 		/// Google Chrome. This file can generally be found in Chrome&apos;s User Data
-		/// directory (e.g. &quot;C:@Users \
-		/// [User]@AppData @Local @Google @Chrome @User Data
-		/// &quot;
-		/// on
+		/// directory (e.g. &quot;C:\Users\[User]\AppData\Local\Google\Chrome\User Data\&quot; on
 		/// Windows) and is updated periodically by Chrome&apos;s component updater service.
-		/// Must be called in the browser process after the context has been initialized.
-		/// See https://dev.chromium.org/Home/chromium-security/crlsets for background.
+		/// Must be called in the browser process after the context has been
+		/// initialized. See https://dev.chromium.org/Home/chromium-security/crlsets for
+		/// background.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// void cef_load_crlsets_file(const cef_string_t* path)
+		/// void cef_load_crlsets_file(cef_string_t const * path)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_load_crlsets_file(cef_string_t* path);
 
 		/// <summary>
-		/// Returns the MediaRouter object associated with the global request context. If
-		/// |callback| is non-NULL it will be executed asnychronously on the UI thread
-		/// after the manager&apos;s storage has been initialized. Equivalent to calling cef_r
-		/// equest_context_t::cef_request_context_get_global_context()-&gt;get_media_router(
-		/// ).
+		/// Returns the MediaRouter object associated with the global request context.
+		/// If |callback| is non-NULL it will be executed asnychronously on the UI
+		/// thread after the manager&apos;s storage has been initialized. Equivalent to
+		/// calling cef_request_context_t::cef_request_context_get_global_context()-
+		/// &gt;get_media_router().
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_media_router_capi.h as
-		/// cef_media_router_t* cef_media_router_get_global(_cef_completion_callback_t* callback)
+		/// cef_media_router_t * cef_media_router_get_global(_cef_completion_callback_t * callback)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_media_router_t* cef_media_router_get_global(cef_completion_callback_t* callback);
+
+		/// <summary>
+		/// Create a new MenuButton. A |delegate| must be provided to call show_menu()
+		/// when the button is clicked. |text| will be shown on the MenuButton and used
+		/// as the default accessible name. If |with_frame| is true (1) the button will
+		/// have a visible frame at all times, center alignment, additional padding and
+		/// a default minimum size of 70x33 DIP. If |with_frame| is false (0) the button
+		/// will only have a visible frame on hover/press, left alignment, less padding
+		/// and no default minimum size.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_menu_button_capi.h as
+		/// cef_menu_button_t * cef_menu_button_create(_cef_menu_button_delegate_t * delegate, cef_string_t const * text)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_menu_button_t* cef_menu_button_create(cef_menu_button_delegate_t* @delegate, cef_string_t* text);
 
 		/// <summary>
 		/// Create a new MenuModel with the specified |delegate|.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_menu_model_capi.h as
-		/// cef_menu_model_t* cef_menu_model_create(_cef_menu_model_delegate_t* delegate)
+		/// cef_menu_model_t * cef_menu_model_create(_cef_menu_model_delegate_t * delegate)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_menu_model_t* cef_menu_model_create(cef_menu_model_delegate_t* @delegate);
@@ -729,10 +912,20 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_trace_capi.h as
-		/// int64 cef_now_from_system_trace_time()
+		/// int64_t cef_now_from_system_trace_time()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern long cef_now_from_system_trace_time();
+
+		/// <summary>
+		/// Create a new Panel.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_panel_capi.h as
+		/// cef_panel_t * cef_panel_create(_cef_panel_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_panel_t* cef_panel_create(cef_panel_delegate_t* @delegate);
 
 		/// <summary>
 		/// Parses the specified |json_string| and returns a dictionary or list
@@ -740,7 +933,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// _cef_value_t* cef_parse_json(const cef_string_t* json_string, cef_json_parser_options_t options)
+		/// _cef_value_t * cef_parse_json(cef_string_t const * json_string, cef_json_parser_options_t options)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_value_t* cef_parse_json(cef_string_t* json_string, CefJsonParserOptions options);
@@ -752,7 +945,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// _cef_value_t* cef_parse_json_buffer(const void* json, size_t json_size, cef_json_parser_options_t options)
+		/// _cef_value_t * cef_parse_json_buffer(void const * json, size_t json_size, cef_json_parser_options_t options)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_value_t* cef_parse_json_buffer(void* json, UIntPtr json_size, CefJsonParserOptions options);
@@ -764,7 +957,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// _cef_value_t* cef_parse_jsonand_return_error(const cef_string_t* json_string, cef_json_parser_options_t options, cef_string_t* error_msg_out)
+		/// _cef_value_t * cef_parse_jsonand_return_error(cef_string_t const * json_string, cef_json_parser_options_t options, cef_string_t * error_msg_out)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_value_t* cef_parse_jsonand_return_error(cef_string_t* json_string, CefJsonParserOptions options, cef_string_t* error_msg_out);
@@ -775,7 +968,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// int cef_parse_url(const cef_string_t* url, _cef_urlparts_t* parts)
+		/// int cef_parse_url(cef_string_t const * url, _cef_urlparts_t * parts)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_parse_url(cef_string_t* url, cef_urlparts_t* parts);
@@ -785,7 +978,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_request_capi.h as
-		/// cef_post_data_t* cef_post_data_create()
+		/// cef_post_data_t * cef_post_data_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_post_data_t* cef_post_data_create();
@@ -795,7 +988,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_request_capi.h as
-		/// cef_post_data_element_t* cef_post_data_element_create()
+		/// cef_post_data_element_t * cef_post_data_element_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_post_data_element_t* cef_post_data_element_create();
@@ -807,7 +1000,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_task_capi.h as
-		/// int cef_post_delayed_task(cef_thread_id_t threadId, cef_task_t* task, int64 delay_ms)
+		/// int cef_post_delayed_task(cef_thread_id_t threadId, cef_task_t * task, int64_t delay_ms)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_post_delayed_task(CefThreadId threadId, cef_task_t* task, long delay_ms);
@@ -818,17 +1011,60 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_task_capi.h as
-		/// int cef_post_task(cef_thread_id_t threadId, cef_task_t* task)
+		/// int cef_post_task(cef_thread_id_t threadId, cef_task_t * task)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_post_task(CefThreadId threadId, cef_task_t* task);
+
+		/// <summary>
+		/// Returns the current Chrome Variations configuration (combination of field
+		/// trials and chrome://flags) as human-readable strings. This is the human-
+		/// readable equivalent of the &quot;Active Variations&quot; section of chrome://version.
+		/// See https://developer.chrome.com/docs/web-platform/chrome-variations for
+		/// background and details. Note that field trial tests are disabled by default
+		/// in Official CEF builds (via the `disable_fieldtrial_testing_config=true (1)`
+		/// GN flag). This function must be called on the browser process UI thread.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_preference_capi.h as
+		/// void cef_preference_manager_get_chrome_variations_as_strings(cef_string_list_t strings)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_preference_manager_get_chrome_variations_as_strings(cef_string_list_t strings);
+
+		/// <summary>
+		/// Returns the current Chrome Variations configuration (combination of field
+		/// trials and chrome://flags) as equivalent command-line switches
+		/// (`--[enable|disable]-features=XXXX`, etc). These switches can be used to
+		/// apply the same configuration when launching a CEF-based application. See
+		/// https://developer.chrome.com/docs/web-platform/chrome-variations for
+		/// background and details. Note that field trial tests are disabled by default
+		/// in Official CEF builds (via the `disable_fieldtrial_testing_config=true (1)`
+		/// GN flag). This function must be called on the browser process UI thread.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_preference_capi.h as
+		/// void cef_preference_manager_get_chrome_variations_as_switches(cef_string_list_t switches)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_preference_manager_get_chrome_variations_as_switches(cef_string_list_t switches);
+
+		/// <summary>
+		/// Returns the global preference manager object.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_preference_capi.h as
+		/// cef_preference_manager_t * cef_preference_manager_get_global()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_preference_manager_t* cef_preference_manager_get_global();
 
 		/// <summary>
 		/// Create a new cef_print_settings_t object.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_print_settings_capi.h as
-		/// cef_print_settings_t* cef_print_settings_create()
+		/// cef_print_settings_t * cef_print_settings_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_print_settings_t* cef_print_settings_create();
@@ -838,15 +1074,15 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_process_message_capi.h as
-		/// cef_process_message_t* cef_process_message_create(const cef_string_t* name)
+		/// cef_process_message_t * cef_process_message_create(cef_string_t const * name)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_process_message_t* cef_process_message_create(cef_string_t* name);
 
 		/// <summary>
-		/// Quit the CEF message loop that was started by calling cef_run_message_loop().
-		/// This function should only be called on the main application thread and only
-		/// if cef_run_message_loop() was used.
+		/// Quit the CEF message loop that was started by calling
+		/// cef_run_message_loop(). This function should only be called on the main
+		/// application thread and only if cef_run_message_loop() was used.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_app_capi.h as
@@ -856,82 +1092,23 @@ namespace CefNet.CApi
 		public static unsafe extern void cef_quit_message_loop();
 
 		/// <summary>
-		/// Register a new V8 extension with the specified JavaScript extension code and
-		/// handler. Functions implemented by the handler are prototyped using the
-		/// keyword &apos;native&apos;. The calling of a native function is restricted to the scope
-		/// in which the prototype of the native function is defined. This function may
-		/// only be called on the render process main thread.
-		/// Example JavaScript extension code: &lt;pre&gt;// create the &apos;example&apos; global object if it doesn&apos;t already exist.
-		/// if (!example)
-		/// example = {};
-		/// // create the &apos;example.test&apos; global object if it doesn&apos;t already exist.
-		/// if (!example.test)
-		/// example.test = {};
-		/// (function() {
-		/// // Define the function &apos;example.test.myfunction&apos;.
-		/// example.test.myfunction = function() {
-		/// // Call CefV8Handler::Execute() with the function name &apos;MyFunction&apos;
-		/// // and no arguments.
-		/// native function MyFunction();
-		/// return MyFunction();
-		/// };
-		/// // Define the getter function for parameter &apos;example.test.myparam&apos;.
-		/// example.test.__defineGetter__(&apos;myparam&apos;, function() {
-		/// // Call CefV8Handler::Execute() with the function name &apos;GetMyParam&apos;
-		/// // and no arguments.
-		/// native function GetMyParam();
-		/// return GetMyParam();
-		/// });
-		/// // Define the setter function for parameter &apos;example.test.myparam&apos;.
-		/// example.test.__defineSetter__(&apos;myparam&apos;, function(b) {
-		/// // Call CefV8Handler::Execute() with the function name &apos;SetMyParam&apos;
-		/// // and a single argument.
-		/// native function SetMyParam();
-		/// if(b) SetMyParam(b);
-		/// });
-		/// // Extension definitions can also contain normal JavaScript variables
-		/// // and functions.
-		/// var myint = 0;
-		/// example.test.increment = function() {
-		/// myint += 1;
-		/// return myint;
-		/// };
-		/// })();
-		/// &lt;/pre&gt;Example usage in the page: &lt;pre&gt;// Call the function.
-		/// example.test.myfunction();
-		/// // Set the parameter.
-		/// example.test.myparam = value;
-		/// // Get the parameter.
-		/// value = example.test.myparam;
-		/// // Call another function.
-		/// example.test.increment();
-		/// &lt;/pre&gt;
-		/// </summary>
-		/// <remarks>
-		/// Defined in include/capi/cef_v8_capi.h as
-		/// int cef_register_extension(const cef_string_t* extension_name, const cef_string_t* javascript_code, cef_v8handler_t* handler)
-		/// </remarks>
-		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern int cef_register_extension(cef_string_t* extension_name, cef_string_t* javascript_code, cef_v8handler_t* handler);
-
-		/// <summary>
 		/// Register a scheme handler factory with the global request context. An NULL
-		/// |domain_name| value for a standard scheme will cause the factory to match all
-		/// domain names. The |domain_name| value will be ignored for non-standard
+		/// |domain_name| value for a standard scheme will cause the factory to match
+		/// all domain names. The |domain_name| value will be ignored for non-standard
 		/// schemes. If |scheme_name| is a built-in scheme and no handler is returned by
 		/// |factory| then the built-in scheme handler factory will be called. If
 		/// |scheme_name| is a custom scheme then you must also implement the
 		/// cef_app_t::on_register_custom_schemes() function in all processes. This
 		/// function may be called multiple times to change or remove the factory that
-		/// matches the specified |scheme_name| and optional |domain_name|. Returns false
-		/// (0) if an error occurs. This function may be called on any thread in the
-		/// browser process. Using this function is equivalent to calling cef_request_con
-		/// text_t::cef_request_context_get_global_context()-&gt;register_scheme_handler_fac
-		/// tory().
+		/// matches the specified |scheme_name| and optional |domain_name|. Returns
+		/// false (0) if an error occurs. This function may be called on any thread in
+		/// the browser process. Using this function is equivalent to calling cef_reques
+		/// t_context_t::cef_request_context_get_global_context()-
+		/// &gt;register_scheme_handler_factory().
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_scheme_capi.h as
-		/// int cef_register_scheme_handler_factory(const cef_string_t* scheme_name, const cef_string_t* domain_name, cef_scheme_handler_factory_t* factory)
+		/// int cef_register_scheme_handler_factory(cef_string_t const * scheme_name, cef_string_t const * domain_name, cef_scheme_handler_factory_t * factory)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_register_scheme_handler_factory(cef_string_t* scheme_name, cef_string_t* domain_name, cef_scheme_handler_factory_t* factory);
@@ -942,10 +1119,21 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_origin_whitelist_capi.h as
-		/// int cef_remove_cross_origin_whitelist_entry(const cef_string_t* source_origin, const cef_string_t* target_protocol, const cef_string_t* target_domain, int allow_target_subdomains)
+		/// int cef_remove_cross_origin_whitelist_entry(cef_string_t const * source_origin, cef_string_t const * target_protocol, cef_string_t const * target_domain, int allow_target_subdomains)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_remove_cross_origin_whitelist_entry(cef_string_t* source_origin, cef_string_t* target_protocol, cef_string_t* target_domain, int allow_target_subdomains);
+
+		/// <summary>
+		/// Creates a new context object that shares storage with |other| and uses an
+		/// optional |handler|.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_request_context_capi.h as
+		/// cef_request_context_t * cef_request_context_cef_create_context_shared(cef_request_context_t * other, _cef_request_context_handler_t * handler)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_request_context_t* cef_request_context_cef_create_context_shared(cef_request_context_t* other, cef_request_context_handler_t* handler);
 
 		/// <summary>
 		/// Creates a new context object with the specified |settings| and optional
@@ -953,7 +1141,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_request_context_capi.h as
-		/// cef_request_context_t* cef_request_context_create_context(const const _cef_request_context_settings_t* settings, _cef_request_context_handler_t* handler)
+		/// cef_request_context_t * cef_request_context_create_context(_cef_request_context_settings_t const * settings, _cef_request_context_handler_t * handler)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_request_context_t* cef_request_context_create_context(cef_request_context_settings_t* settings, cef_request_context_handler_t* handler);
@@ -963,7 +1151,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_request_context_capi.h as
-		/// cef_request_context_t* cef_request_context_get_global_context()
+		/// cef_request_context_t * cef_request_context_get_global_context()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_request_context_t* cef_request_context_get_global_context();
@@ -973,17 +1161,28 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_request_capi.h as
-		/// cef_request_t* cef_request_create()
+		/// cef_request_t * cef_request_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_request_t* cef_request_create();
+
+		/// <summary>
+		/// Combines specified |base_url| and |relative_url| into |resolved_url|.
+		/// Returns false (0) if one of the URLs is NULL or invalid.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_parser_capi.h as
+		/// int cef_resolve_url(cef_string_t const * base_url, cef_string_t const * relative_url, cef_string_t * resolved_url)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern int cef_resolve_url(cef_string_t* base_url, cef_string_t* relative_url, cef_string_t* resolved_url);
 
 		/// <summary>
 		/// Returns the global resource bundle instance.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_resource_bundle_capi.h as
-		/// cef_resource_bundle_t* cef_resource_bundle_get_global()
+		/// cef_resource_bundle_t * cef_resource_bundle_get_global()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_resource_bundle_t* cef_resource_bundle_get_global();
@@ -993,7 +1192,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_response_capi.h as
-		/// cef_response_t* cef_response_create()
+		/// cef_response_t * cef_response_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_response_t* cef_response_create();
@@ -1001,9 +1200,9 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Run the CEF message loop. Use this function instead of an application-
 		/// provided message loop to get the best balance between performance and CPU
-		/// usage. This function should only be called on the main application thread and
-		/// only if cef_initialize() is called with a
-		/// CefSettings.multi_threaded_message_loop value of false (0). This function
+		/// usage. This function should only be called on the main application thread
+		/// and only if cef_initialize() is called with a
+		/// cef_settings_t.multi_threaded_message_loop value of false (0). This function
 		/// will block until a quit message is received by the system.
 		/// </summary>
 		/// <remarks>
@@ -1014,14 +1213,24 @@ namespace CefNet.CApi
 		public static unsafe extern void cef_run_message_loop();
 
 		/// <summary>
+		/// Create a new ScrollView.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_scroll_view_capi.h as
+		/// cef_scroll_view_t * cef_scroll_view_create(_cef_view_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_scroll_view_t* cef_scroll_view_create(cef_view_delegate_t* @delegate);
+
+		/// <summary>
 		/// Create a new server that binds to |address| and |port|. |address| must be a
 		/// valid IPv4 or IPv6 address (e.g. 127.0.0.1 or ::1) and |port| must be a port
 		/// number outside of the reserved range (e.g. between 1025 and 65535 on most
 		/// platforms). |backlog| is the maximum number of pending connections. A new
 		/// thread will be created for each CreateServer call (the &quot;dedicated server
-		/// thread&quot;). It is therefore recommended to use a different cef_server_handler_t
-		/// instance for each CreateServer call to avoid thread safety issues in the
-		/// cef_server_handler_t implementation. The
+		/// thread&quot;). It is therefore recommended to use a different
+		/// cef_server_handler_t instance for each CreateServer call to avoid thread
+		/// safety issues in the cef_server_handler_t implementation. The
 		/// cef_server_handler_t::OnServerCreated function will be called on the
 		/// dedicated server thread to report success or failure. See
 		/// cef_server_handler_t::OnServerCreated documentation for a description of
@@ -1029,31 +1238,55 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_server_capi.h as
-		/// void cef_server_create(const cef_string_t* address, uint16 port, int backlog, _cef_server_handler_t* handler)
+		/// void cef_server_create(cef_string_t const * address, uint16_t port, int backlog, _cef_server_handler_t * handler)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern void cef_server_create(cef_string_t* address, ushort port, int backlog, cef_server_handler_t* handler);
+		public static unsafe extern void cef_server_create(cef_string_t* address, UInt16 port, int backlog, cef_server_handler_t* handler);
 
 		/// <summary>
 		/// Sets or clears a specific key-value pair from the crash metadata.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_crash_util_capi.h as
-		/// void cef_set_crash_key_value(const cef_string_t* key, const cef_string_t* value)
+		/// void cef_set_crash_key_value(cef_string_t const * key, cef_string_t const * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_set_crash_key_value(cef_string_t* key, cef_string_t* value);
 
 		/// <summary>
-		/// Set to true (1) before calling Windows APIs like TrackPopupMenu that enter a
-		/// modal message loop. Set to false (0) after exiting the modal message loop.
+		/// Set to true (1) before calling OS APIs on the CEF UI thread that will enter
+		/// a native message loop (see usage restrictions below). Set to false (0) after
+		/// exiting the native message loop. On Windows, use the CefSetOSModalLoop
+		/// function instead in cases like native top menus where resize of the browser
+		/// content is not required, or in cases like printer APIs where reentrancy
+		/// safety cannot be guaranteed.
+		/// Nested processing of Chromium tasks is disabled by default because common
+		/// controls and/or printer functions may use nested native message loops that
+		/// lead to unplanned reentrancy. This function re-enables nested processing in
+		/// the scope of an upcoming native message loop. It must only be used in cases
+		/// where the stack is reentrancy safe and processing nestable tasks is
+		/// explicitly safe. Do not use in cases (like the printer example) where an OS
+		/// API may experience unplanned reentrancy as a result of a new task executing
+		/// immediately.
+		/// For instance,
+		/// - The UI thread is running a message loop.
+		/// - It receives a task #1 and executes it.
+		/// - The task #1 implicitly starts a nested message loop. For example, via
+		/// Windows APIs such as MessageBox or GetSaveFileName, or default handling of
+		/// a user-initiated drag/resize operation (e.g. DefWindowProc handling of
+		/// WM_SYSCOMMAND for SC_MOVE/SC_SIZE).
+		/// - The UI thread receives a task #2 before or while in this second message
+		/// loop.
+		/// - With NestableTasksAllowed set to true (1), the task #2 will run right
+		/// away. Otherwise, it will be executed right after task #1 completes at
+		/// &quot;thread message loop level&quot;.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_app_capi.h as
-		/// void cef_set_osmodal_loop(int osModalLoop)
+		/// void cef_set_nestable_tasks_allowed(int allowed)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern void cef_set_osmodal_loop(int osModalLoop);
+		public static unsafe extern void cef_set_nestable_tasks_allowed(int allowed);
 
 		/// <summary>
 		/// Creates a new cef_shared_process_message_builder_t with the specified |name|
@@ -1061,14 +1294,15 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_shared_process_message_builder_capi.h as
-		/// cef_shared_process_message_builder_t* cef_shared_process_message_builder_create(const cef_string_t* name, size_t byte_size)
+		/// cef_shared_process_message_builder_t * cef_shared_process_message_builder_create(cef_string_t const * name, size_t byte_size)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_shared_process_message_builder_t* cef_shared_process_message_builder_create(cef_string_t* name, UIntPtr byte_size);
 
 		/// <summary>
 		/// This function should be called on the main application thread to shut down
-		/// the CEF browser process before the application exits.
+		/// the CEF browser process before the application exits. Do not call any other
+		/// CEF functions after calling this function.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_app_capi.h as
@@ -1082,7 +1316,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_stream_capi.h as
-		/// cef_stream_reader_t* cef_stream_reader_create_for_data(void* data, size_t size)
+		/// cef_stream_reader_t * cef_stream_reader_create_for_data(void * data, size_t size)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_stream_reader_t* cef_stream_reader_create_for_data(void* data, UIntPtr size);
@@ -1092,7 +1326,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_stream_capi.h as
-		/// cef_stream_reader_t* cef_stream_reader_create_for_file(const cef_string_t* fileName)
+		/// cef_stream_reader_t * cef_stream_reader_create_for_file(cef_string_t const * fileName)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_stream_reader_t* cef_stream_reader_create_for_file(cef_string_t* fileName);
@@ -1102,7 +1336,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_stream_capi.h as
-		/// cef_stream_reader_t* cef_stream_reader_create_for_handler(cef_read_handler_t* handler)
+		/// cef_stream_reader_t * cef_stream_reader_create_for_handler(cef_read_handler_t * handler)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_stream_reader_t* cef_stream_reader_create_for_handler(cef_read_handler_t* handler);
@@ -1112,7 +1346,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_stream_capi.h as
-		/// cef_stream_writer_t* cef_stream_writer_create_for_file(const cef_string_t* fileName)
+		/// cef_stream_writer_t * cef_stream_writer_create_for_file(cef_string_t const * fileName)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_stream_writer_t* cef_stream_writer_create_for_file(cef_string_t* fileName);
@@ -1122,26 +1356,26 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_stream_capi.h as
-		/// cef_stream_writer_t* cef_stream_writer_create_for_handler(cef_write_handler_t* handler)
+		/// cef_stream_writer_t * cef_stream_writer_create_for_handler(cef_write_handler_t * handler)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_stream_writer_t* cef_stream_writer_create_for_handler(cef_write_handler_t* handler);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_ascii_to_utf16(const char* src, size_t src_len, cef_string_utf16_t* output)
+		/// int cef_string_ascii_to_utf16(char const * src, size_t src_len, cef_string_utf16_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_ascii_to_utf16(byte* src, UIntPtr src_len, cef_string_utf16_t* output);
 
 		/// <summary>
-		/// These functions convert an ASCII string, typically a hardcoded constant, to a
-		/// Wide/UTF16 string. Use instead of the UTF8 conversion routines if you know
+		/// These functions convert an ASCII string, typically a hardcoded constant, to
+		/// a Wide/UTF16 string. Use instead of the UTF8 conversion routines if you know
 		/// the string is ASCII.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_ascii_to_wide(const char* src, size_t src_len, cef_string_wide_t* output)
+		/// int cef_string_ascii_to_wide(char const * src, size_t src_len, cef_string_wide_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_ascii_to_wide(byte* src, UIntPtr src_len, cef_string_wide_t* output);
@@ -1161,7 +1395,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_list.h as
-		/// void cef_string_list_append(cef_string_list_t list, const cef_string_t* value)
+		/// void cef_string_list_append(cef_string_list_t list, cef_string_t const * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_string_list_append(cef_string_list_t list, cef_string_t* value);
@@ -1212,7 +1446,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_list.h as
-		/// int cef_string_list_value(cef_string_list_t list, size_t index, cef_string_t* value)
+		/// int cef_string_list_value(cef_string_list_t list, size_t index, cef_string_t * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_list_value(cef_string_list_t list, UIntPtr index, cef_string_t* value);
@@ -1228,11 +1462,12 @@ namespace CefNet.CApi
 		public static unsafe extern cef_string_map_t cef_string_map_alloc();
 
 		/// <summary>
-		/// Append a new key/value pair at the end of the string map.
+		/// Append a new key/value pair at the end of the string map. If the key exists,
+		/// overwrite the existing value with a new value w/o changing the pair order.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_map.h as
-		/// int cef_string_map_append(cef_string_map_t map, const cef_string_t* key, const cef_string_t* value)
+		/// int cef_string_map_append(cef_string_map_t map, cef_string_t const * key, cef_string_t const * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_map_append(cef_string_map_t map, cef_string_t* key, cef_string_t* value);
@@ -1252,7 +1487,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_map.h as
-		/// int cef_string_map_find(cef_string_map_t map, const cef_string_t* key, cef_string_t* value)
+		/// int cef_string_map_find(cef_string_map_t map, cef_string_t const * key, cef_string_t * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_map_find(cef_string_map_t map, cef_string_t* key, cef_string_t* value);
@@ -1272,7 +1507,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_map.h as
-		/// int cef_string_map_key(cef_string_map_t map, size_t index, cef_string_t* key)
+		/// int cef_string_map_key(cef_string_map_t map, size_t index, cef_string_t * key)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_map_key(cef_string_map_t map, UIntPtr index, cef_string_t* key);
@@ -1292,7 +1527,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_map.h as
-		/// int cef_string_map_value(cef_string_map_t map, size_t index, cef_string_t* value)
+		/// int cef_string_map_value(cef_string_map_t map, size_t index, cef_string_t * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_map_value(cef_string_map_t map, UIntPtr index, cef_string_t* value);
@@ -1312,7 +1547,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_multimap.h as
-		/// int cef_string_multimap_append(cef_string_multimap_t map, const cef_string_t* key, const cef_string_t* value)
+		/// int cef_string_multimap_append(cef_string_multimap_t map, cef_string_t const * key, cef_string_t const * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_multimap_append(cef_string_multimap_t map, cef_string_t* key, cef_string_t* value);
@@ -1332,7 +1567,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_multimap.h as
-		/// int cef_string_multimap_enumerate(cef_string_multimap_t map, const cef_string_t* key, size_t value_index, cef_string_t* value)
+		/// int cef_string_multimap_enumerate(cef_string_multimap_t map, cef_string_t const * key, size_t value_index, cef_string_t * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_multimap_enumerate(cef_string_multimap_t map, cef_string_t* key, UIntPtr value_index, cef_string_t* value);
@@ -1342,7 +1577,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_multimap.h as
-		/// size_t cef_string_multimap_find_count(cef_string_multimap_t map, const cef_string_t* key)
+		/// size_t cef_string_multimap_find_count(cef_string_multimap_t map, cef_string_t const * key)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern UIntPtr cef_string_multimap_find_count(cef_string_multimap_t map, cef_string_t* key);
@@ -1362,7 +1597,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_multimap.h as
-		/// int cef_string_multimap_key(cef_string_multimap_t map, size_t index, cef_string_t* key)
+		/// int cef_string_multimap_key(cef_string_multimap_t map, size_t index, cef_string_t * key)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_multimap_key(cef_string_multimap_t map, UIntPtr index, cef_string_t* key);
@@ -1382,7 +1617,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_multimap.h as
-		/// int cef_string_multimap_value(cef_string_multimap_t map, size_t index, cef_string_t* value)
+		/// int cef_string_multimap_value(cef_string_multimap_t map, size_t index, cef_string_t * value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_multimap_value(cef_string_multimap_t map, UIntPtr index, cef_string_t* value);
@@ -1439,21 +1674,21 @@ namespace CefNet.CApi
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// void cef_string_utf16_clear(cef_string_utf16_t* str)
+		/// void cef_string_utf16_clear(cef_string_utf16_t * str)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_string_utf16_clear(cef_string_utf16_t* str);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_cmp(const cef_string_utf16_t* str1, const cef_string_utf16_t* str2)
+		/// int cef_string_utf16_cmp(cef_string_utf16_t const * str1, cef_string_utf16_t const * str2)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_cmp(cef_string_utf16_t* str1, cef_string_utf16_t* str2);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_set(const char16* src, size_t src_len, cef_string_utf16_t* output, int copy)
+		/// int cef_string_utf16_set(char16_t const * src, size_t src_len, cef_string_utf16_t * output, int copy)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_set(char* src, UIntPtr src_len, cef_string_utf16_t* output, int copy);
@@ -1464,63 +1699,63 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_to_lower(const char16* src, size_t src_len, cef_string_utf16_t* output)
+		/// int cef_string_utf16_to_lower(char16_t const * src, size_t src_len, cef_string_utf16_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_to_lower(char* src, UIntPtr src_len, cef_string_utf16_t* output);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_to_upper(const char16* src, size_t src_len, cef_string_utf16_t* output)
+		/// int cef_string_utf16_to_upper(char16_t const * src, size_t src_len, cef_string_utf16_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_to_upper(char* src, UIntPtr src_len, cef_string_utf16_t* output);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_to_utf8(const char16* src, size_t src_len, cef_string_utf8_t* output)
+		/// int cef_string_utf16_to_utf8(char16_t const * src, size_t src_len, cef_string_utf8_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_to_utf8(char* src, UIntPtr src_len, cef_string_utf8_t* output);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf16_to_wide(const char16* src, size_t src_len, cef_string_wide_t* output)
+		/// int cef_string_utf16_to_wide(char16_t const * src, size_t src_len, cef_string_wide_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf16_to_wide(char* src, UIntPtr src_len, cef_string_wide_t* output);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// void cef_string_utf8_clear(cef_string_utf8_t* str)
+		/// void cef_string_utf8_clear(cef_string_utf8_t * str)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_string_utf8_clear(cef_string_utf8_t* str);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf8_cmp(const cef_string_utf8_t* str1, const cef_string_utf8_t* str2)
+		/// int cef_string_utf8_cmp(cef_string_utf8_t const * str1, cef_string_utf8_t const * str2)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf8_cmp(cef_string_utf8_t* str1, cef_string_utf8_t* str2);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf8_set(const char* src, size_t src_len, cef_string_utf8_t* output, int copy)
+		/// int cef_string_utf8_set(char const * src, size_t src_len, cef_string_utf8_t * output, int copy)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf8_set(byte* src, UIntPtr src_len, cef_string_utf8_t* output, int copy);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf8_to_utf16(const char* src, size_t src_len, cef_string_utf16_t* output)
+		/// int cef_string_utf8_to_utf16(char const * src, size_t src_len, cef_string_utf16_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf8_to_utf16(byte* src, UIntPtr src_len, cef_string_utf16_t* output);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_utf8_to_wide(const char* src, size_t src_len, cef_string_wide_t* output)
+		/// int cef_string_utf8_to_wide(char const * src, size_t src_len, cef_string_wide_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_utf8_to_wide(byte* src, UIntPtr src_len, cef_string_wide_t* output);
@@ -1530,7 +1765,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// void cef_string_wide_clear(cef_string_wide_t* str)
+		/// void cef_string_wide_clear(cef_string_wide_t * str)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern void cef_string_wide_clear(cef_string_wide_t* str);
@@ -1540,7 +1775,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_wide_cmp(const cef_string_wide_t* str1, const cef_string_wide_t* str2)
+		/// int cef_string_wide_cmp(cef_string_wide_t const * str1, cef_string_wide_t const * str2)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_wide_cmp(cef_string_wide_t* str1, cef_string_wide_t* str2);
@@ -1552,14 +1787,14 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_wide_set(const wchar* src, size_t src_len, cef_string_wide_t* output, int copy)
+		/// int cef_string_wide_set(wchar_t const * src, size_t src_len, cef_string_wide_t * output, int copy)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_wide_set(char* src, UIntPtr src_len, cef_string_wide_t* output, int copy);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_wide_to_utf16(const wchar* src, size_t src_len, cef_string_utf16_t* output)
+		/// int cef_string_wide_to_utf16(wchar_t const * src, size_t src_len, cef_string_utf16_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_wide_to_utf16(char* src, UIntPtr src_len, cef_string_utf16_t* output);
@@ -1572,10 +1807,21 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_types.h as
-		/// int cef_string_wide_to_utf8(const wchar* src, size_t src_len, cef_string_utf8_t* output)
+		/// int cef_string_wide_to_utf8(wchar_t const * src, size_t src_len, cef_string_utf8_t * output)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_string_wide_to_utf8(char* src, UIntPtr src_len, cef_string_utf8_t* output);
+
+		/// <summary>
+		/// Returns the global task manager object. Returns nullptr if the function was
+		/// called from the incorrect thread.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_task_manager_capi.h as
+		/// cef_task_manager_t * cef_task_manager_get()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_task_manager_t* cef_task_manager_get();
 
 		/// <summary>
 		/// Returns the task runner for the current thread. Only CEF threads will have
@@ -1584,7 +1830,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_task_capi.h as
-		/// cef_task_runner_t* cef_task_runner_get_for_current_thread()
+		/// cef_task_runner_t * cef_task_runner_get_for_current_thread()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_task_runner_t* cef_task_runner_get_for_current_thread();
@@ -1594,25 +1840,35 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_task_capi.h as
-		/// cef_task_runner_t* cef_task_runner_get_for_thread(cef_thread_id_t threadId)
+		/// cef_task_runner_t * cef_task_runner_get_for_thread(cef_thread_id_t threadId)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_task_runner_t* cef_task_runner_get_for_thread(CefThreadId threadId);
 
 		/// <summary>
+		/// Create a new Textfield.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_textfield_capi.h as
+		/// cef_textfield_t * cef_textfield_create(_cef_textfield_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_textfield_t* cef_textfield_create(cef_textfield_delegate_t* @delegate);
+
+		/// <summary>
 		/// Create and start a new thread. This function does not block waiting for the
-		/// thread to run initialization. |display_name| is the name that will be used to
-		/// identify the thread. |priority| is the thread execution priority.
+		/// thread to run initialization. |display_name| is the name that will be used
+		/// to identify the thread. |priority| is the thread execution priority.
 		/// |message_loop_type| indicates the set of asynchronous events that the thread
-		/// can process. If |stoppable| is true (1) the thread will stopped and joined on
-		/// destruction or when stop() is called; otherwise, the thread cannot be stopped
-		/// and will be leaked on shutdown. On Windows the |com_init_mode| value
+		/// can process. If |stoppable| is true (1) the thread will stopped and joined
+		/// on destruction or when stop() is called; otherwise, the thread cannot be
+		/// stopped and will be leaked on shutdown. On Windows the |com_init_mode| value
 		/// specifies how COM will be initialized for the thread. If |com_init_mode| is
 		/// set to COM_INIT_MODE_STA then |message_loop_type| must be set to ML_TYPE_UI.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_thread_capi.h as
-		/// cef_thread_t* cef_thread_create(const cef_string_t* display_name, cef_thread_priority_t priority, cef_message_loop_type_t message_loop_type, int stoppable, cef_com_init_mode_t com_init_mode)
+		/// cef_thread_t * cef_thread_create(cef_string_t const * display_name, cef_thread_priority_t priority, cef_message_loop_type_t message_loop_type, int stoppable, cef_com_init_mode_t com_init_mode)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_thread_t* cef_thread_create(cef_string_t* display_name, CefThreadPriority priority, CefMessageLoopType message_loop_type, int stoppable, CefComInitMode com_init_mode);
@@ -1623,7 +1879,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_delta(const cef_time_t* cef_time1, const cef_time_t* cef_time2, long long* delta)
+		/// int cef_time_delta(cef_time_t const * cef_time1, cef_time_t const * cef_time2, long long * delta)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_delta(cef_time_t* cef_time1, cef_time_t* cef_time2, long* delta);
@@ -1634,21 +1890,21 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_from_basetime(const cef_basetime_t from, cef_time_t* to)
+		/// int cef_time_from_basetime(cef_basetime_t const from, cef_time_t * to)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_from_basetime(cef_basetime_t from, cef_time_t* to);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_from_doublet(double time, cef_time_t* cef_time)
+		/// int cef_time_from_doublet(double time, cef_time_t * cef_time)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_from_doublet(double time, cef_time_t* cef_time);
 
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_from_timet(time_t time, cef_time_t* cef_time)
+		/// int cef_time_from_timet(time_t time, cef_time_t * cef_time)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_from_timet(IntPtr time, cef_time_t* cef_time);
@@ -1659,7 +1915,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_now(cef_time_t* cef_time)
+		/// int cef_time_now(cef_time_t * cef_time)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_now(cef_time_t* cef_time);
@@ -1670,7 +1926,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_to_basetime(const cef_time_t* from, cef_basetime_t* to)
+		/// int cef_time_to_basetime(cef_time_t const * from, cef_basetime_t * to)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_to_basetime(cef_time_t* from, cef_basetime_t* to);
@@ -1683,18 +1939,18 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_to_doublet(const cef_time_t* cef_time, double* time)
+		/// int cef_time_to_doublet(cef_time_t const * cef_time, double * time)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_to_doublet(cef_time_t* cef_time, double* time);
 
 		/// <summary>
-		/// Converts cef_time_t to/from time_t. Returns true (1) on success and false (0)
-		/// on failure.
+		/// Converts cef_time_t to/from time_t. Returns true (1) on success and false
+		/// (0) on failure.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_time.h as
-		/// int cef_time_to_timet(const cef_time_t* cef_time, time_t* time)
+		/// int cef_time_to_timet(cef_time_t const * cef_time, time_t * time)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_time_to_timet(cef_time_t* cef_time, IntPtr* time);
@@ -1712,7 +1968,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_uridecode(const cef_string_t* text, int convert_to_utf8, cef_uri_unescape_rule_t unescape_rule)
+		/// cef_string_userfree_t cef_uridecode(cef_string_t const * text, int convert_to_utf8, cef_uri_unescape_rule_t unescape_rule)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_string_userfree_t cef_uridecode(cef_string_t* text, int convert_to_utf8, CefUriUnescapeRule unescape_rule);
@@ -1726,7 +1982,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_uriencode(const cef_string_t* text, int use_plus)
+		/// cef_string_userfree_t cef_uriencode(cef_string_t const * text, int use_plus)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_string_userfree_t cef_uriencode(cef_string_t* text, int use_plus);
@@ -1742,44 +1998,58 @@ namespace CefNet.CApi
 		/// - POST data may only contain only a single element of type PDE_TYPE_FILE
 		/// or PDE_TYPE_BYTES.
 		/// - If |request_context| is empty the global request context will be used.
-		/// The |request| object will be marked as read-only after calling this function.
+		/// The |request| object will be marked as read-only after calling this
+		/// function.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_urlrequest_capi.h as
-		/// cef_urlrequest_t* cef_urlrequest_create(_cef_request_t* request, _cef_urlrequest_client_t* client, _cef_request_context_t* request_context)
+		/// cef_urlrequest_t * cef_urlrequest_create(_cef_request_t * request, _cef_urlrequest_client_t * client, _cef_request_context_t * request_context)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_urlrequest_t* cef_urlrequest_create(cef_request_t* request, cef_urlrequest_client_t* client, cef_request_context_t* request_context);
+
+		/// <summary>
+		/// Create a new backing store with allocated memory of |byte_length| bytes. The
+		/// memory is uninitialized. This function must be called on a thread with a
+		/// valid V8 isolate. The returned object can safely be passed to other threads.
+		/// Returns nullptr on failure.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_v8_capi.h as
+		/// cef_v8_backing_store_t * cef_v8_backing_store_create(size_t byte_length)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_v8_backing_store_t* cef_v8_backing_store_create(UIntPtr byte_length);
 
 		/// <summary>
 		/// Returns the current (top) context object in the V8 context stack.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8context_t* cef_v8context_get_current_context()
+		/// cef_v8_context_t * cef_v8_context_get_current_context()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8context_t* cef_v8context_get_current_context();
+		public static unsafe extern cef_v8_context_t* cef_v8_context_get_current_context();
 
 		/// <summary>
 		/// Returns the entered (bottom) context object in the V8 context stack.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8context_t* cef_v8context_get_entered_context()
+		/// cef_v8_context_t * cef_v8_context_get_entered_context()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8context_t* cef_v8context_get_entered_context();
+		public static unsafe extern cef_v8_context_t* cef_v8_context_get_entered_context();
 
 		/// <summary>
 		/// Returns true (1) if V8 is currently inside a context.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// int cef_v8context_in_context()
+		/// int cef_v8_context_in_context()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern int cef_v8context_in_context();
+		public static unsafe extern int cef_v8_context_in_context();
 
 		/// <summary>
 		/// Returns the stack trace for the currently active context. |frame_limit| is
@@ -1787,162 +2057,219 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8stack_trace_t* cef_v8stack_trace_get_current(int frame_limit)
+		/// cef_v8_stack_trace_t * cef_v8_stack_trace_get_current(int frame_limit)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8stack_trace_t* cef_v8stack_trace_get_current(int frame_limit);
+		public static unsafe extern cef_v8_stack_trace_t* cef_v8_stack_trace_get_current(int frame_limit);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type array with the specified |length|.
-		/// If |length| is negative the returned array will have length 0. This function
-		/// should only be called from within the scope of a
-		/// cef_render_process_handler_t, cef_v8handler_t or cef_v8accessor_t callback,
-		/// or in combination with calling enter() and exit() on a stored cef_v8context_t
-		/// reference.
+		/// Create a new cef_v8_value_t object of type array with the specified
+		/// |length|. If |length| is negative the returned array will have length 0.
+		/// This function should only be called from within the scope of a
+		/// cef_render_process_handler_t, cef_v8_handler_t or cef_v8_accessor_t
+		/// callback, or in combination with calling enter() and exit() on a stored
+		/// cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_array(int length)
+		/// cef_v8_value_t * cef_v8_value_create_array(int length)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_array(int length);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_array(int length);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type ArrayBuffer which wraps the
+		/// Create a new cef_v8_value_t object of type ArrayBuffer which wraps the
 		/// provided |buffer| of size |length| bytes. The ArrayBuffer is externalized,
 		/// meaning that it does not own |buffer|. The caller is responsible for freeing
-		/// |buffer| when requested via a call to cef_v8array_buffer_release_callback_t::
-		/// ReleaseBuffer. This function should only be called from within the scope of a
-		/// cef_render_process_handler_t, cef_v8handler_t or cef_v8accessor_t callback,
-		/// or in combination with calling enter() and exit() on a stored cef_v8context_t
-		/// reference.
+		/// |buffer| when requested via a call to
+		/// cef_v8_array_buffer_release_callback_t::ReleaseBuffer. This function should
+		/// only be called from within the scope of a cef_render_process_handler_t,
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
+		/// NOTE: Always returns nullptr when V8 sandbox is enabled.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_array_buffer(void* buffer, size_t length, cef_v8array_buffer_release_callback_t* release_callback)
+		/// cef_v8_value_t * cef_v8_value_create_array_buffer(void * buffer, size_t length, cef_v8_array_buffer_release_callback_t * release_callback)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_array_buffer(void* buffer, UIntPtr length, cef_v8array_buffer_release_callback_t* release_callback);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_array_buffer(void* buffer, UIntPtr length, cef_v8_array_buffer_release_callback_t* release_callback);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type bool.
-		/// </summary>
-		/// <remarks>
-		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_bool(int value)
-		/// </remarks>
-		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_bool(int value);
-
-		/// <summary>
-		/// Create a new cef_v8value_t object of type Date. This function should only be
+		/// Create a new cef_v8_value_t object of type ArrayBuffer from a backing store
+		/// previously created with cef_v8_backing_store_t::cef_translator_test_scoped_l
+		/// ibrary_child_child_create(). This is a zero-copy operation - the ArrayBuffer
+		/// uses the memory already allocated by the backing store. The backing store is
+		/// consumed and becomes invalid after this call. This function should only be
 		/// called from within the scope of a cef_render_process_handler_t,
-		/// cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling
-		/// enter() and exit() on a stored cef_v8context_t reference.
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_date(cef_basetime_t date)
+		/// cef_v8_value_t * cef_v8_value_create_array_buffer_from_backing_store(cef_v8_backing_store_t * backing_store)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_date(cef_basetime_t date);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_array_buffer_from_backing_store(cef_v8_backing_store_t* backing_store);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type double.
+		/// Create a new cef_v8_value_t object of type ArrayBuffer which copies the
+		/// provided |buffer| of size |length| bytes. This function should only be
+		/// called from within the scope of a cef_render_process_handler_t,
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_double(double value)
+		/// cef_v8_value_t * cef_v8_value_create_array_buffer_with_copy(void * buffer, size_t length)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_double(double value);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_array_buffer_with_copy(void* buffer, UIntPtr length);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type function. This function should only
+		/// Create a new cef_v8_value_t object of type bool.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_v8_capi.h as
+		/// cef_v8_value_t * cef_v8_value_create_bool(int value)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_bool(int value);
+
+		/// <summary>
+		/// Create a new cef_v8_value_t object of type Date. This function should only
 		/// be called from within the scope of a cef_render_process_handler_t,
-		/// cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling
-		/// enter() and exit() on a stored cef_v8context_t reference.
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_function(const cef_string_t* name, cef_v8handler_t* handler)
+		/// cef_v8_value_t * cef_v8_value_create_date(cef_basetime_t date)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_function(cef_string_t* name, cef_v8handler_t* handler);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_date(cef_basetime_t date);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type int.
+		/// Create a new cef_v8_value_t object of type double.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_int(int32 value)
+		/// cef_v8_value_t * cef_v8_value_create_double(double value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_int(int value);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_double(double value);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type null.
+		/// Create a new cef_v8_value_t object of type function. This function should
+		/// only be called from within the scope of a cef_render_process_handler_t,
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_null()
+		/// cef_v8_value_t * cef_v8_value_create_function(cef_string_t const * name, cef_v8_handler_t * handler)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_null();
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_function(cef_string_t* name, cef_v8_handler_t* handler);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type object with optional accessor
-		/// and/or interceptor. This function should only be called from within the scope
-		/// of a cef_render_process_handler_t, cef_v8handler_t or cef_v8accessor_t
-		/// callback, or in combination with calling enter() and exit() on a stored
-		/// cef_v8context_t reference.
+		/// Create a new cef_v8_value_t object of type int.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_object(cef_v8accessor_t* accessor, cef_v8interceptor_t* interceptor)
+		/// cef_v8_value_t * cef_v8_value_create_int(int32_t value)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_object(cef_v8accessor_t* accessor, cef_v8interceptor_t* interceptor);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_int(int value);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type string.
+		/// Create a new cef_v8_value_t object of type null.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_string(const cef_string_t* value)
+		/// cef_v8_value_t * cef_v8_value_create_null()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_string(cef_string_t* value);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_null();
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type unsigned int.
+		/// Create a new cef_v8_value_t object of type object with optional accessor
+		/// and/or interceptor. This function should only be called from within the
+		/// scope of a cef_render_process_handler_t, cef_v8_handler_t or
+		/// cef_v8_accessor_t callback, or in combination with calling enter() and
+		/// exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_uint(uint32 value)
+		/// cef_v8_value_t * cef_v8_value_create_object(cef_v8_accessor_t * accessor, cef_v8_interceptor_t * interceptor)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_uint(uint value);
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_object(cef_v8_accessor_t* accessor, cef_v8_interceptor_t* interceptor);
 
 		/// <summary>
-		/// Create a new cef_v8value_t object of type undefined.
+		/// Create a new cef_v8_value_t object of type Promise. This function should
+		/// only be called from within the scope of a cef_render_process_handler_t,
+		/// cef_v8_handler_t or cef_v8_accessor_t callback, or in combination with
+		/// calling enter() and exit() on a stored cef_v8_context_t reference.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_v8_capi.h as
-		/// cef_v8value_t* cef_v8value_create_undefined()
+		/// cef_v8_value_t * cef_v8_value_create_promise()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
-		public static unsafe extern cef_v8value_t* cef_v8value_create_undefined();
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_promise();
+
+		/// <summary>
+		/// Create a new cef_v8_value_t object of type string.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_v8_capi.h as
+		/// cef_v8_value_t * cef_v8_value_create_string(cef_string_t const * value)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_string(cef_string_t* value);
+
+		/// <summary>
+		/// Create a new cef_v8_value_t object of type unsigned int.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_v8_capi.h as
+		/// cef_v8_value_t * cef_v8_value_create_uint(uint32_t value)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_uint(UInt32 value);
+
+		/// <summary>
+		/// Create a new cef_v8_value_t object of type undefined.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/cef_v8_capi.h as
+		/// cef_v8_value_t * cef_v8_value_create_undefined()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_v8_value_t* cef_v8_value_create_undefined();
 
 		/// <summary>
 		/// Creates a new object.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_values_capi.h as
-		/// cef_value_t* cef_value_create()
+		/// cef_value_t * cef_value_create()
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_value_t* cef_value_create();
+
+		/// <summary>
+		/// Return the full CEF version string for the libcef library (e.g.,
+		/// &quot;143.0.3+gcbafc77+chromium-143.0.7499.0&quot;). The returned pointer is valid
+		/// for the lifetime of the process.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_version_info.h as
+		/// char const * cef_version_full()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern IntPtr cef_version_full();
 
 		/// <summary>
 		/// Returns CEF version information for the libcef library. The |entry|
@@ -1957,25 +2284,45 @@ namespace CefNet.CApi
 		/// 7 - CHROME_VERSION_PATCH
 		/// </summary>
 		/// <remarks>
-		/// Defined in include/cef_version.h as
+		/// Defined in include/cef_version_info.h as
 		/// int cef_version_info(int entry)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_version_info(int entry);
 
 		/// <summary>
+		/// Return all CEF version information for the libcef library.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_version_info.h as
+		/// void cef_version_info_all(cef_version_info_t * info)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_version_info_all(cef_version_info_t* info);
+
+		/// <summary>
 		/// Create a new waitable event. If |automatic_reset| is true (1) then the event
-		/// state is automatically reset to un-signaled after a single waiting thread has
-		/// been released; otherwise, the state remains signaled until reset() is called
-		/// manually. If |initially_signaled| is true (1) then the event will start in
-		/// the signaled state.
+		/// state is automatically reset to un-signaled after a single waiting thread
+		/// has been released; otherwise, the state remains signaled until reset() is
+		/// called manually. If |initially_signaled| is true (1) then the event will
+		/// start in the signaled state.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_waitable_event_capi.h as
-		/// cef_waitable_event_t* cef_waitable_event_create(int automatic_reset, int initially_signaled)
+		/// cef_waitable_event_t * cef_waitable_event_create(int automatic_reset, int initially_signaled)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_waitable_event_t* cef_waitable_event_create(int automatic_reset, int initially_signaled);
+
+		/// <summary>
+		/// Create a new Window.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/capi/views/cef_window_capi.h as
+		/// cef_window_t * cef_window_create_top_level(_cef_window_delegate_t * delegate)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern cef_window_t* cef_window_create_top_level(cef_window_delegate_t* @delegate);
 
 		/// <summary>
 		/// Generates a JSON string from the specified root |node| which should be a
@@ -1985,7 +2332,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_parser_capi.h as
-		/// cef_string_userfree_t cef_write_json(_cef_value_t* node, cef_json_writer_options_t options)
+		/// cef_string_userfree_t cef_write_json(_cef_value_t * node, cef_json_writer_options_t options)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_string_userfree_t cef_write_json(cef_value_t* node, CefJsonWriterOptions options);
@@ -1996,7 +2343,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_xml_reader_capi.h as
-		/// cef_xml_reader_t* cef_xml_reader_create(_cef_stream_reader_t* stream, cef_xml_encoding_type_t encodingType, const cef_string_t* URI)
+		/// cef_xml_reader_t * cef_xml_reader_create(_cef_stream_reader_t * stream, cef_xml_encoding_type_t encodingType, cef_string_t const * URI)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_xml_reader_t* cef_xml_reader_create(cef_stream_reader_t* stream, CefXmlEncodingType encodingType, cef_string_t* URI);
@@ -2004,12 +2351,12 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Writes the contents of |src_dir| into a zip archive at |dest_file|. If
 		/// |include_hidden_files| is true (1) files starting with &quot;.&quot; will be included.
-		/// Returns true (1) on success.  Calling this function on the browser process UI
-		/// or IO threads is not allowed.
+		/// Returns true (1) on success.  Calling this function on the browser process
+		/// UI or IO threads is not allowed.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_file_util_capi.h as
-		/// int cef_zip_directory(const cef_string_t* src_dir, const cef_string_t* dest_file, int include_hidden_files)
+		/// int cef_zip_directory(cef_string_t const * src_dir, cef_string_t const * dest_file, int include_hidden_files)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern int cef_zip_directory(cef_string_t* src_dir, cef_string_t* dest_file, int include_hidden_files);
@@ -2020,7 +2367,7 @@ namespace CefNet.CApi
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/capi/cef_zip_reader_capi.h as
-		/// cef_zip_reader_t* cef_zip_reader_create(_cef_stream_reader_t* stream)
+		/// cef_zip_reader_t * cef_zip_reader_create(_cef_stream_reader_t * stream)
 		/// </remarks>
 		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
 		public static unsafe extern cef_zip_reader_t* cef_zip_reader_create(cef_stream_reader_t* stream);

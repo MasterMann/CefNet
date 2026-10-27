@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to provide handler implementations. Methods will be
 	/// called by the process and/or thread indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -69,19 +70,22 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAppPrivate.AvoidOnBeforeCommandLineProcessing();
+		bool ICefAppPrivate.AvoidOnBeforeCommandLineProcessing()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefApp), nameof(OnBeforeCommandLineProcessing));
+		}
 
 		/// <summary>
-		/// Provides an opportunity to view and/or modify command-line arguments before
-		/// processing by CEF and Chromium. The |process_type| value will be NULL for
-		/// the browser process. Do not keep a reference to the cef_command_line_t
-		/// object passed to this function. The CefSettings.command_line_args_disabled
-		/// value can be used to start with an NULL command-line object. Any values
-		/// specified in CefSettings that equate to command-line arguments will be set
-		/// before this function is called. Be cautious when using this function to
-		/// modify command-line arguments for non-browser processes as this may result
-		/// in undefined behavior including crashes.
+		/// Provides an opportunity to view and/or modify command-line arguments
+		/// before processing by CEF and Chromium. The |process_type| value will be
+		/// NULL for the browser process. Do not keep a reference to the
+		/// cef_command_line_t object passed to this function. The
+		/// cef_settings_t.command_line_args_disabled value can be used to start with
+		/// an NULL command-line object. Any values specified in CefSettings that
+		/// equate to command-line arguments will be set before this function is
+		/// called. Be cautious when using this function to modify command-line
+		/// arguments for non-browser processes as this may result in undefined
+		/// behavior including crashes.
 		/// </summary>
 		protected internal unsafe virtual void OnBeforeCommandLineProcessing(string processType, CefCommandLine commandLine)
 		{
@@ -92,7 +96,7 @@ namespace CefNet
 		private unsafe delegate void OnBeforeCommandLineProcessingDelegate(cef_app_t* self, cef_string_t* process_type, cef_command_line_t* command_line);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_app_t* self, const cef_string_t* process_type, _cef_command_line_t* command_line)*
+		// void (*)(_cef_app_t* self, cef_string_t const* process_type, _cef_command_line_t* command_line)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -107,14 +111,16 @@ namespace CefNet
 			instance.OnBeforeCommandLineProcessing(CefString.Read(process_type), CefCommandLine.Wrap(CefCommandLine.Create, command_line));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAppPrivate.AvoidOnRegisterCustomSchemes();
+		bool ICefAppPrivate.AvoidOnRegisterCustomSchemes()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefApp), nameof(OnRegisterCustomSchemes));
+		}
 
 		/// <summary>
-		/// Provides an opportunity to register custom schemes. Do not keep a reference
-		/// to the |registrar| object. This function is called on the main thread for
-		/// each process and the registered schemes should be the same across all
-		/// processes.
+		/// Provides an opportunity to register custom schemes. Do not keep a
+		/// reference to the |registrar| object. This function is called on the main
+		/// thread for each process and the registered schemes should be the same
+		/// across all processes.
 		/// </summary>
 		protected internal unsafe virtual void OnRegisterCustomSchemes(CefSchemeRegistrar registrar)
 		{
@@ -140,10 +146,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Return the handler for resource bundle events. If
-		/// CefSettings.pack_loading_disabled is true (1) a handler must be returned.
-		/// If no handler is returned resources will be loaded from pack files. This
-		/// function is called by the browser and render processes on multiple threads.
+		/// Return the handler for resource bundle events. If no handler is returned
+		/// resources will be loaded from pack files. This function is called by the
+		/// browser and render processes on multiple threads.
 		/// </summary>
 		protected internal unsafe virtual CefResourceBundleHandler GetResourceBundleHandler()
 		{

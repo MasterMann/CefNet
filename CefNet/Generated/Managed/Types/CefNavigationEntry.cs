@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure used to represent an entry in navigation history.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -51,8 +52,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the actual URL of the page. For some pages this may be data: URL or
-		/// similar. Use get_display_url() to return a display-friendly version.
+		/// Gets the actual URL of the page. For some pages this may be data: URL
+		/// or similar. Use get_display_url() to return a display-friendly version.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		public unsafe virtual string Url
@@ -76,7 +77,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the original URL that was entered by the user before any redirects.
+		/// Gets the original URL that was entered by the user before any
+		/// redirects.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		public unsafe virtual string OriginalUrl
