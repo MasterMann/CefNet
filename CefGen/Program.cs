@@ -41,12 +41,16 @@ namespace CefGen
 			string projectPath = GetProjectPath();
 
 			bool onlyStdCall = false;
+			string target = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "windows"
+				: RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "macos" : "linux";
 			foreach (string arg in args)
 			{
 				if (arg.StartsWith("--"))
 				{
 					if (arg.StartsWith("--out="))
 						outDirPath = arg.Substring(6);
+					if (arg.StartsWith("--target="))
+						target = arg.Substring(9);
 					if (arg == "--stdcall")
 						onlyStdCall = true;
 					continue;
@@ -56,8 +60,13 @@ namespace CefGen
 					cefPath = arg;
 				}
 			}
-			var osPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "windows" :
-				RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux" : "osx";
+			if (target != "windows" && target != "linux" && target != "macos")
+			{
+				Console.WriteLine("Unknown --target; use windows, linux or macos.");
+				Environment.Exit(-1);
+				return;
+			}
+			string osPath = target == "macos" ? "osx" : target;
 			if (string.IsNullOrWhiteSpace(cefPath))
 				cefPath = Path.Combine(projectPath, "..", "cef",osPath);
 			else
@@ -89,7 +98,7 @@ namespace CefGen
 				GenerateCefWrapperTypes(cefPath, outDirPath);
 
 				Console.WriteLine("Generate unsafe types...");
-				GenerateFromCHeaders(cefPath, outDirPath, onlyStdCall);
+				GenerateFromCHeaders(cefPath, outDirPath, onlyStdCall, target);
 
 				Console.WriteLine("Compile unsafe types...");
 				var nativeTypes = new NativeCefApiTypes(outDirPath);
@@ -181,46 +190,7 @@ namespace CefGen
 			return (int.Parse(last), windows, macOS, linux);
 		}
 
-		private static string ApplyHotPatch(string basePath, List<string> files)
-		{
-			string temp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "temp");
-			if (Directory.Exists(temp))
-			{
-				Directory.Delete(temp, true);
-				Thread.Sleep(1000);
-			}
-			Directory.CreateDirectory(temp);
-			Directory.CreateDirectory(Path.Combine(temp, "include"));
-			Directory.CreateDirectory(Path.Combine(temp, "include", "internal"));
-
-			// Linux handle types are plain typedefs in current CEF headers; CSharpCodeGen.GetClrTypeName maps them.
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				string path = Path.Combine(basePath, "include", "internal", "cef_types_win.h");
-				if (File.Exists(path))
-				{
-					string content = File.ReadAllText(path, Encoding.UTF8);
-					content = content.Replace("#define cef_event_handle_t MSG*", "typedef MSG* CefEventHandle;\n#define cef_event_handle_t CefEventHandle");
-					File.WriteAllText(Path.Combine(temp, "include", "internal", "cef_types_win.h"), content, Encoding.UTF8);
-				}
-				FixSTL1300(temp, files);
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				string path = Path.Combine(basePath, "include", "internal", "cef_types_mac.h");
-				if (File.Exists(path))
-				{
-					string content = File.ReadAllText(path, Encoding.UTF8);
-					content = content.Replace("#define cef_cursor_handle_t void*", "typedef void* HCURSOR;\n#define cef_cursor_handle_t HCURSOR");
-					content = content.Replace("#define cef_window_handle_t void*", "typedef void* HWND;\n#define cef_window_handle_t HWND");
-					content = content.Replace("#define cef_event_handle_t void*", "typedef void* CefEventHandle;\n#define cef_event_handle_t CefEventHandle");
-					File.WriteAllText(Path.Combine(temp, "include", "internal", "cef_types_mac.h"), content, Encoding.UTF8);
-				}
-			}
-			return temp;
-		}
-
-		private static void GenerateFromCHeaders(string basePath, string outDirPath, bool onlyStdCall)
+		private static void GenerateFromCHeaders(string basePath, string outDirPath, bool onlyStdCall, string target)
 		{
 			var options = new CppParserOptions { ParserKind = CppParserKind.C };
 			var files = new List<string>(Directory.GetFiles(Path.Combine(basePath, "include", "capi"), "*.h"));
@@ -229,50 +199,34 @@ namespace CefGen
 			files.Add(Path.Combine(basePath, "include", "cef_api_hash.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_api_versions.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_version_info.h"));
-			string hotPatchPath = ApplyHotPatch(basePath, files);
-			options.IncludeFolders.Add(hotPatchPath);
 			options.IncludeFolders.Add(basePath);
 
 			var apiVersion = GetApiVersionInfo(basePath);
 			options.Defines.Add("CEF_API_VERSION=" + apiVersion.Version);
 
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			// Parse against the bundled minimal system headers instead of the host's C library or
+			// Windows SDK: generation needs no compiler installation, and CppAst keeps typedef names
+			// such as size_t and int64_t, which it loses for declarations from system headers.
+			options.AdditionalArguments.Add("-nostdinc");
+			options.IncludeFolders.Add(Path.Combine(AppContext.BaseDirectory, "SystemHeaders"));
+			options.TargetCpu = CppTargetCpu.X86_64;
+			switch (target)
 			{
-				string clangInclude = Directory.Exists("/usr/lib/clang")
-					? Directory.GetDirectories("/usr/lib/clang")
-						.Select(dir => Path.Combine(dir, "include"))
-						.Where(Directory.Exists)
-						.OrderByDescending(dir => dir, StringComparer.Ordinal)
-						.FirstOrDefault()
-					: null;
-				// CppAst registers typedefs from system headers (size_t, int64_t, ...) under a separate
-				// context and then fails to resolve them from CEF headers, falling back to canonical
-				// types such as 'unsigned long'. Parsing the standard headers as user includes keeps
-				// the typedef names intact.
-				options.AdditionalArguments.Add("-nostdinc");
-				if (clangInclude != null)
-					options.IncludeFolders.Add(clangInclude);
-				options.IncludeFolders.Add("/usr/include/x86_64-linux-gnu");
-				options.IncludeFolders.Add("/usr/include");
-				options.TargetAbi = "gnu";
-				options.TargetCpu = CppTargetCpu.X86_64;
-				options.TargetSystem = "linux";
-				options.TargetVendor = "pc";
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				//options.Defines.Add("_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH");
-			}
-			else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				//options.TargetCpu = CppTargetCpu.X86_64;
-				options.TargetSystem = "darwin";
-				options.TargetVendor = "apple";
-				options.SystemIncludeFolders.Add("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include");
-				options.SystemIncludeFolders.Add("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1");
-				options.SystemIncludeFolders.Add("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include");
-				options.SystemIncludeFolders.Add("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/include");
-				options.AdditionalArguments.Add("-stdlib=libc++");
+				case "windows":
+					options.TargetSystem = "windows";
+					options.TargetVendor = "pc";
+					options.TargetAbi = "msvc";
+					break;
+				case "macos":
+					options.TargetSystem = "darwin";
+					options.TargetVendor = "apple";
+					options.TargetAbi = string.Empty;
+					break;
+				default:
+					options.TargetSystem = "linux";
+					options.TargetVendor = "pc";
+					options.TargetAbi = "gnu";
+					break;
 			}
 
 			var nativeBuild = new NativeCefApiBuilder(onlyStdCall)
@@ -296,11 +250,11 @@ namespace CefGen
 				Environment.Exit(-1);
 				return;
 			}
-			string[] cefRoots = { Path.GetFullPath(basePath), Path.GetFullPath(hotPatchPath) };
+			string cefRoot = Path.GetFullPath(basePath);
 			bool IsCefDeclaration(CppElement element)
 			{
 				string file = element.Span.Start.File;
-				return file != null && cefRoots.Any(root => Path.GetFullPath(file).StartsWith(root, StringComparison.Ordinal));
+				return file != null && Path.GetFullPath(file).StartsWith(cefRoot, StringComparison.OrdinalIgnoreCase);
 			}
 			var cefTypedefs = compilation.Typedefs.Where(IsCefDeclaration).ToList();
 			var cefEnums = compilation.Enums.Where(IsCefDeclaration).ToList();
@@ -364,8 +318,6 @@ namespace CefGen
 				}
 			}
 
-			FixSTL1300RemoveIncludesAfterParse(compilation.Functions);
-
 			var api = new CefApiClass("CefNativeApi")
 			{
 				ApiVersion = apiVersion.Version,
@@ -417,8 +369,6 @@ namespace CefGen
 			Directory.CreateDirectory(Path.Combine(path, "Native", "Typedefs"));
 		}
 
-		static partial void FixSTL1300(string tempIncludePath, List<string> files);
-		static partial void FixSTL1300RemoveIncludesAfterParse(CppContainerList<CppFunction> functions);
 
 	}
 

@@ -107,10 +107,12 @@ The API of this project is not frozen and is subject to change.
 ## Migration to other CEF build
 1. Download a [CEF package (standard or minimal)](https://cef-builds.spotifycdn.com/index.html)
    and extract it as described above.
-2. Run the generator on Linux: `dotnet run --project CefGen`. It parses the C API headers in
-   `cef/linux/include`, pins the newest stable API version from `cef_api_versions.h`, and rewrites
-   `CefNet/Generated`. Watch the output for errors. The C API is the same on every platform, so the
-   Linux output serves all of them; generating on Windows is not supported yet.
+2. Run the generator on Windows, Linux or macOS: `dotnet run --project CefGen`. It parses the C API
+   headers in `cef/<os>/include` for the current OS, pins the newest stable API version from
+   `cef_api_versions.h`, and rewrites `CefNet/Generated`. Watch the output for errors. The generator
+   brings its own minimal C system headers, so it needs no C compiler or Windows SDK, and every host
+   produces the same bindings. To read another OS's CEF package, pass `--target=windows|linux|macos`
+   and the package path, for example `dotnet run --project CefGen -- --target=windows cef/windows`.
 3. Update `CefVersion` in [Directory.Build.props](Directory.Build.props).
 4. Build `CefNet.slnx` and update the handwritten code for API changes.
 5. Compare the handwritten native structures in `CefNet/CefTypes/CApi` (such as `cef_window_info_t`)
