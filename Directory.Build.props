@@ -26,9 +26,9 @@
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>The CefNet Authors</Authors>
-    <PackageProjectUrl>https://github.com/cefnet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/masterMann/cefnet</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/cefnet/cefnet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/masterMann/cefnet</RepositoryUrl>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageReleaseNotes>
       CEF v.$(CefVersion).*.

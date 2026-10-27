@@ -2,6 +2,9 @@
 
 CefNet is a .NET CLR binding for the Chromium Embedded Framework (CEF).
 
+This repository continues the original CefNet project, whose repository is no longer available,
+with support for current CEF releases, .NET 10, and Avalonia 12.
+
 ## Getting Started
 
 Since CefNet is a wrapper, you need to have the Chromium Embedded Framework
