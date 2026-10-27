@@ -56,8 +56,36 @@ For more information, see the sample applications.
 
 ## Features
 
-* Cross-platform
-* Full managed code
+* Cross-platform (Windows, Linux; macOS untested)
+* Full managed code, generated from the CEF C API
+* Controls for Avalonia, WinForms and WPF, plus `WindowlessWebView` for custom integrations
+* CEF Views: native browser windows without a UI framework (see the `ViewsApp` sample)
+* Shared GPU textures (accelerated paint), described below
+
+### Shared GPU textures
+
+Set `SharedTextureEnabled` before the browser is created (for `WindowlessWebView`, pass it to the
+constructor) to receive frames as GPU textures through the `CefAcceleratedPaint` event instead of CPU
+bitmaps through `CefPaint`. `CefAcceleratedPaintInfo` exposes a D3D11 shared handle on Windows, an
+IOSurface on macOS, and dmabuf planes with a DRM format modifier on Linux. The texture is only valid
+during the event: open or import it, copy it into a texture you own, and return.
+
+The Avalonia control presents shared textures on Windows when Avalonia's compositor can import D3D11
+textures; elsewhere it keeps using CPU bitmaps. Try it with `AvaloniaApp --shared-texture`.
+
+### Media
+
+The prebuilt CEF distributions play royalty-free formats: VP9, AV1 and Opus, including DASH through
+Media Source Extensions players such as dash.js or Shaka Player, and Widevine DRM. H.264, AAC, HEVC
+and HLS require a CEF build with `proprietary_codecs=true` and `ffmpeg_branding=Chrome`, which you must
+build (and license) yourself.
+
+### Sandbox
+
+CefNet runs the CEF sandbox disabled (`CefSettings.NoSandbox = true`, and `--no-zygote` on Linux):
+the .NET runtime cannot run in Chromium's forked Linux zygote, and the Windows sandbox requires a
+native bootstrap executable. Use CefNet for trusted content, and restrict navigation (for example in
+`OnBeforeBrowse`) when pages may load untrusted content.
 
 ## Warning
 The API of this project is not frozen and is subject to change.
