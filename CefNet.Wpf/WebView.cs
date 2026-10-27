@@ -139,6 +139,8 @@ namespace CefNet.Wpf
 						requestContext = value as CefRequestContext;
 					if (propertyBag.TryGetValue(InitialPropertyKeys.ExtraInfo, out value))
 						extraInfo = value as CefDictionaryValue;
+					if (propertyBag.TryGetValue(InitialPropertyKeys.SharedTexture, out value))
+						windowInfo.SharedTextureEnabled = (bool)value;
 				}
 
 				if (initialUrl == null)

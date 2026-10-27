@@ -149,7 +149,7 @@ namespace CefGen
 			AddFilesToSyntaxTrees(syntaxTrees, Path.Combine(basePath, "Native"));
 			AddFilesToSyntaxTrees(syntaxTrees, Path.Combine(basePath, "Managed", "Enums"));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet { public struct CefEventHandle { } }")));
-			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.CApi { public struct cef_main_args_t { } public struct cef_window_info_t { } }")));
+			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.CApi { public struct cef_main_args_t { } public struct cef_window_info_t { } public struct cef_accelerated_paint_info_t { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet.WinApi { public struct MSG { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace System { [AttributeUsage(AttributeTargets.Parameter)] sealed class ImmutableAttribute : Attribute { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace System { [AttributeUsage(AttributeTargets.Method)] sealed class NativeNameAttribute : Attribute { public NativeNameAttribute(string name) { } } }")));

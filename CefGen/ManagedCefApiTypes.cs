@@ -65,6 +65,7 @@ namespace CefGen
 			//syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From(File.ReadAllText(Path.Combine(_basePath, "Managed", "Enums", "CefWrapperType.cs")))));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace System { static class Ext111 { public static void InitBlock(this IntPtr startAddress, byte value, int size) { } } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("using CefNet.CApi; namespace CefNet { public unsafe class CefWindowInfo { public cef_window_info_t* GetNativeInstance() { return null; } public static CefWindowInfo Wrap(cef_window_info_t* p) { return null; } } }")));
+			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("using CefNet.CApi; namespace CefNet { public unsafe sealed class CefAcceleratedPaintInfo { internal CefAcceleratedPaintInfo(cef_accelerated_paint_info_t* p) { } internal void Invalidate() { } } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet { public class InvalidCefObjectException : System.Exception { } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("namespace CefNet { public class CefApi { public static bool UseUnsafeImplementation; } }")));
 			syntaxTrees.Add(SyntaxFactory.ParseSyntaxTree(SourceText.From("using CefNet.CApi; namespace CefNet { public class CefStringMultimap { cef_string_multimap_t a; public static implicit operator cef_string_multimap_t(CefStringMultimap a) { return a.a; } } }")));

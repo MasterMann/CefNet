@@ -241,6 +241,9 @@ namespace CefNet
 			CefClient obj_client = CefClient.Wrap(CefClient.Create, *client);
 			CefDictionaryValue obj_extra_info = CefDictionaryValue.Wrap(CefDictionaryValue.Create, *extra_info);
 			instance.OnBeforeDevToolsPopup(CefBrowser.Wrap(CefBrowser.Create, browser), CefWindowInfo.Wrap(windowInfo), ref obj_client, new CefBrowserSettings(settings), ref obj_extra_info, ref *use_default_window);
+			*client = (obj_client != null) ? obj_client.GetNativeInstance() : null;
+			*extra_info = (obj_extra_info != null) ? obj_extra_info.GetNativeInstance() : null;
+			
 		}
 
 		bool ICefLifeSpanHandlerPrivate.AvoidOnAfterCreated()

@@ -110,6 +110,16 @@ namespace CefNet
 		public event EventHandler<CefPaintEventArgs> CefPaint;
 
 		/// <summary>
+		/// Occurs when a view or a pop-up window was rendered into a shared GPU texture.<para/>
+		/// This event is raised on the CEF UI thread, which can differ from the UI thread of the application.
+		/// </summary>
+		/// <remarks>
+		/// This event only occurs when <see cref="SharedTextureEnabled"/> is true. The texture is only
+		/// valid while the event is raised; see <see cref="CefAcceleratedPaintInfo"/>.
+		/// </remarks>
+		public event EventHandler<CefAcceleratedPaintEventArgs> CefAcceleratedPaint;
+
+		/// <summary>
 		/// Occurs when a new browser is created.
 		/// </summary>
 		public event EventHandler BrowserCreated;
@@ -242,6 +252,26 @@ namespace CefNet
 			set
 			{
 				SetInitProperty(InitialPropertyKeys.ExtraInfo, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets and sets a value indicating whether a windowless browser renders into shared GPU
+		/// textures (<see cref="CefAcceleratedPaint"/>) instead of CPU bitmaps (<see cref="CefPaint"/>).
+		/// </summary>
+		/// <remarks>
+		/// This property cannot be used after the browser is created. It requires GPU acceleration.
+		/// </remarks>
+		[DefaultValue(false)]
+		public bool SharedTextureEnabled
+		{
+			get
+			{
+				return GetInitProperty<bool>(InitialPropertyKeys.SharedTexture);
+			}
+			set
+			{
+				SetInitProperty(InitialPropertyKeys.SharedTexture, value);
 			}
 		}
 
@@ -827,6 +857,29 @@ namespace CefNet
 		{
 			OnCefPaint(e);
 		}
+
+		void IChromiumWebViewPrivate.RaiseCefAcceleratedPaint(CefAcceleratedPaintEventArgs e)
+		{
+			OnCefAcceleratedPaint(e);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="CefAcceleratedPaint"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="CefAcceleratedPaintEventArgs"/> that contains the event data.</param>
+		/// <remarks>
+		/// This method is called on the CEF UI thread and must copy the texture before it returns.
+		/// </remarks>
+		protected virtual void OnCefAcceleratedPaint(CefAcceleratedPaintEventArgs e)
+		{
+			PresentSharedTexture(e);
+			CefAcceleratedPaint?.Invoke(this, e);
+		}
+
+		/// <summary>
+		/// Lets a UI framework integration present the shared texture before handlers run.
+		/// </summary>
+		partial void PresentSharedTexture(CefAcceleratedPaintEventArgs e);
 
 		void IChromiumWebViewPrivate.RaisePopupShow(PopupShowEventArgs e)
 		{

@@ -133,7 +133,7 @@ namespace AvaloniaApp
 
 
 		public WebViewTab()
-			: this(new CustomWebView())
+			: this(new CustomWebView { SharedTextureEnabled = Program.SharedTextureEnabled })
 		{
 
 		}

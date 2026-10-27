@@ -255,6 +255,9 @@ namespace CefNet
 			string s_new_url = CefString.Read(new_url);
 			string s_orig_new_url = s_new_url;
 			instance.OnResourceRedirect(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response), ref s_new_url);
+			if (s_new_url != s_orig_new_url)
+				CefString.Replace(new_url, s_new_url);
+			
 		}
 
 		bool ICefResourceRequestHandlerPrivate.AvoidOnResourceResponse()

@@ -12,6 +12,8 @@ using CefNet.Input;
 using CefNet.Internal;
 using CefNet.WinApi;
 using System;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -30,6 +32,8 @@ namespace CefNet.Avalonia
 		private int _suppressLostFocusEvent = 0;
 		private PointerPressedEventArgs _lastPointerPressedEventArgs;
 		private Dictionary<InitialPropertyKeys, object> InitialPropertyBag = new Dictionary<InitialPropertyKeys, object>();
+		private D3D11SharedTextureRenderer _sharedTextureRenderer;
+		private bool _sharedTextureRendererPending;
 
 		static WebView()
 		{
@@ -198,13 +202,63 @@ namespace CefNet.Avalonia
 		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
 			base.OnAttachedToLogicalTree(e);
-			if (!IsDesignMode && (_state == State.NotInitialized))
+			if (!IsDesignMode && (_state == State.NotInitialized) && !_sharedTextureRendererPending)
 			{
 				Debug.Assert(BrowserObject is null);
 				Window window = e.Root as Window;
-				if (window is not null)
+				if (window is null)
+					return;
+				if (SharedTextureEnabled && OperatingSystem.IsWindows())
+					CreateBrowserWithSharedTexturesAsync(window);
+				else
 					OnCreateBrowser(window);
 			}
+		}
+
+		/// <summary>
+		/// Creates the GPU renderer for shared textures before the browser, because CEF fixes the
+		/// rendering mode at browser creation. Falls back to CPU frames if the renderer is unavailable.
+		/// </summary>
+		[SupportedOSPlatform("windows")]
+		private async void CreateBrowserWithSharedTexturesAsync(Window window)
+		{
+			_sharedTextureRendererPending = true;
+			try
+			{
+				// The composition visual exists once the control is in the visual tree.
+				if (!this.IsAttachedToVisualTree())
+				{
+					var attached = new TaskCompletionSource<bool>();
+					EventHandler<VisualTreeAttachmentEventArgs> handler = (s, e) => attached.TrySetResult(true);
+					AttachedToVisualTree += handler;
+					try
+					{
+						await attached.Task;
+					}
+					finally
+					{
+						AttachedToVisualTree -= handler;
+					}
+				}
+
+				try
+				{
+					_sharedTextureRenderer = await D3D11SharedTextureRenderer.TryCreateAsync(this);
+				}
+				catch (Exception ex)
+				{
+					Debug.Print("Shared textures are unavailable: " + ex.Message);
+				}
+				if (_sharedTextureRenderer != null)
+					_sharedTextureRenderer.Invalidate = type => BrowserObject?.Host.Invalidate(type);
+			}
+			finally
+			{
+				_sharedTextureRendererPending = false;
+			}
+
+			if (_state == State.NotInitialized)
+				OnCreateBrowser(window);
 		}
 
 		protected virtual void OnCreateBrowser()
@@ -252,6 +306,8 @@ namespace CefNet.Avalonia
 						requestContext = value as CefRequestContext;
 					if (propertyBag.TryGetValue(InitialPropertyKeys.ExtraInfo, out value))
 						extraInfo = value as CefDictionaryValue;
+					if (propertyBag.TryGetValue(InitialPropertyKeys.SharedTexture, out value))
+						windowInfo.SharedTextureEnabled = (bool)value && _sharedTextureRenderer != null;
 				}
 
 				if (initialUrl == null)
@@ -319,6 +375,11 @@ namespace CefNet.Avalonia
 				SetState(State.Closing, true);
 				BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				this.ViewGlue = null;
+			}
+			if (OperatingSystem.IsWindows())
+			{
+				_sharedTextureRenderer?.Dispose();
+				_sharedTextureRenderer = null;
 			}
 		}
 
@@ -569,6 +630,14 @@ namespace CefNet.Avalonia
 		protected virtual void OnPopupShow(PopupShowEventArgs e)
 		{
 			OffscreenGraphics.SetPopup(e);
+			if (OperatingSystem.IsWindows())
+				_sharedTextureRenderer?.SetPopup(e);
+		}
+
+		partial void PresentSharedTexture(CefAcceleratedPaintEventArgs e)
+		{
+			if (OperatingSystem.IsWindows())
+				_sharedTextureRenderer?.Paint(e);
 		}
 
 		private CefPoint PointToViewport(CefPoint point)

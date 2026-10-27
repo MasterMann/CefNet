@@ -106,6 +106,16 @@ namespace CefNet
 		event EventHandler<CefPaintEventArgs> CefPaint;
 
 		/// <summary>
+		/// Occurs when a view or a pop-up window was rendered into a shared GPU texture.
+		/// This event is raised on the CEF UI thread.
+		/// </summary>
+		/// <remarks>
+		/// This event only occurs when shared textures are enabled for the browser. The texture is only
+		/// valid while the event is raised; see <see cref="CefAcceleratedPaintInfo"/>.
+		/// </remarks>
+		event EventHandler<CefAcceleratedPaintEventArgs> CefAcceleratedPaint;
+
+		/// <summary>
 		/// Occurs when a new browser is created.
 		/// </summary>
 		event EventHandler BrowserCreated;

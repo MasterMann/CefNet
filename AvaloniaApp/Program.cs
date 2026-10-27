@@ -23,6 +23,11 @@ namespace AvaloniaApp
 		/// </summary>
 		public static string StartUrl { get; private set; } = "https://google.com";
 
+		/// <summary>
+		/// Gets a value indicating whether tabs render through shared GPU textures, set with <c>--shared-texture</c>.
+		/// </summary>
+		public static bool SharedTextureEnabled { get; private set; }
+
 		// Initialization code. Don't use any Avalonia, third-party APIs or any
 		// SynchronizationContext-reliant code before AppMain is called: things aren't initialized
 		// yet and stuff might break.
@@ -31,6 +36,7 @@ namespace AvaloniaApp
 		{
 			string cefPath;
 			bool externalMessagePump = args.Contains("--external-message-pump");
+			SharedTextureEnabled = args.Contains("--shared-texture");
 			string urlArg = args.FirstOrDefault(arg => arg.StartsWith("--url=", StringComparison.Ordinal));
 			if (urlArg != null)
 				StartUrl = urlArg.Substring("--url=".Length);

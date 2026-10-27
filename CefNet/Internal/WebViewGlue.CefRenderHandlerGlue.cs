@@ -122,7 +122,7 @@ namespace CefNet.Internal
 
 		internal protected virtual void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, CefAcceleratedPaintInfo info)
 		{
-
+			WebView.RaiseCefAcceleratedPaint(new CefAcceleratedPaintEventArgs(browser, type, dirtyRects, info));
 		}
 
 		internal bool AvoidStartDragging()

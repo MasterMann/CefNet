@@ -110,6 +110,8 @@ namespace CefGen
 					continue;
 				if (symbol.Name == "cef_window_info_t")
 					continue;
+				if (symbol.Name == "cef_accelerated_paint_info_t")
+					continue;
 				if (symbol.Name == "CefEventHandle")
 					continue;
 				if (symbol.Name == "cef_basetime_t")
@@ -790,6 +792,13 @@ namespace CefGen
 				{
 					args.Add("CefWindowInfo.Wrap(" + arg.Name.EscapeName() + ")");
 				}
+				else if (typeInfo.Type.Name == "cef_accelerated_paint_info_t")
+				{
+					// The shared texture is only valid during the callback.
+					wrappers.AppendFormat("var obj_{0} = new CefAcceleratedPaintInfo({1});\r\n", arg.Name, arg.Name.EscapeName());
+					disposers.AppendFormat("obj_{0}.Invalidate();\r\n", arg.Name);
+					args.Add("obj_" + arg.Name);
+				}
 				else if (typeKind == CefTypeKind.RefCounted)
 				{
 					if (typeInfo.IsDoublePointedType)
@@ -943,6 +952,8 @@ namespace CefGen
 					.Append(wrappers.ToString())
 					.Append(callCode)
 					.Append(";");
+				if (disposers.Length != 0)
+					body.Append("\r\n").Append(disposers.ToString());
 			}
 			else
 			{

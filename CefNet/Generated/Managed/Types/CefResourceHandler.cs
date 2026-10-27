@@ -203,6 +203,9 @@ namespace CefNet
 			string s_redirectUrl = CefString.Read(redirectUrl);
 			string s_orig_redirectUrl = s_redirectUrl;
 			instance.GetResponseHeaders(CefResponse.Wrap(CefResponse.Create, response), ref *response_length, ref s_redirectUrl);
+			if (s_redirectUrl != s_orig_redirectUrl)
+				CefString.Replace(redirectUrl, s_redirectUrl);
+			
 		}
 
 		bool ICefResourceHandlerPrivate.AvoidSkip()

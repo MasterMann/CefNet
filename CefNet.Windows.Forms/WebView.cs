@@ -157,6 +157,8 @@ namespace CefNet.Windows.Forms
 						requestContext = value as CefRequestContext;
 					if (propertyBag.TryGetValue(InitialPropertyKeys.ExtraInfo, out value))
 						extraInfo = value as CefDictionaryValue;
+					if (propertyBag.TryGetValue(InitialPropertyKeys.SharedTexture, out value))
+						windowInfo.SharedTextureEnabled = (bool)value && WindowlessRenderingEnabled;
 				}
 
 				if (initialUrl == null)

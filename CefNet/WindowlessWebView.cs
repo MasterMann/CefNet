@@ -8,6 +8,7 @@ namespace CefNet
 	public partial class WindowlessWebView : IDisposable
 	{
 		private object SyncRoot = new Dictionary<InitialPropertyKeys, object>();
+		private readonly Dictionary<InitialPropertyKeys, object> _creationProperties = new Dictionary<InitialPropertyKeys, object>();
 
 		private bool _layoutOff;
 		private CefRect _bounds;
@@ -43,12 +44,31 @@ namespace CefNet
 		}
 
 		public WindowlessWebView(string url, CefBrowserSettings settings, CefDictionaryValue extraInfo, CefRequestContext requestContext)
+			: this(url, settings, extraInfo, requestContext, false)
+		{
+
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WindowlessWebView"/> class and creates its browser.
+		/// </summary>
+		/// <param name="url">The initial URL, or null for about:blank.</param>
+		/// <param name="settings">The browser settings, or null for the defaults.</param>
+		/// <param name="extraInfo">Data passed to the render process with the new browser, or null.</param>
+		/// <param name="requestContext">The request context, or null for the global context.</param>
+		/// <param name="sharedTextureEnabled">
+		/// True to receive frames as shared GPU textures through <see cref="CefAcceleratedPaint"/>
+		/// instead of CPU bitmaps through <see cref="CefPaint"/>.
+		/// </param>
+		public WindowlessWebView(string url, CefBrowserSettings settings, CefDictionaryValue extraInfo, CefRequestContext requestContext, bool sharedTextureEnabled)
 		{
 			CefWindowInfo windowInfo = null;
 			try
 			{
 				windowInfo = new CefWindowInfo();
 				InitializeInternal(windowInfo);
+				windowInfo.SharedTextureEnabled = sharedTextureEnabled;
+				_creationProperties[InitialPropertyKeys.SharedTexture] = sharedTextureEnabled;
 				this.BrowserSettings = settings ?? DefaultBrowserSettings;
 				this.ExtraInfo = extraInfo;
 				this.RequestContext = requestContext;
@@ -91,7 +111,7 @@ namespace CefNet
 
 		private T GetInitProperty<T>(InitialPropertyKeys key)
 		{
-			return default;
+			return _creationProperties.TryGetValue(key, out object value) ? (T)value : default;
 		}
 
 		private void InitializeInternal(CefWindowInfo windowInfo)

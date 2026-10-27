@@ -27,6 +27,9 @@ namespace CefGen
 			"CefStringBase",
 			"_cef_main_args_t",
 			"_cef_window_info_t",
+			// Platform-specific layouts; handwritten in CefTypes/CApi.
+			"_cef_accelerated_paint_info_t",
+			"_cef_accelerated_paint_native_pixmap_plane_info_t",
 			"_XEvent",
 			"_XDisplay"
 		};

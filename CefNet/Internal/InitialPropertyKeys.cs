@@ -11,6 +11,7 @@ namespace CefNet.Internal
 		BrowserSettings = 2,
 		Url = 3,
 		ExtraInfo = 4,
+		SharedTexture = 5,
 		
 	}
 }

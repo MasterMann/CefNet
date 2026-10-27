@@ -450,7 +450,10 @@ namespace CefNet
 			{
 				obj_dirtyRects[i] = *(CefRect*)(dirtyRects + i);
 			}
-			instance.OnAcceleratedPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, new CefAcceleratedPaintInfo(info));
+			var obj_info = new CefAcceleratedPaintInfo(info);
+			instance.OnAcceleratedPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, obj_info);
+			obj_info.Invalidate();
+			
 		}
 
 		bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize()
