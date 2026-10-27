@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefAudioHandlerPrivate::AvoidGetAudioParameters()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefAudioHandler::GetAudioParameters(class CefNet.CefBrowser, valuetype CefNet.CefAudioParameters&)
-			ldftn instance bool CefNet.CefAudioHandler::GetAudioParameters(class CefNet.CefBrowser, valuetype CefNet.CefAudioParameters&)
+			ldvirtftn instance bool CefNet.CefAudioHandler::GetAudioParameters(class CefNet.CefBrowser, class CefNet.CefAudioParameters)
+			ldftn instance bool CefNet.CefAudioHandler::GetAudioParameters(class CefNet.CefBrowser, class CefNet.CefAudioParameters)
 			ceq
 			ret
 		}
@@ -30,8 +30,8 @@
 			.override method instance bool CefNet.Internal.ICefAudioHandlerPrivate::AvoidOnAudioStreamStarted()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefAudioHandler::OnAudioStreamStarted(class CefNet.CefBrowser, valuetype CefNet.CefAudioParameters, int32)
-			ldftn instance void CefNet.CefAudioHandler::OnAudioStreamStarted(class CefNet.CefBrowser, valuetype CefNet.CefAudioParameters, int32)
+			ldvirtftn instance void CefNet.CefAudioHandler::OnAudioStreamStarted(class CefNet.CefBrowser, class CefNet.CefAudioParameters, int32)
+			ldftn instance void CefNet.CefAudioHandler::OnAudioStreamStarted(class CefNet.CefBrowser, class CefNet.CefAudioParameters, int32)
 			ceq
 			ret
 		}

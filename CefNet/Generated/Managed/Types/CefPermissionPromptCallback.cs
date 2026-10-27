@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback structure used for asynchronous continuation of permission prompts.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

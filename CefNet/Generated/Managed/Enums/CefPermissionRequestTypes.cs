@@ -20,7 +20,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Permission types used with OnShowPermissionPrompt. Some types are
-	/// platform-specific or only supported with the Chrome runtime. Should be kept
+	/// platform-specific or only supported with Chrome style. Should be kept
 	/// in sync with Chromium&apos;s permissions::RequestType type.
 	/// </summary>
 	[Flags]
@@ -28,13 +28,13 @@ namespace CefNet
 	{
 		None = 0,
 
-		AccessibilityEvents = 1 << 0,
+		ArSession = 1 << 0,
 
-		ArSession = 1 << 1,
+		CameraPanTiltZoom = 1 << 1,
 
-		CameraPanTiltZoom = 1 << 2,
+		CameraStream = 1 << 2,
 
-		CameraStream = 1 << 3,
+		CapturedSurfaceControl = 1 << 3,
 
 		Clipboard = 1 << 4,
 
@@ -46,29 +46,47 @@ namespace CefNet
 
 		Geolocation = 1 << 8,
 
-		IdleDetection = 1 << 9,
+		HandTracking = 1 << 9,
 
-		MicStream = 1 << 10,
+		IdentityProvider = 1 << 10,
 
-		MidiSysex = 1 << 11,
+		IdleDetection = 1 << 11,
 
-		MultipleDownloads = 1 << 12,
+		MicStream = 1 << 12,
 
-		Notifications = 1 << 13,
+		MidiSysex = 1 << 13,
 
-		ProtectedMediaIdentifier = 1 << 14,
+		MultipleDownloads = 1 << 14,
 
-		RegisterProtocolHandler = 1 << 15,
+		Notifications = 1 << 15,
 
-		SecurityAttestation = 1 << 16,
+		KeyboardLock = 1 << 16,
 
-		StorageAccess = 1 << 17,
+		PointerLock = 1 << 17,
 
-		U2fApiRequest = 1 << 18,
+		ProtectedMediaIdentifier = 1 << 18,
 
-		VrSession = 1 << 19,
+		RegisterProtocolHandler = 1 << 19,
 
-		WindowManagement = 1 << 20,
+		StorageAccess = 1 << 20,
+
+		VrSession = 1 << 21,
+
+		WebAppInstallation = 1 << 22,
+
+		WindowManagement = 1 << 23,
+
+		FileSystemAccess = 1 << 24,
+
+		LocalNetworkAccessDeprecated = 1 << 25,
+
+		LocalNetwork = 1 << 26,
+
+		LoopbackNetwork = 1 << 27,
+
+		Sensors = 1 << 28,
+
+		AmbientLogin = 1 << 29,
 	}
 }
 

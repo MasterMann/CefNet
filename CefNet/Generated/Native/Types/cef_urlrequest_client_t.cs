@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure that should be implemented by the cef_urlrequest_t client. The
 	/// functions of this structure will be called on the same thread that created
 	/// the request unless otherwise documented.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_urlrequest_client_t
@@ -51,7 +52,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64 current, int64 total)*
+		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64_t current, int64_t total)*
 		/// </summary>
 		public void* on_upload_progress;
 
@@ -71,7 +72,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64 current, int64 total)*
+		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64_t current, int64_t total)*
 		/// </summary>
 		public void* on_download_progress;
 
@@ -90,7 +91,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, const void* data, size_t data_length)*
+		/// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, void const* data, size_t data_length)*
 		/// </summary>
 		public void* on_download_data;
 
@@ -109,7 +110,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_urlrequest_client_t* self, int isProxy, const cef_string_t* host, int port, const cef_string_t* realm, const cef_string_t* scheme, _cef_auth_callback_t* callback)*
+		/// int (*)(_cef_urlrequest_client_t* self, int isProxy, cef_string_t const* host, int port, cef_string_t const* realm, cef_string_t const* scheme, _cef_auth_callback_t* callback)*
 		/// </summary>
 		public void* get_auth_credentials;
 

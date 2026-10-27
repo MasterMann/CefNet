@@ -27,6 +27,7 @@ namespace CefNet
 	/// then the image at scale factor 2.0 should be 200x200 pixels -- both images
 	/// will display with a DIP size of 100x100 units. The functions of this
 	/// structure can be called on any browser process thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -44,6 +44,13 @@ namespace CefNet
 		/// UI) then any related promises may remain unresolved.
 		/// </summary>
 		Ignore = 3,
+
+		/// <summary>
+		/// Ignore the permission request. If the prompt remains unhandled (e.g.
+		/// OnShowPermissionPrompt returns false and there is no default permissions
+		/// UI) then any related promises may remain unresolved.
+		/// </summary>
+		NumValues = 4,
 	}
 }
 

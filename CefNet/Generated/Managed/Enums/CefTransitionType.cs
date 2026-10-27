@@ -40,7 +40,7 @@ namespace CefNet
 
 		/// <summary>
 		/// User got to this page through a suggestion in the UI (for example, via the
-		/// destinations page). Chrome runtime only.
+		/// destinations page). Chrome style only.
 		/// </summary>
 		AutoBookmark = 2,
 
@@ -67,7 +67,7 @@ namespace CefNet
 		/// that did not look like a URL.  For example, a match might have the URL
 		/// of a Google search result page, but appear like &quot;Search Google for ...&quot;.
 		/// These are not quite the same as EXPLICIT navigations because the user
-		/// didn&apos;t type or see the destination URL. Chrome runtime only.
+		/// didn&apos;t type or see the destination URL. Chrome style only.
 		/// See also TT_KEYWORD.
 		/// </summary>
 		Generated = 5,
@@ -77,7 +77,7 @@ namespace CefNet
 		/// loaded in a toplevel frame.  For example, opening a tab to show the ASH
 		/// screen saver, opening the devtools window, opening the NTP after the safe
 		/// browsing warning, opening web-based dialog boxes are examples of
-		/// AUTO_TOPLEVEL navigations. Chrome runtime only.
+		/// AUTO_TOPLEVEL navigations. Chrome style only.
 		/// </summary>
 		AutoToplevel = 6,
 
@@ -104,15 +104,21 @@ namespace CefNet
 		/// the url &apos;http://&apos; + keyword. For example, if you do a tab-to-search
 		/// against wikipedia the generated url has a transition qualifer of
 		/// TT_KEYWORD, and TemplateURLModel generates a visit for &apos;wikipedia.org&apos;
-		/// with a transition type of TT_KEYWORD_GENERATED. Chrome runtime only.
+		/// with a transition type of TT_KEYWORD_GENERATED. Chrome style only.
 		/// </summary>
 		Keyword = 9,
 
 		/// <summary>
 		/// Corresponds to a visit generated for a keyword. See description of
-		/// TT_KEYWORD for more details. Chrome runtime only.
+		/// TT_KEYWORD for more details. Chrome style only.
 		/// </summary>
 		KeywordGenerated = 10,
+
+		/// <summary>
+		/// Corresponds to a visit generated for a keyword. See description of
+		/// TT_KEYWORD for more details. Chrome style only.
+		/// </summary>
+		NumValues = 11,
 
 		/// <summary>
 		/// General mask defining the bits used for the source values.
@@ -136,14 +142,13 @@ namespace CefNet
 		DirectLoadFlag = 0x02000000,
 
 		/// <summary>
-		/// User is navigating to the home page. Chrome runtime only.
+		/// User is navigating to the home page. Chrome style only.
 		/// </summary>
 		HomePageFlag = 0x04000000,
 
 		/// <summary>
 		/// The transition originated from an external application; the exact
-		/// definition of this is embedder dependent. Chrome runtime and
-		/// extension system only.
+		/// definition of this is embedder dependent. Chrome style only.
 		/// </summary>
 		FromApiFlag = 0x08000000,
 

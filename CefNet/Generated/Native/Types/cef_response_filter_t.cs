@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to filter resource response content. The functions
 	/// of this structure will be called on the browser process IO thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_response_filter_t

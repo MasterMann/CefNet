@@ -23,11 +23,15 @@ namespace CefNet
 	/// </summary>
 	public enum CefChromeToolbarType
 	{
+		Unknown = 0,
+
 		None = 1,
 
 		Normal = 2,
 
 		Location = 3,
+
+		NumValues = 4,
 	}
 }
 

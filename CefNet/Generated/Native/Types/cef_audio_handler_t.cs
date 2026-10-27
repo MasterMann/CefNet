@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Implement this structure to handle audio events.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_audio_handler_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_audio_parameters_t* params, int channels)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_audio_parameters_t const* params, int channels)*
 		/// </summary>
 		public void* on_audio_stream_started;
 
@@ -71,7 +72,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const float** data, int frames, int64 pts)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, float const** data, int frames, int64_t pts)*
 		/// </summary>
 		public void* on_audio_stream_packet;
 
@@ -114,7 +115,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_string_t* message)*
+		/// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_string_t const* message)*
 		/// </summary>
 		public void* on_audio_stream_error;
 

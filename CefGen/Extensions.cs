@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -22,6 +22,36 @@ namespace CefGen
 {
 	internal static class Extensions
 	{
+		/// <summary>
+		/// Returns the minimally qualified C# type name, spelling native integers as
+		/// <c>IntPtr</c>/<c>UIntPtr</c> as the wrapper builders expect (C# 11+ shows <c>nint</c>/<c>nuint</c>).
+		/// </summary>
+		public static string ToCefDisplayString(this ITypeSymbol type)
+		{
+			string name = type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+			name = Regex.Replace(name, @"\bnuint\b", "UIntPtr");
+			return Regex.Replace(name, @"\bnint\b", "IntPtr");
+		}
+
+		/// <summary>
+		/// Returns the C type name in the form the name resolvers expect (<c>const T*</c>);
+		/// CppAst prints pointers and qualifiers as <c>T const *</c>.
+		/// </summary>
+		public static string GetCName(this CppType type)
+		{
+			string name = Regex.Replace(type.GetDisplayName(), @"\s+\*", "*");
+			name = Regex.Replace(name, @"^([\w ]+?) const(?=\*|$)", "const $1");
+			// An array of const pointers (T* const*) is an input array; the builders recognize
+			// input arrays by a leading const, so fold pointer-level const into it.
+			if (Regex.IsMatch(name, @"\*\s*const\b"))
+			{
+				name = Regex.Replace(name, @"\*\s*const\b", "*");
+				if (!name.StartsWith("const "))
+					name = "const " + name;
+			}
+			return name;
+		}
+
 		private struct BoolIntInfo
 		{
 			public string Method;

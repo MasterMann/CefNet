@@ -23,6 +23,8 @@ namespace CefNet.Internal
 	public interface ICefLifeSpanHandlerPrivate
 	{
 		bool AvoidOnBeforePopup();
+		bool AvoidOnBeforePopupAborted();
+		bool AvoidOnBeforeDevToolsPopup();
 		bool AvoidOnAfterCreated();
 		bool AvoidDoClose();
 		bool AvoidOnBeforeClose();

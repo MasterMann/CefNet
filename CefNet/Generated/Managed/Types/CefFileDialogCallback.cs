@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback structure for asynchronous continuation of file dialog requests.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

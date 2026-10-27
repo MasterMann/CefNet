@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Provides information about the context menu state. The functions of this
 	/// structure can only be accessed on browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

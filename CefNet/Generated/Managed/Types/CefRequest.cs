@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent a web request. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

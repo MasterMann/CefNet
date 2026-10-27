@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure used to implement a custom request handler structure. The
 	/// functions of this structure will be called on the IO thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -181,7 +182,7 @@ namespace CefNet
 		private unsafe delegate void GetResponseHeadersDelegate(cef_resource_handler_t* self, cef_response_t* response, long* response_length, cef_string_t* redirectUrl);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_resource_handler_t* self, _cef_response_t* response, int64* response_length, cef_string_t* redirectUrl)*
+		// void (*)(_cef_resource_handler_t* self, _cef_response_t* response, int64_t* response_length, cef_string_t* redirectUrl)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -222,7 +223,7 @@ namespace CefNet
 		private unsafe delegate int SkipDelegate(cef_resource_handler_t* self, long bytes_to_skip, long* bytes_skipped, cef_resource_skip_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_resource_handler_t* self, int64 bytes_to_skip, int64* bytes_skipped, _cef_resource_skip_callback_t* callback)*
+		// int (*)(_cef_resource_handler_t* self, int64_t bytes_to_skip, int64_t* bytes_skipped, _cef_resource_skip_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

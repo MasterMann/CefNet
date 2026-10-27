@@ -25,6 +25,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_cookie_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// The cookie name.
 		/// </summary>
 		public cef_string_t name;

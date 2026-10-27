@@ -40,6 +40,8 @@ namespace CefNet
 		Dictionary = 7,
 
 		List = 8,
+
+		NumValues = 9,
 	}
 }
 

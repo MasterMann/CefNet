@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to handle file downloads. The functions of this structure
 	/// will called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_download_handler_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, const cef_string_t* url, const cef_string_t* request_method)*
+		/// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, cef_string_t const* url, cef_string_t const* request_method)*
 		/// </summary>
 		public void* can_download;
 
@@ -41,6 +42,8 @@ namespace CefNet.CApi
 		/// attachment` response from the server). |url| is the target download URL
 		/// and |request_function| is the target function (GET, POST, etc). Return
 		/// true (1) to proceed with the download or false (0) to cancel the download.
+		/// This function is not called for downloads initiated by
+		/// cef_browser_host_t::start_download().
 		/// </summary>
 		[NativeName("can_download")]
 		public unsafe int CanDownload(cef_browser_t* browser, [Immutable]cef_string_t* url, [Immutable]cef_string_t* request_method)
@@ -52,23 +55,27 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_download_handler_t* self, _cef_browser_t* browser, _cef_download_item_t* download_item, const cef_string_t* suggested_name, _cef_before_download_callback_t* callback)*
+		/// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, _cef_download_item_t* download_item, cef_string_t const* suggested_name, _cef_before_download_callback_t* callback)*
 		/// </summary>
 		public void* on_before_download;
 
 		/// <summary>
 		/// Called before a download begins. |suggested_name| is the suggested name
-		/// for the download file. By default the download will be canceled. Execute
-		/// |callback| either asynchronously or in this function to continue the
-		/// download if desired. Do not keep a reference to |download_item| outside of
-		/// this function.
+		/// for the download file. Return true (1) and execute |callback| either
+		/// asynchronously or in this function to continue the download. Return false
+		/// (0) to proceed with default handling (cancel with Alloy style, default
+		/// download handling with Chrome style). To cancel the download with either
+		/// style execute the callback passed to on_download_updated(). If this
+		/// function returns true (1) and |callback| is destroyed without being
+		/// executed, the download will be canceled. Do not keep a reference to
+		/// |download_item| outside of this function.
 		/// </summary>
 		[NativeName("on_before_download")]
-		public unsafe void OnBeforeDownload(cef_browser_t* browser, cef_download_item_t* download_item, [Immutable]cef_string_t* suggested_name, cef_before_download_callback_t* callback)
+		public unsafe int OnBeforeDownload(cef_browser_t* browser, cef_download_item_t* download_item, [Immutable]cef_string_t* suggested_name, cef_before_download_callback_t* callback)
 		{
 			fixed (cef_download_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_download_item_t*, cef_string_t*, cef_before_download_callback_t*, void>)on_before_download)(self, browser, download_item, suggested_name, callback);
+				return ((delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_download_item_t*, cef_string_t*, cef_before_download_callback_t*, int>)on_before_download)(self, browser, download_item, suggested_name, callback);
 			}
 		}
 

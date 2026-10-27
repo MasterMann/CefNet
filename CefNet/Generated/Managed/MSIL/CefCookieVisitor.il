@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefCookieVisitorPrivate::AvoidVisit()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefCookieVisitor::Visit(valuetype CefNet.CefCookie, int32, int32, int32&)
-			ldftn instance bool CefNet.CefCookieVisitor::Visit(valuetype CefNet.CefCookie, int32, int32, int32&)
+			ldvirtftn instance bool CefNet.CefCookieVisitor::Visit(class CefNet.CefCookie, int32, int32, int32&)
+			ldftn instance bool CefNet.CefCookieVisitor::Visit(class CefNet.CefCookie, int32, int32, int32&)
 			ceq
 			ret
 		}

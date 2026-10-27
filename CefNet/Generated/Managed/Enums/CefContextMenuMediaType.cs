@@ -58,6 +58,11 @@ namespace CefNet
 		/// A plugin node is selected.
 		/// </summary>
 		Plugin = 6,
+
+		/// <summary>
+		/// A plugin node is selected.
+		/// </summary>
+		NumValues = 7,
 	}
 }
 

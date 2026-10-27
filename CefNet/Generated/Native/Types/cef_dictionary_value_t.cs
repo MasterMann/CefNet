@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure representing a dictionary value. Can be used on any process and
 	/// thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_dictionary_value_t
@@ -175,7 +176,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* has_key;
 
@@ -209,7 +210,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* remove;
 
@@ -227,7 +228,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_value_type_t (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// cef_value_type_t (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_type;
 
@@ -244,7 +245,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_value;
 
@@ -265,7 +266,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_bool;
 
@@ -282,7 +283,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_int;
 
@@ -299,7 +300,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// double (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// double (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_double;
 
@@ -316,7 +317,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// cef_string_userfree_t (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_string;
 
@@ -334,7 +335,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_binary_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_binary_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_binary;
 
@@ -352,7 +353,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_dictionary_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_dictionary_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_dictionary;
 
@@ -371,7 +372,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_list_value_t* (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// _cef_list_value_t* (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* get_list;
 
@@ -390,7 +391,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_value_t* value)*
 		/// </summary>
 		public void* set_value;
 
@@ -412,7 +413,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key)*
 		/// </summary>
 		public void* set_null;
 
@@ -430,7 +431,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, int value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, int value)*
 		/// </summary>
 		public void* set_bool;
 
@@ -448,7 +449,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, int value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, int value)*
 		/// </summary>
 		public void* set_int;
 
@@ -466,7 +467,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, double value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, double value)*
 		/// </summary>
 		public void* set_double;
 
@@ -484,7 +485,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, const cef_string_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 
@@ -502,7 +503,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_binary_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_binary_value_t* value)*
 		/// </summary>
 		public void* set_binary;
 
@@ -523,7 +524,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_dictionary_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_dictionary_value_t* value)*
 		/// </summary>
 		public void* set_dictionary;
 
@@ -544,7 +545,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_dictionary_value_t* self, const cef_string_t* key, _cef_list_value_t* value)*
+		/// int (*)(_cef_dictionary_value_t* self, cef_string_t const* key, _cef_list_value_t* value)*
 		/// </summary>
 		public void* set_list;
 

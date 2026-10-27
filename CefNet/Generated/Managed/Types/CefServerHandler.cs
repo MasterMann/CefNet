@@ -27,6 +27,7 @@ namespace CefNet
 	/// It is therefore recommended to use a different cef_server_handler_t instance
 	/// for each cef_server_t::CreateServer call to avoid thread safety issues in
 	/// the cef_server_handler_t implementation.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -240,7 +241,7 @@ namespace CefNet
 		private unsafe delegate void OnHttpRequestDelegate(cef_server_handler_t* self, cef_server_t* server, int connection_id, cef_string_t* client_address, cef_request_t* request);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const cef_string_t* client_address, _cef_request_t* request)*
+		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, cef_string_t const* client_address, _cef_request_t* request)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -282,7 +283,7 @@ namespace CefNet
 		private unsafe delegate void OnWebSocketRequestDelegate(cef_server_handler_t* self, cef_server_t* server, int connection_id, cef_string_t* client_address, cef_request_t* request, cef_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const cef_string_t* client_address, _cef_request_t* request, _cef_callback_t* callback)*
+		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, cef_string_t const* client_address, _cef_request_t* request, _cef_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -350,7 +351,7 @@ namespace CefNet
 		private unsafe delegate void OnWebSocketMessageDelegate(cef_server_handler_t* self, cef_server_t* server, int connection_id, void* data, UIntPtr data_size);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const void* data, size_t data_size)*
+		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, void const* data, size_t data_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

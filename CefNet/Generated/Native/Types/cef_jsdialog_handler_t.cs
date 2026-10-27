@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to JavaScript dialogs. The
 	/// functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_jsdialog_handler_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, const cef_string_t* origin_url, cef_jsdialog_type_t dialog_type, const cef_string_t* message_text, const cef_string_t* default_prompt_text, _cef_jsdialog_callback_t* callback, int* suppress_message)*
+		/// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, cef_string_t const* origin_url, cef_jsdialog_type_t dialog_type, cef_string_t const* message_text, cef_string_t const* default_prompt_text, _cef_jsdialog_callback_t* callback, int* suppress_message)*
 		/// </summary>
 		public void* on_jsdialog;
 
@@ -62,7 +63,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, const cef_string_t* message_text, int is_reload, _cef_jsdialog_callback_t* callback)*
+		/// int (*)(_cef_jsdialog_handler_t* self, _cef_browser_t* browser, cef_string_t const* message_text, int is_reload, _cef_jsdialog_callback_t* callback)*
 		/// </summary>
 		public void* on_before_unload_dialog;
 

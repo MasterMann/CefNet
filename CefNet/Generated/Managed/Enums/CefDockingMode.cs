@@ -23,15 +23,17 @@ namespace CefNet
 	/// </summary>
 	public enum CefDockingMode
 	{
-		TopLeft = 1,
+		TopLeft = 0,
 
-		TopRight = 2,
+		TopRight = 1,
 
-		BottomLeft = 3,
+		BottomLeft = 2,
 
-		BottomRight = 4,
+		BottomRight = 3,
 
-		Custom = 5,
+		Custom = 4,
+
+		NumValues = 5,
 	}
 }
 

@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to filter cookies that may be sent or received from
 	/// resource requests. The functions of this structure will be called on the IO
 	/// thread unless otherwise indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_cookie_access_filter_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, const _cef_cookie_t* cookie)*
+		/// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_cookie_t const* cookie)*
 		/// </summary>
 		public void* can_send_cookie;
 
@@ -53,7 +54,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, const _cef_cookie_t* cookie)*
+		/// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, _cef_cookie_t const* cookie)*
 		/// </summary>
 		public void* can_save_cookie;
 

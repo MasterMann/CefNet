@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure that supports the reading of zip archives via the zlib unzip API.
 	/// The functions of this structure should only be called on the thread that
 	/// creates the object.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

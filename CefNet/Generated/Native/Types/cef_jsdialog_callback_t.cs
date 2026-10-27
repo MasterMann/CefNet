@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure used for asynchronous continuation of JavaScript dialog
 	/// requests.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_jsdialog_callback_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_jsdialog_callback_t* self, int success, const cef_string_t* user_input)*
+		/// void (*)(_cef_jsdialog_callback_t* self, int success, cef_string_t const* user_input)*
 		/// </summary>
 		public void* cont;
 

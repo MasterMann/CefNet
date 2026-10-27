@@ -27,9 +27,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefAudioParameters
+	public unsafe partial class CefAudioParameters
 	{
-		private cef_audio_parameters_t _instance;
+		private cef_audio_parameters_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefAudioParameters()
+		{
+			_disposable = true;
+			_instance = (cef_audio_parameters_t*)CefStructure.Allocate(sizeof(cef_audio_parameters_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_audio_parameters_t));
+		}
+
+		internal static unsafe CefAudioParameters Create(IntPtr instance)
+		{
+			return new CefAudioParameters((cef_audio_parameters_t*)instance);
+		}
+
+		public CefAudioParameters(cef_audio_parameters_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_audio_parameters_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_audio_parameters_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Layout of the audio channels
@@ -38,11 +85,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.channel_layout;
+				return _instance->channel_layout;
 			}
 			set
 			{
-				_instance.channel_layout = value;
+				_instance->channel_layout = value;
 			}
 		}
 
@@ -53,11 +100,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.sample_rate;
+				return _instance->sample_rate;
 			}
 			set
 			{
-				_instance.sample_rate = value;
+				_instance->sample_rate = value;
 			}
 		}
 
@@ -68,22 +115,12 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.frames_per_buffer;
+				return _instance->frames_per_buffer;
 			}
 			set
 			{
-				_instance.frames_per_buffer = value;
+				_instance->frames_per_buffer = value;
 			}
-		}
-
-		public static implicit operator CefAudioParameters(cef_audio_parameters_t instance)
-		{
-			return new CefAudioParameters { _instance = instance };
-		}
-
-		public static implicit operator cef_audio_parameters_t(CefAudioParameters instance)
-		{
-			return instance._instance;
 		}
 	}
 }

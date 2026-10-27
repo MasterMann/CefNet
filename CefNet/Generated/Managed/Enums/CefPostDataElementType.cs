@@ -28,6 +28,8 @@ namespace CefNet
 		Bytes = 1,
 
 		File = 2,
+
+		NumValues = 3,
 	}
 }
 

@@ -28,9 +28,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefPdfPrintSettings : IDisposable
+	public unsafe partial class CefPdfPrintSettings : IDisposable
 	{
-		private cef_pdf_print_settings_t _instance;
+		private cef_pdf_print_settings_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefPdfPrintSettings()
+		{
+			_disposable = true;
+			_instance = (cef_pdf_print_settings_t*)CefStructure.Allocate(sizeof(cef_pdf_print_settings_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_pdf_print_settings_t));
+		}
+
+		internal static unsafe CefPdfPrintSettings Create(IntPtr instance)
+		{
+			return new CefPdfPrintSettings((cef_pdf_print_settings_t*)instance);
+		}
+
+		public CefPdfPrintSettings(cef_pdf_print_settings_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_pdf_print_settings_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_pdf_print_settings_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Set to true (1) for landscape mode or false (0) for portrait mode.
@@ -39,11 +86,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.landscape != 0;
+				return _instance->landscape != 0;
 			}
 			set
 			{
-				_instance.landscape = value ? 1 : 0;
+				_instance->landscape = value ? 1 : 0;
 			}
 		}
 
@@ -54,11 +101,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.print_background != 0;
+				return _instance->print_background != 0;
 			}
 			set
 			{
-				_instance.print_background = value ? 1 : 0;
+				_instance->print_background = value ? 1 : 0;
 			}
 		}
 
@@ -71,11 +118,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.scale;
+				return _instance->scale;
 			}
 			set
 			{
-				_instance.scale = value;
+				_instance->scale = value;
 			}
 		}
 
@@ -88,11 +135,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.paper_width;
+				return _instance->paper_width;
 			}
 			set
 			{
-				_instance.paper_width = value;
+				_instance->paper_width = value;
 			}
 		}
 
@@ -100,11 +147,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.paper_height;
+				return _instance->paper_height;
 			}
 			set
 			{
-				_instance.paper_height = value;
+				_instance->paper_height = value;
 			}
 		}
 
@@ -116,11 +163,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.prefer_css_page_size != 0;
+				return _instance->prefer_css_page_size != 0;
 			}
 			set
 			{
-				_instance.prefer_css_page_size = value ? 1 : 0;
+				_instance->prefer_css_page_size = value ? 1 : 0;
 			}
 		}
 
@@ -131,11 +178,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.margin_type;
+				return _instance->margin_type;
 			}
 			set
 			{
-				_instance.margin_type = value;
+				_instance->margin_type = value;
 			}
 		}
 
@@ -147,11 +194,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.margin_top;
+				return _instance->margin_top;
 			}
 			set
 			{
-				_instance.margin_top = value;
+				_instance->margin_top = value;
 			}
 		}
 
@@ -159,11 +206,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.margin_right;
+				return _instance->margin_right;
 			}
 			set
 			{
-				_instance.margin_right = value;
+				_instance->margin_right = value;
 			}
 		}
 
@@ -171,11 +218,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.margin_bottom;
+				return _instance->margin_bottom;
 			}
 			set
 			{
-				_instance.margin_bottom = value;
+				_instance->margin_bottom = value;
 			}
 		}
 
@@ -183,11 +230,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.margin_left;
+				return _instance->margin_left;
 			}
 			set
 			{
-				_instance.margin_left = value;
+				_instance->margin_left = value;
 			}
 		}
 
@@ -204,17 +251,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.page_ranges)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->page_ranges);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.page_ranges)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->page_ranges, value);
 			}
 		}
 
@@ -226,11 +267,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.display_header_footer != 0;
+				return _instance->display_header_footer != 0;
 			}
 			set
 			{
-				_instance.display_header_footer = value ? 1 : 0;
+				_instance->display_header_footer = value ? 1 : 0;
 			}
 		}
 
@@ -250,17 +291,11 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.header_template)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->header_template);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.header_template)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->header_template, value);
 			}
 		}
 
@@ -273,35 +308,64 @@ namespace CefNet
 		{
 			get
 			{
-				fixed (cef_string_t* s = &_instance.footer_template)
-				{
-					return CefString.Read(s);
-				}
+				return CefString.Read(&_instance->footer_template);
 			}
 			set
 			{
-				fixed (cef_string_t* s = &_instance.footer_template)
-				{
-					CefString.Replace(s, value);
-				}
+				CefString.Replace(&_instance->footer_template, value);
+			}
+		}
+
+		/// <summary>
+		/// Set to true (1) to generate tagged (accessible) PDF.
+		/// </summary>
+		public bool GenerateTaggedPdf
+		{
+			get
+			{
+				return _instance->generate_tagged_pdf != 0;
+			}
+			set
+			{
+				_instance->generate_tagged_pdf = value ? 1 : 0;
+			}
+		}
+
+		/// <summary>
+		/// Set to true (1) to generate a document outline.
+		/// </summary>
+		public bool GenerateDocumentOutline
+		{
+			get
+			{
+				return _instance->generate_document_outline != 0;
+			}
+			set
+			{
+				_instance->generate_document_outline = value ? 1 : 0;
 			}
 		}
 
 		public void Dispose()
 		{
-			PageRanges = null;
-			HeaderTemplate = null;
-			FooterTemplate = null;
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public static implicit operator CefPdfPrintSettings(cef_pdf_print_settings_t instance)
+		protected virtual void Dispose(bool disposing)
 		{
-			return new CefPdfPrintSettings { _instance = instance };
+			if (_disposable && _instance != null)
+			{
+				PageRanges = null;
+				HeaderTemplate = null;
+				FooterTemplate = null;
+				Marshal.FreeHGlobal((IntPtr)_instance);
+				_instance = null;}
 		}
 
-		public static implicit operator cef_pdf_print_settings_t(CefPdfPrintSettings instance)
+		~CefPdfPrintSettings()
 		{
-			return instance._instance;
+			Dispose(false);
 		}
 	}
 }

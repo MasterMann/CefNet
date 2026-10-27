@@ -28,6 +28,7 @@ namespace CefNet.CApi
 	/// is safe to create and/or signal a WaitableEvent from any thread. Blocking on
 	/// a WaitableEvent by calling the *wait() functions is not allowed on the
 	/// browser process UI or IO threads.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_waitable_event_t
@@ -111,7 +112,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_waitable_event_t* self, int64 max_ms)*
+		/// int (*)(_cef_waitable_event_t* self, int64_t max_ms)*
 		/// </summary>
 		public void* timed_wait;
 

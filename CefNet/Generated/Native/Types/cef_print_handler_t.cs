@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to handle printing on Linux. Each browser will have
 	/// only one print job in progress at a time. The functions of this structure
 	/// will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_print_handler_t
@@ -91,7 +92,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, const cef_string_t* document_name, const cef_string_t* pdf_file_path, _cef_print_job_callback_t* callback)*
+		/// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, cef_string_t const* document_name, cef_string_t const* pdf_file_path, _cef_print_job_callback_t* callback)*
 		/// </summary>
 		public void* on_print_job;
 

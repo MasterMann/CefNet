@@ -23,6 +23,7 @@ namespace CefNet.CApi
 	/// command ids that have default implementations. All user-defined command ids
 	/// should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of
 	/// this structure can only be accessed on the browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_menu_model_t
@@ -101,7 +102,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_item;
 
@@ -118,7 +119,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_check_item;
 
@@ -135,7 +136,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label, int group_id)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label, int group_id)*
 		/// </summary>
 		public void* add_radio_item;
 
@@ -153,7 +154,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* add_sub_menu;
 
@@ -188,7 +189,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_item_at;
 
@@ -206,7 +207,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_check_item_at;
 
@@ -224,7 +225,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label, int group_id)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label, int group_id)*
 		/// </summary>
 		public void* insert_radio_item_at;
 
@@ -243,7 +244,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, size_t index, int command_id, const cef_string_t* label)*
+		/// _cef_menu_model_t* (*)(_cef_menu_model_t* self, size_t index, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* insert_sub_menu_at;
 
@@ -386,7 +387,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* label)*
 		/// </summary>
 		public void* set_label;
 
@@ -404,7 +405,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, size_t index, const cef_string_t* label)*
+		/// int (*)(_cef_menu_model_t* self, size_t index, cef_string_t const* label)*
 		/// </summary>
 		public void* set_label_at;
 
@@ -994,20 +995,21 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int command_id, const cef_string_t* font_list)*
+		/// int (*)(_cef_menu_model_t* self, int command_id, cef_string_t const* font_list)*
 		/// </summary>
 		public void* set_font_list;
 
 		/// <summary>
 		/// Sets the font list for the specified |command_id|. If |font_list| is NULL
 		/// the system font will be used. Returns true (1) on success. The format is
-		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where: - FONT_FAMILY_LIST is a
-		/// comma-separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names
-		/// (case-sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where:
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		[NativeName("set_font_list")]
 		public unsafe int SetFontList(int command_id, [Immutable]cef_string_t* font_list)
@@ -1019,21 +1021,20 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_menu_model_t* self, int index, const cef_string_t* font_list)*
+		/// int (*)(_cef_menu_model_t* self, int index, cef_string_t const* font_list)*
 		/// </summary>
 		public void* set_font_list_at;
 
 		/// <summary>
 		/// Sets the font list for the specified |index|. Specify an |index| value of
-		/// -1 to set the default font. If |font_list| is NULL the system font will be
-		/// used. Returns true (1) on success. The format is
-		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where: - FONT_FAMILY_LIST is a
-		/// comma-separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names
-		/// (case-sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// - 1 to set the default font. If |font_list| is NULL the system font will
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		[NativeName("set_font_list_at")]
 		public unsafe int SetFontListAt(int index, [Immutable]cef_string_t* font_list)

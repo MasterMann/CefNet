@@ -91,13 +91,35 @@
 			ret
 		}
 
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefRequestHandlerPrivate.AvoidOnRenderProcessUnresponsive()
+		{
+			.override method instance bool CefNet.Internal.ICefRequestHandlerPrivate::AvoidOnRenderProcessUnresponsive()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance bool CefNet.CefRequestHandler::OnRenderProcessUnresponsive(class CefNet.CefBrowser, class CefNet.CefUnresponsiveProcessCallback)
+			ldftn instance bool CefNet.CefRequestHandler::OnRenderProcessUnresponsive(class CefNet.CefBrowser, class CefNet.CefUnresponsiveProcessCallback)
+			ceq
+			ret
+		}
+
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefRequestHandlerPrivate.AvoidOnRenderProcessResponsive()
+		{
+			.override method instance bool CefNet.Internal.ICefRequestHandlerPrivate::AvoidOnRenderProcessResponsive()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance void CefNet.CefRequestHandler::OnRenderProcessResponsive(class CefNet.CefBrowser)
+			ldftn instance void CefNet.CefRequestHandler::OnRenderProcessResponsive(class CefNet.CefBrowser)
+			ceq
+			ret
+		}
+
 		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated()
 		{
 			.override method instance bool CefNet.Internal.ICefRequestHandlerPrivate::AvoidOnRenderProcessTerminated()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefRequestHandler::OnRenderProcessTerminated(class CefNet.CefBrowser, valuetype CefNet.CefTerminationStatus)
-			ldftn instance void CefNet.CefRequestHandler::OnRenderProcessTerminated(class CefNet.CefBrowser, valuetype CefNet.CefTerminationStatus)
+			ldvirtftn instance void CefNet.CefRequestHandler::OnRenderProcessTerminated(class CefNet.CefBrowser, valuetype CefNet.CefTerminationStatus, int32, string)
+			ldftn instance void CefNet.CefRequestHandler::OnRenderProcessTerminated(class CefNet.CefBrowser, valuetype CefNet.CefTerminationStatus, int32, string)
 			ceq
 			ret
 		}

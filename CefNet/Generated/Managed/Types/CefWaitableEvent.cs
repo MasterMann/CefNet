@@ -30,6 +30,7 @@ namespace CefNet
 	/// is safe to create and/or signal a WaitableEvent from any thread. Blocking on
 	/// a WaitableEvent by calling the *wait() functions is not allowed on the
 	/// browser process UI or IO threads.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

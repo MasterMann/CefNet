@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to handle events related to permission requests.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_permission_handler_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* requesting_origin, uint32 requested_permissions, _cef_media_access_callback_t* callback)*
+		/// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* requesting_origin, uint32_t requested_permissions, _cef_media_access_callback_t* callback)*
 		/// </summary>
 		public void* on_request_media_access_permission;
 
@@ -43,23 +44,23 @@ namespace CefNet.CApi
 		/// cef_media_access_permission_types_t that represent the requested
 		/// permissions. Return true (1) and call cef_media_access_callback_t
 		/// functions either in this function or at a later time to continue or cancel
-		/// the request. Return false (0) to proceed with default handling. With the
-		/// Chrome runtime, default handling will display the permission request UI.
-		/// With the Alloy runtime, default handling will deny the request. This
-		/// function will not be called if the &quot;--enable-media-stream&quot; command-line
-		/// switch is used to grant all permissions.
+		/// the request. Return false (0) to proceed with default handling. With
+		/// Chrome style, default handling will display the permission request UI.
+		/// With Alloy style, default handling will deny the request. This function
+		/// will not be called if the &quot;--enable-media-stream&quot; command-line switch is
+		/// used to grant all permissions.
 		/// </summary>
 		[NativeName("on_request_media_access_permission")]
-		public unsafe int OnRequestMediaAccessPermission(cef_browser_t* browser, cef_frame_t* frame, [Immutable]cef_string_t* requesting_origin, uint requested_permissions, cef_media_access_callback_t* callback)
+		public unsafe int OnRequestMediaAccessPermission(cef_browser_t* browser, cef_frame_t* frame, [Immutable]cef_string_t* requesting_origin, UInt32 requested_permissions, cef_media_access_callback_t* callback)
 		{
 			fixed (cef_permission_handler_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_permission_handler_t*, cef_browser_t*, cef_frame_t*, cef_string_t*, uint, cef_media_access_callback_t*, int>)on_request_media_access_permission)(self, browser, frame, requesting_origin, requested_permissions, callback);
+				return ((delegate* unmanaged[Stdcall]<cef_permission_handler_t*, cef_browser_t*, cef_frame_t*, cef_string_t*, UInt32, cef_media_access_callback_t*, int>)on_request_media_access_permission)(self, browser, frame, requesting_origin, requested_permissions, callback);
 			}
 		}
 
 		/// <summary>
-		/// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64 prompt_id, const cef_string_t* requesting_origin, uint32 requested_permissions, _cef_permission_prompt_callback_t* callback)*
+		/// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64_t prompt_id, cef_string_t const* requesting_origin, uint32_t requested_permissions, _cef_permission_prompt_callback_t* callback)*
 		/// </summary>
 		public void* on_show_permission_prompt;
 
@@ -70,21 +71,21 @@ namespace CefNet.CApi
 		/// cef_permission_request_types_t that represent the requested permissions.
 		/// Return true (1) and call cef_permission_prompt_callback_t::Continue either
 		/// in this function or at a later time to continue or cancel the request.
-		/// Return false (0) to proceed with default handling. With the Chrome
-		/// runtime, default handling will display the permission prompt UI. With the
-		/// Alloy runtime, default handling is CEF_PERMISSION_RESULT_IGNORE.
+		/// Return false (0) to proceed with default handling. With Chrome style,
+		/// default handling will display the permission prompt UI. With Alloy style,
+		/// default handling is CEF_PERMISSION_RESULT_IGNORE.
 		/// </summary>
 		[NativeName("on_show_permission_prompt")]
-		public unsafe int OnShowPermissionPrompt(cef_browser_t* browser, ulong prompt_id, [Immutable]cef_string_t* requesting_origin, uint requested_permissions, cef_permission_prompt_callback_t* callback)
+		public unsafe int OnShowPermissionPrompt(cef_browser_t* browser, ulong prompt_id, [Immutable]cef_string_t* requesting_origin, UInt32 requested_permissions, cef_permission_prompt_callback_t* callback)
 		{
 			fixed (cef_permission_handler_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_permission_handler_t*, cef_browser_t*, ulong, cef_string_t*, uint, cef_permission_prompt_callback_t*, int>)on_show_permission_prompt)(self, browser, prompt_id, requesting_origin, requested_permissions, callback);
+				return ((delegate* unmanaged[Stdcall]<cef_permission_handler_t*, cef_browser_t*, ulong, cef_string_t*, UInt32, cef_permission_prompt_callback_t*, int>)on_show_permission_prompt)(self, browser, prompt_id, requesting_origin, requested_permissions, callback);
 			}
 		}
 
 		/// <summary>
-		/// void (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64 prompt_id, cef_permission_request_result_t result)*
+		/// void (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64_t prompt_id, cef_permission_request_result_t result)*
 		/// </summary>
 		public void* on_dismiss_permission_prompt;
 

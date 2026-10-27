@@ -135,5 +135,27 @@
 			ret
 		}
 
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefDisplayHandlerPrivate.AvoidOnContentsBoundsChange()
+		{
+			.override method instance bool CefNet.Internal.ICefDisplayHandlerPrivate::AvoidOnContentsBoundsChange()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance bool CefNet.CefDisplayHandler::OnContentsBoundsChange(class CefNet.CefBrowser, valuetype CefNet.CefRect)
+			ldftn instance bool CefNet.CefDisplayHandler::OnContentsBoundsChange(class CefNet.CefBrowser, valuetype CefNet.CefRect)
+			ceq
+			ret
+		}
+
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefDisplayHandlerPrivate.AvoidGetRootWindowScreenRect()
+		{
+			.override method instance bool CefNet.Internal.ICefDisplayHandlerPrivate::AvoidGetRootWindowScreenRect()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance bool CefNet.CefDisplayHandler::GetRootWindowScreenRect(class CefNet.CefBrowser, valuetype CefNet.CefRect&)
+			ldftn instance bool CefNet.CefDisplayHandler::GetRootWindowScreenRect(class CefNet.CefBrowser, valuetype CefNet.CefRect&)
+			ceq
+			ret
+		}
+
 	}
 }

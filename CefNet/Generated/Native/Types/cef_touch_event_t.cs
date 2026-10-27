@@ -74,7 +74,7 @@ namespace CefNet.CApi
 		/// Bit flags describing any pressed modifier keys. See
 		/// cef_event_flags_t for values.
 		/// </summary>
-		public uint modifiers;
+		public UInt32 modifiers;
 
 		/// <summary>
 		/// The device type that caused the event.

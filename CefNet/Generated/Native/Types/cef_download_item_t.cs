@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure used to represent a download item.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_download_item_t
@@ -133,7 +134,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_download_item_t* self)*
+		/// int64_t (*)(_cef_download_item_t* self)*
 		/// </summary>
 		public void* get_current_speed;
 
@@ -168,7 +169,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_download_item_t* self)*
+		/// int64_t (*)(_cef_download_item_t* self)*
 		/// </summary>
 		public void* get_total_bytes;
 
@@ -185,7 +186,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_download_item_t* self)*
+		/// int64_t (*)(_cef_download_item_t* self)*
 		/// </summary>
 		public void* get_received_bytes;
 
@@ -254,7 +255,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// uint32 (*)(_cef_download_item_t* self)*
+		/// uint32_t (*)(_cef_download_item_t* self)*
 		/// </summary>
 		public void* get_id;
 
@@ -262,11 +263,11 @@ namespace CefNet.CApi
 		/// Returns the unique identifier for this download.
 		/// </summary>
 		[NativeName("get_id")]
-		public unsafe uint GetId()
+		public unsafe UInt32 GetId()
 		{
 			fixed (cef_download_item_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, uint>)get_id)(self);
+				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, UInt32>)get_id)(self);
 			}
 		}
 
@@ -357,6 +358,23 @@ namespace CefNet.CApi
 			fixed (cef_download_item_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, cef_string_userfree_t>)get_mime_type)(self);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_download_item_t* self)*
+		/// </summary>
+		public void* is_paused;
+
+		/// <summary>
+		/// Returns true (1) if the download has been paused.
+		/// </summary>
+		[NativeName("is_paused")]
+		public unsafe int IsPaused()
+		{
+			fixed (cef_download_item_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, int>)is_paused)(self);
 			}
 		}
 	}

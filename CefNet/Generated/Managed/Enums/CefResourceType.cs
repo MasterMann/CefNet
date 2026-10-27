@@ -124,6 +124,11 @@ namespace CefNet
 		/// A sub-frame service worker navigation preload request.
 		/// </summary>
 		NavigationPreloadSubFrame = 20,
+
+		/// <summary>
+		/// A sub-frame service worker navigation preload request.
+		/// </summary>
+		NumValues = 21,
 	}
 }
 

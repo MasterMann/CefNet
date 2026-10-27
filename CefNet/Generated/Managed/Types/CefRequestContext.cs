@@ -35,6 +35,7 @@ namespace CefNet
 	/// in single-process mode will share the same request context. This will be the
 	/// first request context passed into a cef_browser_host_t static factory
 	/// function and all other request context objects will be ignored.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -85,6 +86,42 @@ namespace CefNet
 			get
 			{
 				return SafeCall(CefString.ReadAndFree(NativeInstance->GetCachePath()));
+			}
+		}
+
+		/// <summary>
+		/// Gets the current Chrome color scheme mode (SYSTEM, LIGHT or DARK). Must
+		/// be called on the browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefColorVariant ChromeColorSchemeMode
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetChromeColorSchemeMode());
+			}
+		}
+
+		/// <summary>
+		/// Gets the current Chrome color scheme color, or transparent (0) for the
+		/// default color. Must be called on the browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefColor ChromeColorSchemeColor
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetChromeColorSchemeColor());
+			}
+		}
+
+		/// <summary>
+		/// Gets the current Chrome color scheme variant. Must be called on the
+		/// browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefColorVariant ChromeColorSchemeVariant
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetChromeColorSchemeVariant());
 			}
 		}
 
@@ -201,112 +238,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Load an extension.
-		/// If extension resources will be read from disk using the default load
-		/// implementation then |root_directory| should be the absolute path to the
-		/// extension resources directory and |manifest| should be NULL. If extension
-		/// resources will be provided by the client (e.g. via cef_request_handler_t
-		/// and/or cef_extension_handler_t) then |root_directory| should be a path
-		/// component unique to the extension (if not absolute this will be internally
-		/// prefixed with the PK_DIR_RESOURCES path) and |manifest| should contain the
-		/// contents that would otherwise be read from the &quot;manifest.json&quot; file on
-		/// disk.
-		/// The loaded extension will be accessible in all contexts sharing the same
-		/// storage (HasExtension returns true (1)). However, only the context on
-		/// which this function was called is considered the loader (DidLoadExtension
-		/// returns true (1)) and only the loader will receive
-		/// cef_request_context_handler_t callbacks for the extension.
-		/// cef_extension_handler_t::OnExtensionLoaded will be called on load success
-		/// or cef_extension_handler_t::OnExtensionLoadFailed will be called on load
-		/// failure.
-		/// If the extension specifies a background script via the &quot;background&quot;
-		/// manifest key then cef_extension_handler_t::OnBeforeBackgroundBrowser will
-		/// be called to create the background browser. See that function for
-		/// additional information about background scripts.
-		/// For visible extension views the client application should evaluate the
-		/// manifest to determine the correct extension URL to load and then pass that
-		/// URL to the cef_browser_host_t::CreateBrowser* function after the extension
-		/// has loaded. For example, the client can look for the &quot;browser_action&quot;
-		/// manifest key as documented at
-		/// https://developer.chrome.com/extensions/browserAction. Extension URLs take
-		/// the form &quot;chrome-extension://&lt;extension_id&gt;/&lt;path&gt;&quot;.
-		/// Browsers that host extensions differ from normal browsers as follows:
-		/// - Can access chrome.* JavaScript APIs if allowed by the manifest. Visit
-		/// chrome://extensions-support for the list of extension APIs currently
-		/// supported by CEF.
-		/// - Main frame navigation to non-extension content is blocked.
-		/// - Pinch-zooming is disabled.
-		/// - CefBrowserHost::GetExtension returns the hosted extension.
-		/// - CefBrowserHost::IsBackgroundHost returns true for background hosts.
-		/// See https://developer.chrome.com/extensions for extension implementation
-		/// and usage documentation.
-		/// </summary>
-		public unsafe virtual void LoadExtension(string rootDirectory, CefDictionaryValue manifest, CefExtensionHandler handler)
-		{
-			fixed (char* s0 = rootDirectory)
-			{
-				var cstr0 = new cef_string_t { Str = s0, Length = rootDirectory != null ? rootDirectory.Length : 0 };
-				NativeInstance->LoadExtension(&cstr0, (manifest != null) ? manifest.GetNativeInstance() : null, (handler != null) ? handler.GetNativeInstance() : null);
-			}
-			GC.KeepAlive(this);
-		}
-
-		/// <summary>
-		/// Returns true (1) if this context was used to load the extension identified
-		/// by |extension_id|. Other contexts sharing the same storage will also have
-		/// access to the extension (see HasExtension). This function must be called
-		/// on the browser process UI thread.
-		/// </summary>
-		public unsafe virtual bool DidLoadExtension(string extensionId)
-		{
-			fixed (char* s0 = extensionId)
-			{
-				var cstr0 = new cef_string_t { Str = s0, Length = extensionId != null ? extensionId.Length : 0 };
-				return SafeCall(NativeInstance->DidLoadExtension(&cstr0) != 0);
-			}
-		}
-
-		/// <summary>
-		/// Returns true (1) if this context has access to the extension identified by
-		/// |extension_id|. This may not be the context that was used to load the
-		/// extension (see DidLoadExtension). This function must be called on the
-		/// browser process UI thread.
-		/// </summary>
-		public unsafe virtual bool HasExtension(string extensionId)
-		{
-			fixed (char* s0 = extensionId)
-			{
-				var cstr0 = new cef_string_t { Str = s0, Length = extensionId != null ? extensionId.Length : 0 };
-				return SafeCall(NativeInstance->HasExtension(&cstr0) != 0);
-			}
-		}
-
-		/// <summary>
-		/// Retrieve the list of all extensions that this context has access to (see
-		/// HasExtension). |extension_ids| will be populated with the list of
-		/// extension ID values. Returns true (1) on success. This function must be
-		/// called on the browser process UI thread.
-		/// </summary>
-		public unsafe virtual bool GetExtensions(CefStringList extensionIds)
-		{
-			return SafeCall(NativeInstance->GetExtensions(extensionIds.GetNativeInstance()) != 0);
-		}
-
-		/// <summary>
-		/// Returns the extension matching |extension_id| or NULL if no matching
-		/// extension is accessible in this context (see HasExtension). This function
-		/// must be called on the browser process UI thread.
-		/// </summary>
-		public unsafe virtual CefExtension GetExtension(string extensionId)
-		{
-			fixed (char* s0 = extensionId)
-			{
-				var cstr0 = new cef_string_t { Str = s0, Length = extensionId != null ? extensionId.Length : 0 };
-				return SafeCall(CefExtension.Wrap(CefExtension.Create, NativeInstance->GetExtension(&cstr0)));
-			}
-		}
-
-		/// <summary>
 		/// Returns the MediaRouter object associated with this context.  If
 		/// |callback| is non-NULL it will be executed asnychronously on the UI thread
 		/// after the manager&apos;s context has been initialized.
@@ -314,6 +245,123 @@ namespace CefNet
 		public unsafe virtual CefMediaRouter GetMediaRouter(CefCompletionCallback callback)
 		{
 			return SafeCall(CefMediaRouter.Wrap(CefMediaRouter.Create, NativeInstance->GetMediaRouter((callback != null) ? callback.GetNativeInstance() : null)));
+		}
+
+		/// <summary>
+		/// Returns the current value for |content_type| that applies for the
+		/// specified URLs. If both URLs are NULL the default value will be returned.
+		/// Returns nullptr if no value is configured. Must be called on the browser
+		/// process UI thread.
+		/// </summary>
+		public unsafe virtual CefValue GetWebsiteSetting(string requestingUrl, string topLevelUrl, CefContentSettingTypes contentType)
+		{
+			fixed (char* s0 = requestingUrl)
+			fixed (char* s1 = topLevelUrl)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = requestingUrl != null ? requestingUrl.Length : 0 };
+				var cstr1 = new cef_string_t { Str = s1, Length = topLevelUrl != null ? topLevelUrl.Length : 0 };
+				return SafeCall(CefValue.Wrap(CefValue.Create, NativeInstance->GetWebsiteSetting(&cstr0, &cstr1, contentType)));
+			}
+		}
+
+		/// <summary>
+		/// Sets the current value for |content_type| for the specified URLs in the
+		/// default scope. If both URLs are NULL, and the context is not incognito,
+		/// the default value will be set. Pass nullptr for |value| to remove the
+		/// default value for this content type.
+		/// WARNING: Incorrect usage of this function may cause instability or
+		/// security issues in Chromium. Make sure that you first understand the
+		/// potential impact of any changes to |content_type| by reviewing the related
+		/// source code in Chromium. For example, if you plan to modify
+		/// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
+		/// ContentSettingsType::POPUPS in Chromium:
+		/// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
+		/// </summary>
+		public unsafe virtual void SetWebsiteSetting(string requestingUrl, string topLevelUrl, CefContentSettingTypes contentType, CefValue value)
+		{
+			fixed (char* s0 = requestingUrl)
+			fixed (char* s1 = topLevelUrl)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = requestingUrl != null ? requestingUrl.Length : 0 };
+				var cstr1 = new cef_string_t { Str = s1, Length = topLevelUrl != null ? topLevelUrl.Length : 0 };
+				NativeInstance->SetWebsiteSetting(&cstr0, &cstr1, contentType, (value != null) ? value.GetNativeInstance() : null);
+			}
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Returns the current value for |content_type| that applies for the
+		/// specified URLs. If both URLs are NULL the default value will be returned.
+		/// Returns CEF_CONTENT_SETTING_VALUE_DEFAULT if no value is configured. Must
+		/// be called on the browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefContentSettingValues GetContentSetting(string requestingUrl, string topLevelUrl, CefContentSettingTypes contentType)
+		{
+			fixed (char* s0 = requestingUrl)
+			fixed (char* s1 = topLevelUrl)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = requestingUrl != null ? requestingUrl.Length : 0 };
+				var cstr1 = new cef_string_t { Str = s1, Length = topLevelUrl != null ? topLevelUrl.Length : 0 };
+				return SafeCall(NativeInstance->GetContentSetting(&cstr0, &cstr1, contentType));
+			}
+		}
+
+		/// <summary>
+		/// Sets the current value for |content_type| for the specified URLs in the
+		/// default scope. If both URLs are NULL, and the context is not incognito,
+		/// the default value will be set. Pass CEF_CONTENT_SETTING_VALUE_DEFAULT for
+		/// |value| to use the default value for this content type.
+		/// WARNING: Incorrect usage of this function may cause instability or
+		/// security issues in Chromium. Make sure that you first understand the
+		/// potential impact of any changes to |content_type| by reviewing the related
+		/// source code in Chromium. For example, if you plan to modify
+		/// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
+		/// ContentSettingsType::POPUPS in Chromium:
+		/// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
+		/// </summary>
+		public unsafe virtual void SetContentSetting(string requestingUrl, string topLevelUrl, CefContentSettingTypes contentType, CefContentSettingValues value)
+		{
+			fixed (char* s0 = requestingUrl)
+			fixed (char* s1 = topLevelUrl)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = requestingUrl != null ? requestingUrl.Length : 0 };
+				var cstr1 = new cef_string_t { Str = s1, Length = topLevelUrl != null ? topLevelUrl.Length : 0 };
+				NativeInstance->SetContentSetting(&cstr0, &cstr1, contentType, value);
+			}
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Sets the Chrome color scheme for all browsers that share this request
+		/// context. |variant| values of SYSTEM, LIGHT and DARK change the underlying
+		/// color mode (e.g. light vs dark). Other |variant| values determine how
+		/// |user_color| will be applied in the current color mode. If |user_color| is
+		/// transparent (0) the default color will be used.
+		/// </summary>
+		public unsafe virtual void SetChromeColorScheme(CefColorVariant variant, CefColor userColor)
+		{
+			NativeInstance->SetChromeColorScheme(variant, userColor);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Add an observer for content and website setting changes. The observer will
+		/// remain registered until the returned Registration object is destroyed.
+		/// This function must be called on the browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefRegistration AddSettingObserver(CefSettingObserver observer)
+		{
+			return SafeCall(CefRegistration.Wrap(CefRegistration.Create, NativeInstance->AddSettingObserver((observer != null) ? observer.GetNativeInstance() : null)));
+		}
+
+		/// <summary>
+		/// Clears the HTTP cache. If |callback| is non-NULL it will be executed on
+		/// the UI thread after completion.
+		/// </summary>
+		public unsafe virtual void ClearHttpCache(CefCompletionCallback callback)
+		{
+			NativeInstance->ClearHttpCache((callback != null) ? callback.GetNativeInstance() : null);
+			GC.KeepAlive(this);
 		}
 	}
 }

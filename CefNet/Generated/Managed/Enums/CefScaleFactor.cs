@@ -44,6 +44,8 @@ namespace CefNet
 		SCALE_FACTOR_250P = 8,
 
 		SCALE_FACTOR_300P = 9,
+
+		SCALE_FACTOR_NUM_VALUES = 10,
 	}
 }
 

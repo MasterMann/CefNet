@@ -79,14 +79,15 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// The location where cache data for this request context will be stored on
+		/// The directory where cache data for this request context will be stored on
 		/// disk. If this value is non-empty then it must be an absolute path that is
 		/// either equal to or a child directory of CefSettings.root_cache_path. If
 		/// this value is empty then browsers will be created in &quot;incognito mode&quot;
-		/// where in-memory caches are used for storage and no data is persisted to
-		/// disk. HTML5 databases such as localStorage will only persist across
-		/// sessions if a cache path is specified. To share the global browser cache
-		/// and related configuration set this value to match the
+		/// where in-memory caches are used for storage and no profile-specific data
+		/// is persisted to disk (installation-specific data will still be persisted
+		/// in root_cache_path). HTML5 databases such as localStorage will only
+		/// persist across sessions if a cache path is specified. To share the global
+		/// browser cache and related configuration set this value to match the
 		/// CefSettings.cache_path value.
 		/// </summary>
 		public string CachePath
@@ -122,30 +123,12 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// To persist user preferences as a JSON file in the cache path directory set
-		/// this value to true (1). Can be set globally using the
-		/// CefSettings.persist_user_preferences value. This value will be ignored if
-		/// |cache_path| is empty or if it matches the CefSettings.cache_path value.
-		/// </summary>
-		public bool PersistUserPreferences
-		{
-			get
-			{
-				return _instance->persist_user_preferences != 0;
-			}
-			set
-			{
-				_instance->persist_user_preferences = value ? 1 : 0;
-			}
-		}
-
-		/// <summary>
 		/// Comma delimited ordered list of language codes without any whitespace that
-		/// will be used in the &quot;Accept-Language&quot; HTTP header. Can be set globally
-		/// using the CefSettings.accept_language_list value or overridden on a per-
-		/// browser basis using the CefBrowserSettings.accept_language_list value. If
-		/// all values are empty then &quot;en-US,en&quot; will be used. This value will be
-		/// ignored if |cache_path| matches the CefSettings.cache_path value.
+		/// will be used in the &quot;Accept-Language&quot; HTTP request header and
+		/// &quot;navigator.language&quot; JS attribute. Can be set globally using the
+		/// CefSettings.accept_language_list value. If all values are empty then
+		/// &quot;en-US,en&quot; will be used. This value will be ignored if |cache_path|
+		/// matches the CefSettings.cache_path value.
 		/// </summary>
 		public string AcceptLanguageList
 		{

@@ -86,6 +86,13 @@ namespace CefNet
 		/// Creates a new document picture-in-picture window showing a child WebView.
 		/// </summary>
 		NewPictureInPicture = 11,
+
+		/// <summary>
+		/// Opens a link in a split view alongside the current tab.
+		/// </summary>
+		NewSplitView = 12,
+
+		NumValues = 13,
 	}
 }
 

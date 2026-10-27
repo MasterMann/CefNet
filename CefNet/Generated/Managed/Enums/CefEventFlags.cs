@@ -74,6 +74,16 @@ namespace CefNet
 		/// Mac OS-X command key.
 		/// </summary>
 		IsRepeat = 1 << 13,
+
+		/// <summary>
+		/// Mac OS-X command key.
+		/// </summary>
+		PrecisionScrollingDelta = 1 << 14,
+
+		/// <summary>
+		/// Mac OS-X command key.
+		/// </summary>
+		ScrollByPage = 1 << 15,
 	}
 }
 

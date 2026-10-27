@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure representing a message. Can be used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

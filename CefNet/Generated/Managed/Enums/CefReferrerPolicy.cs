@@ -83,7 +83,7 @@ namespace CefNet
 		/// <summary>
 		/// Always the last value in this enumeration.
 		/// </summary>
-		LastValue = NoReferrer,
+		NumValues = 8,
 	}
 }
 

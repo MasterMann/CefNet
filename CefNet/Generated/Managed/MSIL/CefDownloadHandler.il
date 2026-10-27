@@ -30,8 +30,8 @@
 			.override method instance bool CefNet.Internal.ICefDownloadHandlerPrivate::AvoidOnBeforeDownload()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefDownloadHandler::OnBeforeDownload(class CefNet.CefBrowser, class CefNet.CefDownloadItem, string, class CefNet.CefBeforeDownloadCallback)
-			ldftn instance void CefNet.CefDownloadHandler::OnBeforeDownload(class CefNet.CefBrowser, class CefNet.CefDownloadItem, string, class CefNet.CefBeforeDownloadCallback)
+			ldvirtftn instance bool CefNet.CefDownloadHandler::OnBeforeDownload(class CefNet.CefBrowser, class CefNet.CefDownloadItem, string, class CefNet.CefBeforeDownloadCallback)
+			ldftn instance bool CefNet.CefDownloadHandler::OnBeforeDownload(class CefNet.CefBrowser, class CefNet.CefDownloadItem, string, class CefNet.CefBeforeDownloadCallback)
 			ceq
 			ret
 		}

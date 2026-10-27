@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to handle events related to browser requests. The
 	/// functions of this structure will be called on the IO thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_resource_request_handler_t
@@ -173,7 +174,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_resource_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, cef_urlrequest_status_t status, int64 received_content_length)*
+		/// void (*)(_cef_resource_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, cef_urlrequest_status_t status, int64_t received_content_length)*
 		/// </summary>
 		public void* on_resource_load_complete;
 

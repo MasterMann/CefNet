@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback for asynchronous continuation of cef_resource_handler_t::read().
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

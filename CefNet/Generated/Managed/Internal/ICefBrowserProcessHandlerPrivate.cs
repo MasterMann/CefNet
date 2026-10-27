@@ -24,6 +24,7 @@ namespace CefNet.Internal
 	{
 		bool AvoidOnRegisterCustomPreferences();
 		bool AvoidOnBeforeChildProcessLaunch();
+		bool AvoidOnAlreadyRunningAppRelaunch();
 		bool AvoidOnScheduleMessagePumpWork();
 	}
 }

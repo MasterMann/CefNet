@@ -26,6 +26,7 @@ namespace CefNet
 	/// can be created on any valid CEF thread in either the browser or render
 	/// process. Once created the functions of the URL request object must be
 	/// accessed on the same thread that created it.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure that supports the reading of zip archives via the zlib unzip API.
 	/// The functions of this structure should only be called on the thread that
 	/// creates the object.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_zip_reader_t
@@ -68,7 +69,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_zip_reader_t* self, const cef_string_t* fileName, int caseSensitive)*
+		/// int (*)(_cef_zip_reader_t* self, cef_string_t const* fileName, int caseSensitive)*
 		/// </summary>
 		public void* move_to_file;
 
@@ -123,7 +124,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_zip_reader_t* self)*
+		/// int64_t (*)(_cef_zip_reader_t* self)*
 		/// </summary>
 		public void* get_file_size;
 
@@ -157,7 +158,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_zip_reader_t* self, const cef_string_t* password)*
+		/// int (*)(_cef_zip_reader_t* self, cef_string_t const* password)*
 		/// </summary>
 		public void* open_file;
 
@@ -212,7 +213,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_zip_reader_t* self)*
+		/// int64_t (*)(_cef_zip_reader_t* self)*
 		/// </summary>
 		public void* tell;
 

@@ -23,6 +23,7 @@ namespace CefNet.CApi
 	/// functions of this structure may be called on any thread unless otherwise
 	/// indicated in the comments. When used in the render process the functions of
 	/// this structure may only be called on the main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_browser_t
@@ -315,36 +316,36 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_frame_t* (*)(_cef_browser_t* self, int64 identifier)*
+		/// _cef_frame_t* (*)(_cef_browser_t* self, cef_string_t const* identifier)*
 		/// </summary>
-		public void* get_frame_byident;
+		public void* get_frame_by_identifier;
 
 		/// <summary>
 		/// Returns the frame with the specified identifier, or NULL if not found.
 		/// </summary>
-		[NativeName("get_frame_byident")]
-		public unsafe cef_frame_t* GetFrameByIdent(long identifier)
+		[NativeName("get_frame_by_identifier")]
+		public unsafe cef_frame_t* GetFrameByIdentifier([Immutable]cef_string_t* identifier)
 		{
 			fixed (cef_browser_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_browser_t*, long, cef_frame_t*>)get_frame_byident)(self, identifier);
+				return ((delegate* unmanaged[Stdcall]<cef_browser_t*, cef_string_t*, cef_frame_t*>)get_frame_by_identifier)(self, identifier);
 			}
 		}
 
 		/// <summary>
-		/// _cef_frame_t* (*)(_cef_browser_t* self, const cef_string_t* name)*
+		/// _cef_frame_t* (*)(_cef_browser_t* self, cef_string_t const* name)*
 		/// </summary>
-		public void* get_frame;
+		public void* get_frame_by_name;
 
 		/// <summary>
 		/// Returns the frame with the specified name, or NULL if not found.
 		/// </summary>
-		[NativeName("get_frame")]
-		public unsafe cef_frame_t* GetFrame([Immutable]cef_string_t* name)
+		[NativeName("get_frame_by_name")]
+		public unsafe cef_frame_t* GetFrameByName([Immutable]cef_string_t* name)
 		{
 			fixed (cef_browser_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_browser_t*, cef_string_t*, cef_frame_t*>)get_frame)(self, name);
+				return ((delegate* unmanaged[Stdcall]<cef_browser_t*, cef_string_t*, cef_frame_t*>)get_frame_by_name)(self, name);
 			}
 		}
 
@@ -366,7 +367,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_browser_t* self, size_t* identifiersCount, int64* identifiers)*
+		/// void (*)(_cef_browser_t* self, cef_string_list_t identifiers)*
 		/// </summary>
 		public void* get_frame_identifiers;
 
@@ -374,11 +375,11 @@ namespace CefNet.CApi
 		/// Returns the identifiers of all existing frames.
 		/// </summary>
 		[NativeName("get_frame_identifiers")]
-		public unsafe void GetFrameIdentifiers(UIntPtr* identifiersCount, long* identifiers)
+		public unsafe void GetFrameIdentifiers(cef_string_list_t identifiers)
 		{
 			fixed (cef_browser_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_browser_t*, UIntPtr*, long*, void>)get_frame_identifiers)(self, identifiersCount, identifiers);
+				((delegate* unmanaged[Stdcall]<cef_browser_t*, cef_string_list_t, void>)get_frame_identifiers)(self, identifiers);
 			}
 		}
 

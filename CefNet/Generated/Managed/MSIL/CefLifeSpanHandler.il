@@ -19,8 +19,30 @@
 			.override method instance bool CefNet.Internal.ICefLifeSpanHandlerPrivate::AvoidOnBeforePopup()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefLifeSpanHandler::OnBeforePopup(class CefNet.CefBrowser, class CefNet.CefFrame, string, string, valuetype CefNet.CefWindowOpenDisposition, bool, valuetype CefNet.CefPopupFeatures, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
-			ldftn instance bool CefNet.CefLifeSpanHandler::OnBeforePopup(class CefNet.CefBrowser, class CefNet.CefFrame, string, string, valuetype CefNet.CefWindowOpenDisposition, bool, valuetype CefNet.CefPopupFeatures, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
+			ldvirtftn instance bool CefNet.CefLifeSpanHandler::OnBeforePopup(class CefNet.CefBrowser, class CefNet.CefFrame, int32, string, string, valuetype CefNet.CefWindowOpenDisposition, bool, class CefNet.CefPopupFeatures, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
+			ldftn instance bool CefNet.CefLifeSpanHandler::OnBeforePopup(class CefNet.CefBrowser, class CefNet.CefFrame, int32, string, string, valuetype CefNet.CefWindowOpenDisposition, bool, class CefNet.CefPopupFeatures, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
+			ceq
+			ret
+		}
+
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefLifeSpanHandlerPrivate.AvoidOnBeforePopupAborted()
+		{
+			.override method instance bool CefNet.Internal.ICefLifeSpanHandlerPrivate::AvoidOnBeforePopupAborted()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance void CefNet.CefLifeSpanHandler::OnBeforePopupAborted(class CefNet.CefBrowser, int32)
+			ldftn instance void CefNet.CefLifeSpanHandler::OnBeforePopupAborted(class CefNet.CefBrowser, int32)
+			ceq
+			ret
+		}
+
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefLifeSpanHandlerPrivate.AvoidOnBeforeDevToolsPopup()
+		{
+			.override method instance bool CefNet.Internal.ICefLifeSpanHandlerPrivate::AvoidOnBeforeDevToolsPopup()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance void CefNet.CefLifeSpanHandler::OnBeforeDevToolsPopup(class CefNet.CefBrowser, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
+			ldftn instance void CefNet.CefLifeSpanHandler::OnBeforeDevToolsPopup(class CefNet.CefBrowser, class CefNet.CefWindowInfo, class CefNet.CefClient&, class CefNet.CefBrowserSettings, class CefNet.CefDictionaryValue&, int32&)
 			ceq
 			ret
 		}

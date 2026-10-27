@@ -25,6 +25,17 @@
 			ret
 		}
 
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefFrameHandlerPrivate.AvoidOnFrameDestroyed()
+		{
+			.override method instance bool CefNet.Internal.ICefFrameHandlerPrivate::AvoidOnFrameDestroyed()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance void CefNet.CefFrameHandler::OnFrameDestroyed(class CefNet.CefBrowser, class CefNet.CefFrame)
+			ldftn instance void CefNet.CefFrameHandler::OnFrameDestroyed(class CefNet.CefBrowser, class CefNet.CefFrame)
+			ceq
+			ret
+		}
+
 		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefFrameHandlerPrivate.AvoidOnFrameAttached()
 		{
 			.override method instance bool CefNet.Internal.ICefFrameHandlerPrivate::AvoidOnFrameAttached()

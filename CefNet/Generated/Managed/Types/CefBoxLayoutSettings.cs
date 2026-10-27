@@ -26,9 +26,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefBoxLayoutSettings
+	public unsafe partial class CefBoxLayoutSettings
 	{
-		private cef_box_layout_settings_t _instance;
+		private cef_box_layout_settings_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefBoxLayoutSettings()
+		{
+			_disposable = true;
+			_instance = (cef_box_layout_settings_t*)CefStructure.Allocate(sizeof(cef_box_layout_settings_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_box_layout_settings_t));
+		}
+
+		internal static unsafe CefBoxLayoutSettings Create(IntPtr instance)
+		{
+			return new CefBoxLayoutSettings((cef_box_layout_settings_t*)instance);
+		}
+
+		public CefBoxLayoutSettings(cef_box_layout_settings_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_box_layout_settings_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_box_layout_settings_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// If true (1) the layout will be horizontal, otherwise the layout will be
@@ -38,11 +85,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.horizontal != 0;
+				return _instance->horizontal != 0;
 			}
 			set
 			{
-				_instance.horizontal = value ? 1 : 0;
+				_instance->horizontal = value ? 1 : 0;
 			}
 		}
 
@@ -54,11 +101,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.inside_border_horizontal_spacing;
+				return _instance->inside_border_horizontal_spacing;
 			}
 			set
 			{
-				_instance.inside_border_horizontal_spacing = value;
+				_instance->inside_border_horizontal_spacing = value;
 			}
 		}
 
@@ -70,11 +117,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.inside_border_vertical_spacing;
+				return _instance->inside_border_vertical_spacing;
 			}
 			set
 			{
-				_instance.inside_border_vertical_spacing = value;
+				_instance->inside_border_vertical_spacing = value;
 			}
 		}
 
@@ -85,11 +132,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.inside_border_insets;
+				return _instance->inside_border_insets;
 			}
 			set
 			{
-				_instance.inside_border_insets = value;
+				_instance->inside_border_insets = value;
 			}
 		}
 
@@ -100,41 +147,41 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.between_child_spacing;
+				return _instance->between_child_spacing;
 			}
 			set
 			{
-				_instance.between_child_spacing = value;
+				_instance->between_child_spacing = value;
 			}
 		}
 
 		/// <summary>
 		/// Specifies where along the main axis the child views should be laid out.
 		/// </summary>
-		public CefMainAxisAlignment MainAxisAlignment
+		public CefAxisAlignment MainAxisAlignment
 		{
 			get
 			{
-				return _instance.main_axis_alignment;
+				return _instance->main_axis_alignment;
 			}
 			set
 			{
-				_instance.main_axis_alignment = value;
+				_instance->main_axis_alignment = value;
 			}
 		}
 
 		/// <summary>
 		/// Specifies where along the cross axis the child views should be laid out.
 		/// </summary>
-		public CefCrossAxisAlignment CrossAxisAlignment
+		public CefAxisAlignment CrossAxisAlignment
 		{
 			get
 			{
-				return _instance.cross_axis_alignment;
+				return _instance->cross_axis_alignment;
 			}
 			set
 			{
-				_instance.cross_axis_alignment = value;
+				_instance->cross_axis_alignment = value;
 			}
 		}
 
@@ -145,11 +192,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.minimum_cross_axis_size;
+				return _instance->minimum_cross_axis_size;
 			}
 			set
 			{
-				_instance.minimum_cross_axis_size = value;
+				_instance->minimum_cross_axis_size = value;
 			}
 		}
 
@@ -165,22 +212,12 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.default_flex;
+				return _instance->default_flex;
 			}
 			set
 			{
-				_instance.default_flex = value;
+				_instance->default_flex = value;
 			}
-		}
-
-		public static implicit operator CefBoxLayoutSettings(cef_box_layout_settings_t instance)
-		{
-			return new CefBoxLayoutSettings { _instance = instance };
-		}
-
-		public static implicit operator cef_box_layout_settings_t(CefBoxLayoutSettings instance)
-		{
-			return instance._instance;
 		}
 	}
 }

@@ -44,6 +44,8 @@ namespace CefNet
 		Whitespace = 9,
 
 		Comment = 10,
+
+		NumValues = 11,
 	}
 }
 

@@ -24,6 +24,7 @@ namespace CefNet
 	/// Manage access to preferences. Many built-in preferences are registered by
 	/// Chromium. Custom preferences can be registered in
 	/// cef_browser_process_handler_t::OnRegisterCustomPreferences.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -116,6 +117,23 @@ namespace CefNet
 				error = CefString.ReadAndFree(&cstr2);
 				GC.KeepAlive(this);
 				return rv;
+			}
+		}
+
+		/// <summary>
+		/// Add an observer for preference changes. |name| is the name of the
+		/// preference to observe. If |name| is NULL then all preferences will be
+		/// observed. Observing all preferences has performance consequences and is
+		/// not recommended outside of testing scenarios. The observer will remain
+		/// registered until the returned Registration object is destroyed. This
+		/// function must be called on the browser process UI thread.
+		/// </summary>
+		public unsafe virtual CefRegistration AddPreferenceObserver(string name, CefPreferenceObserver observer)
+		{
+			fixed (char* s0 = name)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
+				return SafeCall(CefRegistration.Wrap(CefRegistration.Create, NativeInstance->AddPreferenceObserver(&cstr0, (observer != null) ? observer.GetNativeInstance() : null)));
 			}
 		}
 	}

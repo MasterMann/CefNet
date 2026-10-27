@@ -24,6 +24,11 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_popup_features_t
 	{
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
 		public int x;
 
 		public int xSet;

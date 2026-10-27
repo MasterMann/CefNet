@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure the client can implement to provide a custom stream reader. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_read_handler_t
@@ -48,7 +49,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_read_handler_t* self, int64 offset, int whence)*
+		/// int (*)(_cef_read_handler_t* self, int64_t offset, int whence)*
 		/// </summary>
 		public void* seek;
 
@@ -67,7 +68,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_read_handler_t* self)*
+		/// int64_t (*)(_cef_read_handler_t* self)*
 		/// </summary>
 		public void* tell;
 

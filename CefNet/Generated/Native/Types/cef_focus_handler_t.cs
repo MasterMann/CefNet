@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to focus. The functions of
 	/// this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_focus_handler_t

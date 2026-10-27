@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to browser requests. The
 	/// functions of this structure will be called on the thread indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_request_handler_t
@@ -58,7 +59,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* target_url, cef_window_open_disposition_t target_disposition, int user_gesture)*
+		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* target_url, cef_window_open_disposition_t target_disposition, int user_gesture)*
 		/// </summary>
 		public void* on_open_urlfrom_tab;
 
@@ -88,7 +89,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_resource_request_handler_t* (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, const cef_string_t* request_initiator, int* disable_default_handling)*
+		/// _cef_resource_request_handler_t* (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, cef_string_t const* request_initiator, int* disable_default_handling)*
 		/// </summary>
 		public void* get_resource_request_handler;
 
@@ -118,7 +119,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, const cef_string_t* origin_url, int isProxy, const cef_string_t* host, int port, const cef_string_t* realm, const cef_string_t* scheme, _cef_auth_callback_t* callback)*
+		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_string_t const* origin_url, int isProxy, cef_string_t const* host, int port, cef_string_t const* realm, cef_string_t const* scheme, _cef_auth_callback_t* callback)*
 		/// </summary>
 		public void* get_auth_credentials;
 
@@ -144,7 +145,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_errorcode_t cert_error, const cef_string_t* request_url, _cef_sslinfo_t* ssl_info, _cef_callback_t* callback)*
+		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_errorcode_t cert_error, cef_string_t const* request_url, _cef_sslinfo_t* ssl_info, _cef_callback_t* callback)*
 		/// </summary>
 		public void* on_certificate_error;
 
@@ -166,29 +167,32 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, int isProxy, const cef_string_t* host, int port, size_t certificatesCount, const _cef_x509certificate_t** certificates, _cef_select_client_certificate_callback_t* callback)*
+		/// const int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, int isProxy, cef_string_t const* host, int port, size_t certificatesCount, _cef_x509_certificate_t** certificates, _cef_select_client_certificate_callback_t* callback)*
 		/// </summary>
 		public void* on_select_client_certificate;
 
 		/// <summary>
 		/// Called on the UI thread when a client certificate is being requested for
-		/// authentication. Return false (0) to use the default behavior and
-		/// automatically select the first certificate available. Return true (1) and
-		/// call cef_select_client_certificate_callback_t::Select either in this
-		/// function or at a later time to select a certificate. Do not call Select or
-		/// call it with NULL to continue without using any certificate. |isProxy|
-		/// indicates whether the host is an HTTPS proxy or the origin server. |host|
-		/// and |port| contains the hostname and port of the SSL server.
-		/// |certificates| is the list of certificates to choose from; this list has
-		/// already been pruned by Chromium so that it only contains certificates from
-		/// issuers that the server trusts.
+		/// authentication. Return false (0) to use the default behavior.  If the
+		/// |certificates| list is not NULL the default behavior will be to display a
+		/// dialog for certificate selection. If the |certificates| list is NULL then
+		/// the default behavior will be not to show a dialog and it will continue
+		/// without using any certificate. Return true (1) and call
+		/// cef_select_client_certificate_callback_t::Select either in this function
+		/// or at a later time to select a certificate. Do not call Select or call it
+		/// with NULL to continue without using any certificate. |isProxy| indicates
+		/// whether the host is an HTTPS proxy or the origin server. |host| and |port|
+		/// contains the hostname and port of the SSL server. |certificates| is the
+		/// list of certificates to choose from; this list has already been pruned by
+		/// Chromium so that it only contains certificates from issuers that the
+		/// server trusts.
 		/// </summary>
 		[NativeName("on_select_client_certificate")]
-		public unsafe int OnSelectClientCertificate(cef_browser_t* browser, int isProxy, [Immutable]cef_string_t* host, int port, UIntPtr certificatesCount, [Immutable]cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
+		public unsafe int OnSelectClientCertificate(cef_browser_t* browser, int isProxy, [Immutable]cef_string_t* host, int port, UIntPtr certificatesCount, [Immutable]cef_x509_certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
 		{
 			fixed (cef_request_handler_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, UIntPtr, cef_x509certificate_t**, cef_select_client_certificate_callback_t*, int>)on_select_client_certificate)(self, browser, isProxy, host, port, certificatesCount, certificates, callback);
+				return ((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, UIntPtr, cef_x509_certificate_t**, cef_select_client_certificate_callback_t*, int>)on_select_client_certificate)(self, browser, isProxy, host, port, certificatesCount, certificates, callback);
 			}
 		}
 
@@ -212,20 +216,75 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_termination_status_t status)*
+		/// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, _cef_unresponsive_process_callback_t* callback)*
+		/// </summary>
+		public void* on_render_process_unresponsive;
+
+		/// <summary>
+		/// Called on the browser process UI thread when the render process is
+		/// unresponsive as indicated by a lack of input event processing for at least
+		/// 15 seconds. Return false (0) for the default behavior which is to continue
+		/// waiting with Alloy style or display of the &quot;Page unresponsive&quot; dialog with
+		/// Chrome style. Return true (1) and don&apos;t execute the callback to continue
+		/// waiting without display of the Chrome style dialog. Return true (1) and
+		/// call cef_unresponsive_process_callback_t::Wait either in this function or
+		/// at a later time to reset the wait timer. In cases where you continue
+		/// waiting there may be another call to this function if the process remains
+		/// unresponsive. Return true (1) and call
+		/// cef_unresponsive_process_callback_t::Terminate either in this function or
+		/// at a later time to terminate the unresponsive process, resulting in a call
+		/// to OnRenderProcessTerminated. OnRenderProcessResponsive will be called if
+		/// the process becomes responsive after this function is called. This
+		/// functionality depends on the hang monitor which can be disabled by passing
+		/// the `--disable-hang-monitor` command-line flag.
+		/// </summary>
+		[NativeName("on_render_process_unresponsive")]
+		public unsafe int OnRenderProcessUnresponsive(cef_browser_t* browser, cef_unresponsive_process_callback_t* callback)
+		{
+			fixed (cef_request_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_unresponsive_process_callback_t*, int>)on_render_process_unresponsive)(self, browser, callback);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser)*
+		/// </summary>
+		public void* on_render_process_responsive;
+
+		/// <summary>
+		/// Called on the browser process UI thread when the render process becomes
+		/// responsive after previously being unresponsive. See documentation on
+		/// OnRenderProcessUnresponsive.
+		/// </summary>
+		[NativeName("on_render_process_responsive")]
+		public unsafe void OnRenderProcessResponsive(cef_browser_t* browser)
+		{
+			fixed (cef_request_handler_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)on_render_process_responsive)(self, browser);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_request_handler_t* self, _cef_browser_t* browser, cef_termination_status_t status, int error_code, cef_string_t const* error_string)*
 		/// </summary>
 		public void* on_render_process_terminated;
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render process terminates
-		/// unexpectedly. |status| indicates how the process terminated.
+		/// unexpectedly. |status| indicates how the process terminated. |error_code|
+		/// and |error_string| represent the error that would be displayed in Chrome&apos;s
+		/// &quot;Aw, Snap!&quot; view. Possible |error_code| values include cef_resultcode_t
+		/// non-normal exit values and platform-specific crash values (for example, a
+		/// Posix signal or Windows hardware exception).
 		/// </summary>
 		[NativeName("on_render_process_terminated")]
-		public unsafe void OnRenderProcessTerminated(cef_browser_t* browser, CefTerminationStatus status)
+		public unsafe void OnRenderProcessTerminated(cef_browser_t* browser, CefTerminationStatus status, int error_code, [Immutable]cef_string_t* error_string)
 		{
 			fixed (cef_request_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefTerminationStatus, void>)on_render_process_terminated)(self, browser, status);
+				((delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefTerminationStatus, int, cef_string_t*, void>)on_render_process_terminated)(self, browser, status, error_code, error_string);
 			}
 		}
 

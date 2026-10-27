@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_media_router_t::CreateRoute. The functions of
 	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -71,7 +72,7 @@ namespace CefNet
 		private unsafe delegate void OnMediaRouteCreateFinishedDelegate(cef_media_route_create_callback_t* self, CefMediaRouteCreateResult result, cef_string_t* error, cef_media_route_t* route);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, const cef_string_t* error, _cef_media_route_t* route)*
+		// void (*)(_cef_media_route_create_callback_t* self, cef_media_route_create_result_t result, cef_string_t const* error, _cef_media_route_t* route)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

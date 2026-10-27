@@ -84,6 +84,15 @@ namespace CefNet
 		/// time without warning).
 		/// </summary>
 		Renderer = 6,
+
+		/// <summary>
+		/// The main thread in the renderer. Used for all WebKit and V8 interaction.
+		/// Tasks may be posted to this thread after
+		/// CefRenderProcessHandler::OnWebKitInitialized but are not guaranteed to
+		/// run before sub-process termination (sub-processes may be killed at any
+		/// time without warning).
+		/// </summary>
+		NumValues = 7,
 	}
 }
 

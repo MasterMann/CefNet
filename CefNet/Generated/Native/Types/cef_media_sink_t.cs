@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Represents a sink to which media can be routed. Instances of this object are
 	/// retrieved via cef_media_observer_t::OnSinks. The functions of this structure
 	/// may be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_sink_t

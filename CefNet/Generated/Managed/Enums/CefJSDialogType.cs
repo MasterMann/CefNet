@@ -28,6 +28,8 @@ namespace CefNet
 		Confirm = 1,
 
 		Prompt = 2,
+
+		NumValues = 3,
 	}
 }
 

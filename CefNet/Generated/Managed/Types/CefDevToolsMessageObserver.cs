@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The
 	/// functions of this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -103,7 +104,7 @@ namespace CefNet
 		private unsafe delegate int OnDevToolsMessageDelegate(cef_dev_tools_message_observer_t* self, cef_browser_t* browser, void* message, UIntPtr message_size);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, const void* message, size_t message_size)*
+		// int (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, void const* message, size_t message_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -142,7 +143,7 @@ namespace CefNet
 		private unsafe delegate void OnDevToolsMethodResultDelegate(cef_dev_tools_message_observer_t* self, cef_browser_t* browser, int message_id, int success, void* result, UIntPtr result_size);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, int message_id, int success, const void* result, size_t result_size)*
+		// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, int message_id, int success, void const* result, size_t result_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -177,7 +178,7 @@ namespace CefNet
 		private unsafe delegate void OnDevToolsEventDelegate(cef_dev_tools_message_observer_t* self, cef_browser_t* browser, cef_string_t* method, void* @params, UIntPtr params_size);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, const cef_string_t* method, const void* params, size_t params_size)*
+		// void (*)(_cef_dev_tools_message_observer_t* self, _cef_browser_t* browser, cef_string_t const* method, void const* params, size_t params_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

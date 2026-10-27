@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure to implement for visiting the DOM. The functions of this structure
 	/// will be called on the render process main thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler

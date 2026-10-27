@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure used to represent an entry in navigation history.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

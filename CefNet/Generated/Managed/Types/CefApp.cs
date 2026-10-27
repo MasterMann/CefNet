@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to provide handler implementations. Methods will be
 	/// called by the process and/or thread indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -93,7 +94,7 @@ namespace CefNet
 		private unsafe delegate void OnBeforeCommandLineProcessingDelegate(cef_app_t* self, cef_string_t* process_type, cef_command_line_t* command_line);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_app_t* self, const cef_string_t* process_type, _cef_command_line_t* command_line)*
+		// void (*)(_cef_app_t* self, cef_string_t const* process_type, _cef_command_line_t* command_line)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -141,11 +142,9 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Return the handler for resource bundle events. If
-		/// cef_settings_t.pack_loading_disabled is true (1) a handler must be
-		/// returned. If no handler is returned resources will be loaded from pack
-		/// files. This function is called by the browser and render processes on
-		/// multiple threads.
+		/// Return the handler for resource bundle events. If no handler is returned
+		/// resources will be loaded from pack files. This function is called by the
+		/// browser and render processes on multiple threads.
 		/// </summary>
 		protected internal unsafe virtual CefResourceBundleHandler GetResourceBundleHandler()
 		{

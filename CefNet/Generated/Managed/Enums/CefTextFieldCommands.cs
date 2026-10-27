@@ -19,21 +19,28 @@ using CefNet.WinApi;
 namespace CefNet
 {
 	/// <summary>
-	/// Represents commands available to TextField.
+	/// Represents commands available to TextField. Should be kept in sync with
+	/// Chromium&apos;s views::TextField::MenuCommands type.
 	/// </summary>
 	public enum CefTextFieldCommands
 	{
+		Unknown = 0,
+
 		Cut = 1,
 
 		Copy = 2,
 
 		Paste = 3,
 
-		Undo = 4,
+		SelectAll = 4,
 
-		Delete = 5,
+		SelectWord = 5,
 
-		SelectAll = 6,
+		Undo = 6,
+
+		Delete = 7,
+
+		NumValues = 8,
 	}
 }
 

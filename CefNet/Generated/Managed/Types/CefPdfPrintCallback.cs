@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::PrintToPDF. The functions of this
 	/// structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -70,7 +71,7 @@ namespace CefNet
 		private unsafe delegate void OnPdfPrintFinishedDelegate(cef_pdf_print_callback_t* self, cef_string_t* path, int ok);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_pdf_print_callback_t* self, const cef_string_t* path, int ok)*
+		// void (*)(_cef_pdf_print_callback_t* self, cef_string_t const* path, int ok)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

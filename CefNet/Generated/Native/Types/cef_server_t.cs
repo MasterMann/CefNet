@@ -24,6 +24,7 @@ namespace CefNet.CApi
 	/// simultaneous connections (e.g. for communicating between applications on
 	/// localhost). The functions of this structure are safe to call from any thread
 	/// in the brower process unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_server_t
@@ -144,9 +145,9 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_t* self, int connection_id, const cef_string_t* content_type, const void* data, size_t data_size)*
+		/// void (*)(_cef_server_t* self, int connection_id, cef_string_t const* content_type, void const* data, size_t data_size)*
 		/// </summary>
-		public void* send_http200response;
+		public void* send_http200_response;
 
 		/// <summary>
 		/// Send an HTTP 200 &quot;OK&quot; response to the connection identified by
@@ -155,38 +156,38 @@ namespace CefNet.CApi
 		/// of |data| in bytes. The contents of |data| will be copied. The connection
 		/// will be closed automatically after the response is sent.
 		/// </summary>
-		[NativeName("send_http200response")]
-		public unsafe void SendHttp200response(int connection_id, [Immutable]cef_string_t* content_type, [Immutable]void* data, UIntPtr data_size)
+		[NativeName("send_http200_response")]
+		public unsafe void SendHttp200Response(int connection_id, [Immutable]cef_string_t* content_type, [Immutable]void* data, UIntPtr data_size)
 		{
 			fixed (cef_server_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_server_t*, int, cef_string_t*, void*, UIntPtr, void>)send_http200response)(self, connection_id, content_type, data, data_size);
+				((delegate* unmanaged[Stdcall]<cef_server_t*, int, cef_string_t*, void*, UIntPtr, void>)send_http200_response)(self, connection_id, content_type, data, data_size);
 			}
 		}
 
 		/// <summary>
 		/// void (*)(_cef_server_t* self, int connection_id)*
 		/// </summary>
-		public void* send_http404response;
+		public void* send_http404_response;
 
 		/// <summary>
 		/// Send an HTTP 404 &quot;Not Found&quot; response to the connection identified by
 		/// |connection_id|. The connection will be closed automatically after the
 		/// response is sent.
 		/// </summary>
-		[NativeName("send_http404response")]
-		public unsafe void SendHttp404response(int connection_id)
+		[NativeName("send_http404_response")]
+		public unsafe void SendHttp404Response(int connection_id)
 		{
 			fixed (cef_server_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_server_t*, int, void>)send_http404response)(self, connection_id);
+				((delegate* unmanaged[Stdcall]<cef_server_t*, int, void>)send_http404_response)(self, connection_id);
 			}
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_t* self, int connection_id, const cef_string_t* error_message)*
+		/// void (*)(_cef_server_t* self, int connection_id, cef_string_t const* error_message)*
 		/// </summary>
-		public void* send_http500response;
+		public void* send_http500_response;
 
 		/// <summary>
 		/// Send an HTTP 500 &quot;Internal Server Error&quot; response to the connection
@@ -194,17 +195,17 @@ namespace CefNet.CApi
 		/// message. The connection will be closed automatically after the response is
 		/// sent.
 		/// </summary>
-		[NativeName("send_http500response")]
-		public unsafe void SendHttp500response(int connection_id, [Immutable]cef_string_t* error_message)
+		[NativeName("send_http500_response")]
+		public unsafe void SendHttp500Response(int connection_id, [Immutable]cef_string_t* error_message)
 		{
 			fixed (cef_server_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_server_t*, int, cef_string_t*, void>)send_http500response)(self, connection_id, error_message);
+				((delegate* unmanaged[Stdcall]<cef_server_t*, int, cef_string_t*, void>)send_http500_response)(self, connection_id, error_message);
 			}
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_t* self, int connection_id, int response_code, const cef_string_t* content_type, int64 content_length, cef_string_multimap_t extra_headers)*
+		/// void (*)(_cef_server_t* self, int connection_id, int response_code, cef_string_t const* content_type, int64_t content_length, cef_string_multimap_t extra_headers)*
 		/// </summary>
 		public void* send_http_response;
 
@@ -234,7 +235,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_t* self, int connection_id, const void* data, size_t data_size)*
+		/// void (*)(_cef_server_t* self, int connection_id, void const* data, size_t data_size)*
 		/// </summary>
 		public void* send_raw_data;
 
@@ -274,7 +275,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_t* self, int connection_id, const void* data, size_t data_size)*
+		/// void (*)(_cef_server_t* self, int connection_id, void const* data, size_t data_size)*
 		/// </summary>
 		public void* send_web_socket_message;
 

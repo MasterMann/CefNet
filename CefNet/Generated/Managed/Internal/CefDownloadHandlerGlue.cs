@@ -44,9 +44,9 @@ namespace CefNet.Internal
 			return _implementation.AvoidOnBeforeDownload();
 		}
 
-		protected internal unsafe override void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
+		protected internal unsafe override bool OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
 		{
-			_implementation.OnBeforeDownload(browser, downloadItem, suggestedName, callback);
+			return _implementation.OnBeforeDownload(browser, downloadItem, suggestedName, callback);
 		}
 
 		bool ICefDownloadHandlerPrivate.AvoidOnDownloadUpdated()

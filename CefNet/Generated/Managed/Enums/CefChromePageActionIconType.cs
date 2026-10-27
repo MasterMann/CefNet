@@ -34,7 +34,7 @@ namespace CefNet
 
 		Find = 4,
 
-		HighEfficiency = 5,
+		MemorySaver = 5,
 
 		IntentPicker = 6,
 
@@ -48,19 +48,19 @@ namespace CefNet
 
 		PwaInstall = 11,
 
-		QrCodeGenerator = 12,
+		QrCodeGeneratorDeprecated = 12,
 
-		ReaderMode = 13,
+		ReaderModeDeprecated = 13,
 
 		SaveAutofillAddress = 14,
 
 		SaveCard = 15,
 
-		SendTabToSelf = 16,
+		SendTabToSelfDeprecated = 16,
 
 		SharingHub = 17,
 
-		SideSearch = 18,
+		SideSearchDeprecated = 18,
 
 		SmsRemoteFetcher = 19,
 
@@ -68,13 +68,63 @@ namespace CefNet
 
 		VirtualCardEnroll = 21,
 
-		VirtualCardManualFallback = 22,
+		VirtualCardInformation = 22,
 
 		Zoom = 23,
 
 		SaveIban = 24,
 
-		MaxValue = SaveIban,
+		MandatoryReauth = 25,
+
+		PriceInsights = 26,
+
+		ReadAnythingDeprecated = 27,
+
+		ProductSpecifications = 28,
+
+		LensOverlay = 29,
+
+		Discounts = 30,
+
+		OptimizationGuide = 31,
+
+		CollaborationMessaging = 32,
+
+		ChangePassword = 33,
+
+		LensOverlayHomework = 34,
+
+		AiMode = 35,
+
+		ReadingMode = 36,
+
+		ContextualSidePanel = 37,
+
+		JSOptimizations = 38,
+
+		RecordReplay = 39,
+
+		Indigo = 40,
+
+		Federation = 41,
+
+		Glic = 42,
+
+		AnchoredContextualCue = 43,
+
+		WebAuthnAmbientSignin = 44,
+
+		AutofillPayment = 45,
+
+		MultistepFilter = 46,
+
+		PaymentsChurnedUsers = 47,
+
+		FakePageActionForDebug = 48,
+
+		WalletReminderNotice = 49,
+
+		NumValues = 50,
 	}
 }
 

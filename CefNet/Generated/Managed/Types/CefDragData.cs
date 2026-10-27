@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent drag data. The functions of this structure may
 	/// be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -270,6 +271,15 @@ namespace CefNet
 		public unsafe virtual int GetFileNames(CefStringList names)
 		{
 			return SafeCall(NativeInstance->GetFileNames(names.GetNativeInstance()));
+		}
+
+		/// <summary>
+		/// Retrieve the list of file paths that are being dragged into the browser
+		/// window.
+		/// </summary>
+		public unsafe virtual int GetFilePaths(CefStringList paths)
+		{
+			return SafeCall(NativeInstance->GetFilePaths(paths.GetNativeInstance()));
 		}
 
 		/// <summary>

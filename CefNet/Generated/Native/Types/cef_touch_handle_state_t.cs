@@ -22,6 +22,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_touch_handle_state_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// Touch handle id. Increments for each new touch handle.
 		/// </summary>
 		public int touch_handle_id;
@@ -30,7 +35,7 @@ namespace CefNet.CApi
 		/// Combination of cef_touch_handle_state_flags_t values indicating what state
 		/// is set.
 		/// </summary>
-		public uint flags;
+		public UInt32 flags;
 
 		/// <summary>
 		/// Enabled state. Only set if |flags| contains CEF_THS_FLAG_ENABLED.

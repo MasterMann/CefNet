@@ -41,50 +41,42 @@ namespace CefNet.Internal
 
 		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible()
 		{
-			return false;	//_implementation.AvoidIsChromeAppMenuItemVisible();
+			return _implementation.AvoidIsChromeAppMenuItemVisible();
 		}
 
 		protected internal unsafe override int IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
 		{
-			return 0;	//_implementation.IsChromeAppMenuItemVisible(browser, commandId);
+			return _implementation.IsChromeAppMenuItemVisible(browser, commandId);
 		}
 
 		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled()
 		{
-			return false;	//_implementation.AvoidIsChromeAppMenuItemEnabled();
+			return _implementation.AvoidIsChromeAppMenuItemEnabled();
 		}
 
 		protected internal unsafe override int IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
 		{
-			return 0;	//_implementation.IsChromeAppMenuItemEnabled(browser, commandId);
+			return _implementation.IsChromeAppMenuItemEnabled(browser, commandId);
 		}
 
 		bool ICefCommandHandlerPrivate.AvoidIsChromePageActionIconVisible()
 		{
-			return false;	//_implementation.AvoidIsChromePageActionIconVisible();
+			return _implementation.AvoidIsChromePageActionIconVisible();
 		}
 
 		protected internal unsafe override int IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
 		{
-			//return _implementation.IsChromePageActionIconVisible(iconType);
-
-			switch (iconType)
-			{
-				case CefChromePageActionIconType.Find:
-				case CefChromePageActionIconType.Zoom:
-					return 1;
-			}
-			return 0;
+			return _implementation.IsChromePageActionIconVisible(iconType);
 		}
 
 		bool ICefCommandHandlerPrivate.AvoidIsChromeToolbarButtonVisible()
 		{
-			return false;	//_implementation.AvoidIsChromeToolbarButtonVisible();
+			return _implementation.AvoidIsChromeToolbarButtonVisible();
 		}
 
 		protected internal unsafe override int IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
 		{
-			return 0;//return _implementation.IsChromeToolbarButtonVisible(buttonType);
+			return _implementation.IsChromeToolbarButtonVisible(buttonType);
 		}
 
 	}

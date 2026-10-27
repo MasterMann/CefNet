@@ -42,6 +42,11 @@ namespace CefNet
 		/// Suitable for low-latency, glitch-resistant audio.
 		/// </summary>
 		RealtimeAudio = 3,
+
+		/// <summary>
+		/// Suitable for low-latency, glitch-resistant audio.
+		/// </summary>
+		NumValues = 4,
 	}
 }
 

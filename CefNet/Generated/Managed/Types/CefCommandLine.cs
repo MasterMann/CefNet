@@ -30,6 +30,7 @@ namespace CefNet
 	/// arguments. Switch names should be lowercase ASCII and will be converted to
 	/// such if necessary. Switch values will retain the original case and UTF8
 	/// encoding. This structure can be used before cef_initialize() is called.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -276,6 +277,20 @@ namespace CefNet
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = wrapper != null ? wrapper.Length : 0 };
 				NativeInstance->PrependWrapper(&cstr0);
+			}
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Remove a switch from the command line. If no such switch is present, this
+		/// has no effect.
+		/// </summary>
+		public unsafe virtual void RemoveSwitch(string name)
+		{
+			fixed (char* s0 = name)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
+				NativeInstance->RemoveSwitch(&cstr0);
 			}
 			GC.KeepAlive(this);
 		}

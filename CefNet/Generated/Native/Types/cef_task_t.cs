@@ -25,6 +25,7 @@ namespace CefNet.CApi
 	/// fails to post then the task object may be destroyed on the source thread
 	/// instead of the target thread. For this reason be cautious when performing
 	/// work in the task object destructor.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_task_t

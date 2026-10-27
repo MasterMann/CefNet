@@ -25,6 +25,7 @@ namespace CefNet
 	/// functions of this structure can only be called in the browser process. They
 	/// may be called on any thread in that process unless otherwise indicated in
 	/// the comments.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -53,6 +54,30 @@ namespace CefNet
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether the browser is ready to be closed, meaning that the
+		/// close has already been initiated and that JavaScript unload handlers have
+		/// already executed or should be ignored. This can be used from a top-level
+		/// window close handler such as cef_window_delegate_t::CanClose (or platform-
+		/// specific equivalent) to distringuish between potentially cancelable
+		/// browser close events (like the user clicking the top-level window close
+		/// button before browser close has started) and mandatory browser close
+		/// events (like JavaScript `window.close()` or after browser close has
+		/// started in response to [Try]close_browser()). Not completing the browser
+		/// close for mandatory close events (when this property returns true)
+		/// will leave the browser in a partially closed state that interferes with
+		/// proper functioning. See close_browser() documentation for additional usage
+		/// information. This property must be called on the browser process UI
+		/// thread.
+		/// </summary>
+		public unsafe virtual bool IsReadyToBeClosed
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsReadyToBeClosed() != 0);
+			}
+		}
+
+		/// <summary>
 		/// Retrieve the window handle (if any) for this browser. If this browser is
 		/// wrapped in a cef_browser_view_t this property should be called on the
 		/// browser process UI thread and it will return the handle for the top-level
@@ -77,6 +102,18 @@ namespace CefNet
 			get
 			{
 				return SafeCall(NativeInstance->GetOpenerWindowHandle());
+			}
+		}
+
+		/// <summary>
+		/// Retrieve the unique identifier of the browser that opened this browser.
+		/// Will return 0 for non-popup browsers.
+		/// </summary>
+		public unsafe virtual int OpenerIdentifier
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetOpenerIdentifier());
 			}
 		}
 
@@ -114,8 +151,20 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets and sets the current zoom level. The default zoom level is 0.0. This property
-		/// can only be called on the UI thread.
+		/// Get the default zoom level. This value will be 0.0 by default but can be
+		/// configured. This property can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual double DefaultZoomLevel
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetDefaultZoomLevel());
+			}
+		}
+
+		/// <summary>
+		/// Gets and sets the current zoom level. This property can only be called on the UI
+		/// thread.
 		/// </summary>
 		public unsafe virtual double ZoomLevel
 		{
@@ -157,8 +206,8 @@ namespace CefNet
 		/// Gets or sets the maximum rate in frames per second (fps) that
 		/// cef_render_handler_t::OnPaint will be called for a windowless browser. The
 		/// actual fps may be lower if the browser cannot generate frames at the
-		/// requested rate. The minimum value is 1 and the maximum value is 60
-		/// (default 30). This property can only be called on the UI thread.
+		/// requested rate. The minimum value is 1 and the default value is 30. This
+		/// function can only be called on the UI thread.
 		/// </summary>
 		public unsafe virtual int WindowlessFrameRate
 		{
@@ -186,31 +235,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the extension hosted in this browser or NULL if no extension is
-		/// hosted. See cef_request_context_t::LoadExtension for details.
-		/// </summary>
-		public unsafe virtual CefExtension Extension
-		{
-			get
-			{
-				return SafeCall(CefExtension.Wrap(CefExtension.Create, NativeInstance->GetExtension()));
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether this browser is hosting an extension background
-		/// script. Background hosts do not have a window and are not displayable. See
-		/// cef_request_context_t::LoadExtension for details.
-		/// </summary>
-		public unsafe virtual bool IsBackgroundHost
-		{
-			get
-			{
-				return SafeCall(NativeInstance->IsBackgroundHost() != 0);
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether the browser&apos;s audio is muted.  This property can only
 		/// be called on the UI thread.
 		/// </summary>
@@ -228,14 +252,68 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Request that the browser close. The JavaScript &apos;onbeforeunload&apos; event will
-		/// be fired. If |force_close| is false (0) the event handler, if any, will be
-		/// allowed to prompt the user and the user can optionally cancel the close.
-		/// If |force_close| is true (1) the prompt will not be displayed and the
-		/// close will proceed. Results in a call to
-		/// cef_life_span_handler_t::do_close() if the event handler allows the close
-		/// or if |force_close| is true (1). See cef_life_span_handler_t::do_close()
-		/// documentation for additional usage information.
+		/// Gets a value indicating whether the renderer is currently in browser fullscreen. This
+		/// differs from window fullscreen in that browser fullscreen is entered using
+		/// the JavaScript Fullscreen API and modifies CSS attributes such as the
+		/// ::backdrop pseudo-element and :fullscreen pseudo-structure. This property
+		/// can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool IsFullscreen
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsFullscreen() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the render process associated with this browser is
+		/// currently unresponsive as indicated by a lack of input event processing
+		/// for at least 15 seconds. To receive associated state change notifications
+		/// and optionally handle an unresponsive render process implement
+		/// cef_request_handler_t::OnRenderProcessUnresponsive. This property can only
+		/// be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool IsRenderProcessUnresponsive
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsRenderProcessUnresponsive() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets the runtime style for this browser (ALLOY or CHROME). See
+		/// cef_runtime_style_t documentation for details.
+		/// </summary>
+		public unsafe virtual CefRuntimeStyle RuntimeStyle
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetRuntimeStyle());
+			}
+		}
+
+		/// <summary>
+		/// Request that the browser close. Closing a browser is a multi-stage process
+		/// that may complete either synchronously or asynchronously, and involves
+		/// callbacks such as cef_life_span_handler_t::DoClose (Alloy style only),
+		/// cef_life_span_handler_t::OnBeforeClose, and a top-level window close
+		/// handler such as cef_window_delegate_t::CanClose (or platform-specific
+		/// equivalent). In some cases a close request may be delayed or canceled by
+		/// the user. Using try_close_browser() instead of close_browser() is
+		/// recommended for most use cases. See cef_life_span_handler_t::do_close()
+		/// documentation for detailed usage and examples.
+		/// If |force_close| is false (0) then JavaScript unload handlers, if any, may
+		/// be fired and the close may be delayed or canceled by the user. If
+		/// |force_close| is true (1) then the user will not be prompted and the close
+		/// will proceed immediately (possibly asynchronously). If browser close is
+		/// delayed and not canceled the default behavior is to call the top-level
+		/// window close handler once the browser is ready to be closed. This default
+		/// behavior can be changed for Alloy style browsers by implementing
+		/// cef_life_span_handler_t::do_close(). is_ready_to_be_closed() can be used
+		/// to detect mandatory browser close events when customizing close behavior
+		/// on the browser process UI thread.
 		/// </summary>
 		public unsafe virtual void CloseBrowser(bool forceClose)
 		{
@@ -244,17 +322,40 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Helper for closing a browser. Call this function from the top-level window
-		/// close handler (if any). Internally this calls CloseBrowser(false (0)) if
-		/// the close has not yet been initiated. This function returns false (0)
-		/// while the close is pending and true (1) after the close has completed. See
-		/// close_browser() and cef_life_span_handler_t::do_close() documentation for
-		/// additional usage information. This function must be called on the browser
-		/// process UI thread.
+		/// Helper for closing a browser. This is similar in behavior to
+		/// CLoseBrowser(false (0)) but returns a boolean to reflect the immediate
+		/// close status. Call this function from a top-level window close handler
+		/// such as cef_window_delegate_t::CanClose (or platform-specific equivalent)
+		/// to request that the browser close, and return the result to indicate if
+		/// the window close should proceed. Returns false (0) if the close will be
+		/// delayed (JavaScript unload handlers triggered but still pending) or true
+		/// (1) if the close will proceed immediately (possibly asynchronously). See
+		/// close_browser() documentation for additional usage information. This
+		/// function must be called on the browser process UI thread.
 		/// </summary>
 		public unsafe virtual bool TryCloseBrowser()
 		{
 			return SafeCall(NativeInstance->TryCloseBrowser() != 0);
+		}
+
+		/// <summary>
+		/// Returns true (1) if this browser can execute the specified zoom command.
+		/// This function can only be called on the UI thread.
+		/// </summary>
+		public unsafe virtual bool CanZoom(CefZoomCommand command)
+		{
+			return SafeCall(NativeInstance->CanZoom(command) != 0);
+		}
+
+		/// <summary>
+		/// Execute a zoom command in this browser. If called on the UI thread the
+		/// change will be applied immediately. Otherwise, the change will be applied
+		/// asynchronously on the UI thread.
+		/// </summary>
+		public unsafe virtual void Zoom(CefZoomCommand command)
+		{
+			NativeInstance->Zoom(command);
+			GC.KeepAlive(this);
 		}
 
 		/// <summary>
@@ -341,7 +442,7 @@ namespace CefNet
 			fixed (char* s0 = path)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = path != null ? path.Length : 0 };
-				NativeInstance->PrintToPdf(&cstr0, (cef_pdf_print_settings_t*)&settings, (callback != null) ? callback.GetNativeInstance() : null);
+				NativeInstance->PrintToPdf(&cstr0, settings.GetNativeInstance(), (callback != null) ? callback.GetNativeInstance() : null);
 			}
 			GC.KeepAlive(this);
 		}
@@ -531,12 +632,22 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Send a notification to the browser that the screen info has changed. The
-		/// browser will then call cef_render_handler_t::GetScreenInfo to update the
-		/// screen information with the new values. This simulates moving the webview
-		/// window from one display to another, or changing the properties of the
-		/// current display. This function is only used when window rendering is
-		/// disabled.
+		/// Notify the browser that screen information has changed. Updated
+		/// information will be sent to the renderer process to configure screen size
+		/// and position values used by CSS and JavaScript (window.deviceScaleFactor,
+		/// window.screenX/Y, window.outerWidth/Height, etc.). For background see
+		/// https://chromiumembedded.github.io/cef/general_usage#coordinate-systems
+		/// This function is used with (a) windowless rendering and (b) windowed
+		/// rendering with external (client-provided) root window.
+		/// With windowless rendering the browser will call
+		/// cef_render_handler_t::GetScreenInfo,
+		/// cef_render_handler_t::GetRootScreenRect and
+		/// cef_render_handler_t::GetViewRect. This simulates moving or resizing the
+		/// root window in the current display, moving the root window from one
+		/// display to another, or changing the properties of the current display.
+		/// With windowed rendering the browser will call
+		/// cef_display_handler_t::GetRootWindowScreenRect and use the associated
+		/// display properties.
 		/// </summary>
 		public unsafe virtual void NotifyScreenInfoChanged()
 		{
@@ -570,7 +681,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual void SendKeyEvent(CefKeyEvent @event)
 		{
-			NativeInstance->SendKeyEvent((cef_key_event_t*)&@event);
+			NativeInstance->SendKeyEvent(@event.GetNativeInstance());
 			GC.KeepAlive(this);
 		}
 
@@ -661,10 +772,15 @@ namespace CefNet
 		public unsafe virtual void ImeSetComposition(string text, CefCompositionUnderline[] underlines, CefRange replacementRange, CefRange selectionRange)
 		{
 			fixed (char* s0 = text)
-			fixed (CefCompositionUnderline* p2 = underlines)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = text != null ? text.Length : 0 };
-				NativeInstance->ImeSetComposition(&cstr0, new UIntPtr((uint)underlines.Length), (cef_composition_underline_t*)p2, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
+				cef_composition_underline_t* arr2 = (cef_composition_underline_t*)Marshal.AllocHGlobal(sizeof(cef_composition_underline_t) * underlines.Length);
+				for (int i = 0; i < underlines.Length; i++)
+				{
+					*(arr2 + i) = *underlines[i].GetNativeInstance();
+				}
+				NativeInstance->ImeSetComposition(&cstr0, new UIntPtr((uint)underlines.Length), arr2, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
+				Marshal.FreeHGlobal((IntPtr)arr2);
 			}
 			GC.KeepAlive(this);
 		}
@@ -799,6 +915,48 @@ namespace CefNet
 		public unsafe virtual void SetAutoResizeEnabled(int enabled, CefSize minSize, CefSize maxSize)
 		{
 			NativeInstance->SetAutoResizeEnabled(enabled, (cef_size_t*)&minSize, (cef_size_t*)&maxSize);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Requests the renderer to exit browser fullscreen. In most cases exiting
+		/// window fullscreen should also exit browser fullscreen. With Alloy style
+		/// this function should be called in response to a user action such as
+		/// clicking the green traffic light button on MacOS
+		/// (cef_window_delegate_t::OnWindowFullscreenTransition callback) or pressing
+		/// the &quot;ESC&quot; key (cef_keyboard_handler_t::OnPreKeyEvent callback). With
+		/// Chrome style these standard exit actions are handled internally but
+		/// new/additional user actions can use this function. Set |will_cause_resize|
+		/// to true (1) if exiting browser fullscreen will cause a view resize.
+		/// </summary>
+		public unsafe virtual void ExitFullscreen(bool willCauseResize)
+		{
+			NativeInstance->ExitFullscreen(willCauseResize ? 1 : 0);
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Returns true (1) if a Chrome command is supported and enabled. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. This function can only be called on the UI thread.
+		/// Only used with Chrome style.
+		/// </summary>
+		public unsafe virtual bool CanExecuteChromeCommand(int commandId)
+		{
+			return SafeCall(NativeInstance->CanExecuteChromeCommand(commandId) != 0);
+		}
+
+		/// <summary>
+		/// Execute a Chrome command. Use the cef_id_for_command_id_name() function
+		/// for version-safe mapping of command IDC names from cef_command_ids.h to
+		/// version-specific numerical |command_id| values. |disposition| provides
+		/// information about the intended command target. Only used with Chrome
+		/// style.
+		/// </summary>
+		public unsafe virtual void ExecuteChromeCommand(int commandId, CefWindowOpenDisposition disposition)
+		{
+			NativeInstance->ExecuteChromeCommand(commandId, disposition);
 			GC.KeepAlive(this);
 		}
 

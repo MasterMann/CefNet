@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to commands. The functions
 	/// of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -74,12 +75,14 @@ namespace CefNet
 
 		/// <summary>
 		/// Called to execute a Chrome command triggered via menu selection or
-		/// keyboard shortcut. Values for |command_id| can be found in the
-		/// cef_command_ids.h file. |disposition| provides information about the
-		/// intended command target. Return true (1) if the command was handled or
-		/// false (0) for the default implementation. For context menu commands this
-		/// will be called after cef_context_menu_handler_t::OnContextMenuCommand.
-		/// Only used with the Chrome runtime.
+		/// keyboard shortcut. Use the cef_id_for_command_id_name() function for
+		/// version-safe mapping of command IDC names from cef_command_ids.h to
+		/// version-specific numerical |command_id| values. |disposition| provides
+		/// information about the intended command target. Return true (1) if the
+		/// command was handled or false (0) for the default implementation. For
+		/// context menu commands this will be called after
+		/// cef_context_menu_handler_t::OnContextMenuCommand. Only used with Chrome
+		/// style.
 		/// </summary>
 		protected internal unsafe virtual bool OnChromeCommand(CefBrowser browser, int commandId, CefWindowOpenDisposition disposition)
 		{
@@ -110,10 +113,11 @@ namespace CefNet
 		extern bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible();
 
 		/// <summary>
-		/// Called to check if a Chrome app menu item should be visible. Values for
-		/// |command_id| can be found in the cef_command_ids.h file. Only called for
-		/// menu items that would be visible by default. Only used with the Chrome
-		/// runtime.
+		/// Called to check if a Chrome app menu item should be visible. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. Only called for menu items that would be visible by
+		/// default. Only used with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual int IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
 		{
@@ -144,10 +148,11 @@ namespace CefNet
 		extern bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled();
 
 		/// <summary>
-		/// Called to check if a Chrome app menu item should be enabled. Values for
-		/// |command_id| can be found in the cef_command_ids.h file. Only called for
-		/// menu items that would be enabled by default. Only used with the Chrome
-		/// runtime.
+		/// Called to check if a Chrome app menu item should be enabled. Use the
+		/// cef_id_for_command_id_name() function for version-safe mapping of command
+		/// IDC names from cef_command_ids.h to version-specific numerical
+		/// |command_id| values. Only called for menu items that would be enabled by
+		/// default. Only used with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual int IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
 		{
@@ -180,7 +185,7 @@ namespace CefNet
 		/// <summary>
 		/// Called during browser creation to check if a Chrome page action icon
 		/// should be visible. Only called for icons that would be visible by default.
-		/// Only used with the Chrome runtime.
+		/// Only used with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual int IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
 		{
@@ -212,7 +217,7 @@ namespace CefNet
 		/// <summary>
 		/// Called during browser creation to check if a Chrome toolbar button should
 		/// be visible. Only called for buttons that would be visible by default. Only
-		/// used with the Chrome runtime.
+		/// used with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual int IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
 		{

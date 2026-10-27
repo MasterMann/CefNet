@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle context menu events. The functions of
 	/// this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_context_menu_handler_t
@@ -115,7 +116,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_context_menu_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_point_t* location, const cef_size_t* size, cef_quick_menu_edit_state_flags_t edit_state_flags, _cef_run_quick_menu_callback_t* callback)*
+		/// int (*)(_cef_context_menu_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_point_t const* location, cef_size_t const* size, cef_quick_menu_edit_state_flags_t edit_state_flags, _cef_run_quick_menu_callback_t* callback)*
 		/// </summary>
 		public void* run_quick_menu;
 

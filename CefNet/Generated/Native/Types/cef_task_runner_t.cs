@@ -25,6 +25,7 @@ namespace CefNet.CApi
 	/// types of tasks in different processes. The cef_thread_id_t definitions in
 	/// cef_types.h list the common CEF threads. Task runners are also available for
 	/// other CEF threads as appropriate (for example, V8 WebWorker threads).
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_task_runner_t
@@ -105,7 +106,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_task_runner_t* self, _cef_task_t* task, int64 delay_ms)*
+		/// int (*)(_cef_task_runner_t* self, _cef_task_t* task, int64_t delay_ms)*
 		/// </summary>
 		public void* post_delayed_task;
 

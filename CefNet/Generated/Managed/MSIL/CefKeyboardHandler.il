@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefKeyboardHandlerPrivate::AvoidOnPreKeyEvent()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefKeyboardHandler::OnPreKeyEvent(class CefNet.CefBrowser, valuetype CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle, int32&)
-			ldftn instance bool CefNet.CefKeyboardHandler::OnPreKeyEvent(class CefNet.CefBrowser, valuetype CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle, int32&)
+			ldvirtftn instance bool CefNet.CefKeyboardHandler::OnPreKeyEvent(class CefNet.CefBrowser, class CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle, int32&)
+			ldftn instance bool CefNet.CefKeyboardHandler::OnPreKeyEvent(class CefNet.CefBrowser, class CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle, int32&)
 			ceq
 			ret
 		}
@@ -30,8 +30,8 @@
 			.override method instance bool CefNet.Internal.ICefKeyboardHandlerPrivate::AvoidOnKeyEvent()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefKeyboardHandler::OnKeyEvent(class CefNet.CefBrowser, valuetype CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle)
-			ldftn instance bool CefNet.CefKeyboardHandler::OnKeyEvent(class CefNet.CefBrowser, valuetype CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle)
+			ldvirtftn instance bool CefNet.CefKeyboardHandler::OnKeyEvent(class CefNet.CefBrowser, class CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle)
+			ldftn instance bool CefNet.CefKeyboardHandler::OnKeyEvent(class CefNet.CefBrowser, class CefNet.CefKeyEvent, valuetype CefNet.CefEventHandle)
 			ceq
 			ret
 		}

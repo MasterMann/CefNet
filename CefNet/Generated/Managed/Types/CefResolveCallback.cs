@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback structure for cef_request_context_t::ResolveHost.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler

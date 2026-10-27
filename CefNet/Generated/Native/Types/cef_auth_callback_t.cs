@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure used for asynchronous continuation of authentication
 	/// requests.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_auth_callback_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_auth_callback_t* self, const cef_string_t* username, const cef_string_t* password)*
+		/// void (*)(_cef_auth_callback_t* self, cef_string_t const* username, cef_string_t const* password)*
 		/// </summary>
 		public void* cont;
 

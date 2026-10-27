@@ -24,6 +24,7 @@ namespace CefNet
 	/// Supports discovery of and communication with media devices on the local
 	/// network via the Cast and DIAL protocols. The functions of this structure may
 	/// be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure representing the SSL information for a navigation entry.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Implement this structure to provide handler implementations.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_client_t
@@ -124,7 +125,8 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Return the handler for download events. If no handler is returned
-		/// downloads will not be allowed.
+		/// downloads will be canceled with Alloy style and will proceed with default
+		/// handling with Chrome style.
 		/// </summary>
 		[NativeName("get_download_handler")]
 		public unsafe cef_download_handler_t* GetDownloadHandler()

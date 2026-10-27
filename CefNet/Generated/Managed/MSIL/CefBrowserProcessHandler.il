@@ -36,6 +36,17 @@
 			ret
 		}
 
+		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefBrowserProcessHandlerPrivate.AvoidOnAlreadyRunningAppRelaunch()
+		{
+			.override method instance bool CefNet.Internal.ICefBrowserProcessHandlerPrivate::AvoidOnAlreadyRunningAppRelaunch()
+			.maxstack 2
+			ldarg.0
+			ldvirtftn instance bool CefNet.CefBrowserProcessHandler::OnAlreadyRunningAppRelaunch(class CefNet.CefCommandLine, string)
+			ldftn instance bool CefNet.CefBrowserProcessHandler::OnAlreadyRunningAppRelaunch(class CefNet.CefCommandLine, string)
+			ceq
+			ret
+		}
+
 		.method private final hidebysig newslot virtual instance bool CefNet.Internal.ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork()
 		{
 			.override method instance bool CefNet.Internal.ICefBrowserProcessHandlerPrivate::AvoidOnScheduleMessagePumpWork()

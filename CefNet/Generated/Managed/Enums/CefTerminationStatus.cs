@@ -42,6 +42,21 @@ namespace CefNet
 		/// Out of memory. Some platforms may use TS_PROCESS_CRASHED instead.
 		/// </summary>
 		ProcessOom = 3,
+
+		/// <summary>
+		/// Child process never launched.
+		/// </summary>
+		LaunchFailed = 4,
+
+		/// <summary>
+		/// On Windows, the OS terminated the process due to code integrity failure.
+		/// </summary>
+		IntegrityFailure = 5,
+
+		/// <summary>
+		/// On Windows, the OS terminated the process due to code integrity failure.
+		/// </summary>
+		NumValues = 6,
 	}
 }
 

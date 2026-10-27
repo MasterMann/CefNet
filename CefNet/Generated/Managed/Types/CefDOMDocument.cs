@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent a DOM document. The functions of this structure
 	/// should only be called on the render process main thread thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

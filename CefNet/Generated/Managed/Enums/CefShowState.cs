@@ -23,13 +23,37 @@ namespace CefNet
 	/// </summary>
 	public enum CefShowState
 	{
-		Normal = 1,
+		/// <summary>
+		/// Show the window as normal.
+		/// </summary>
+		Normal = 0,
 
-		Minimized = 2,
+		/// <summary>
+		/// Show the window as minimized.
+		/// </summary>
+		Minimized = 1,
 
-		Maximized = 3,
+		/// <summary>
+		/// Show the window as maximized.
+		/// </summary>
+		Maximized = 2,
 
-		Fullscreen = 4,
+		/// <summary>
+		/// Show the window as fullscreen.
+		/// </summary>
+		Fullscreen = 3,
+
+		/// <summary>
+		/// Show the window as hidden (no dock thumbnail).
+		/// Only supported on MacOS.
+		/// </summary>
+		Hidden = 4,
+
+		/// <summary>
+		/// Show the window as hidden (no dock thumbnail).
+		/// Only supported on MacOS.
+		/// </summary>
+		NumValues = 5,
 	}
 }
 

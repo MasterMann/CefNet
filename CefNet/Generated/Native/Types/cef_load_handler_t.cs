@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to handle events related to browser load status.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread or render process main thread (TID_RENDERER).
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_load_handler_t
@@ -103,7 +104,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_load_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_errorcode_t errorCode, const cef_string_t* errorText, const cef_string_t* failedUrl)*
+		/// void (*)(_cef_load_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_errorcode_t errorCode, cef_string_t const* errorText, cef_string_t const* failedUrl)*
 		/// </summary>
 		public void* on_load_error;
 

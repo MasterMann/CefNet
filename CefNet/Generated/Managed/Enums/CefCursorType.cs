@@ -122,6 +122,8 @@ namespace CefNet
 		DndCopy = 48,
 
 		DndLink = 49,
+
+		NumValues = 50,
 	}
 }
 

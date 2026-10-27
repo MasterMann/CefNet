@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Supports discovery of and communication with media devices on the local
 	/// network via the Cast and DIAL protocols. The functions of this structure may
 	/// be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_router_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_media_source_t* (*)(_cef_media_router_t* self, const cef_string_t* urn)*
+		/// _cef_media_source_t* (*)(_cef_media_router_t* self, cef_string_t const* urn)*
 		/// </summary>
 		public void* get_source;
 

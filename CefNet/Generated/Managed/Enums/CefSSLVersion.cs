@@ -29,19 +29,45 @@ namespace CefNet
 		/// </summary>
 		Unknown = 0,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		SSL2 = 1,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		SSL3 = 2,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		TLS1 = 3,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		TLS11 = 4,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		TLS12 = 5,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		TLS13 = 6,
 
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
 		Quic = 7,
+
+		/// <summary>
+		/// Unknown SSL version.
+		/// </summary>
+		NumValues = 8,
 	}
 }
 

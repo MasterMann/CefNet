@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure the client can implement to provide a custom stream writer. The
 	/// functions of this structure may be called on any thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_write_handler_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// size_t (*)(_cef_write_handler_t* self, const void* ptr, size_t size, size_t n)*
+		/// size_t (*)(_cef_write_handler_t* self, void const* ptr, size_t size, size_t n)*
 		/// </summary>
 		public void* write;
 
@@ -48,7 +49,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_write_handler_t* self, int64 offset, int whence)*
+		/// int (*)(_cef_write_handler_t* self, int64_t offset, int whence)*
 		/// </summary>
 		public void* seek;
 
@@ -67,7 +68,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_write_handler_t* self)*
+		/// int64_t (*)(_cef_write_handler_t* self)*
 		/// </summary>
 		public void* tell;
 

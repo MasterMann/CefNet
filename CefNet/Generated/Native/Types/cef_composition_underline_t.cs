@@ -27,6 +27,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_composition_underline_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// Underline character range.
 		/// </summary>
 		public cef_range_t range;

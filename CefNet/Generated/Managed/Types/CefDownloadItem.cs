@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure used to represent a download item.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -252,6 +253,17 @@ namespace CefNet
 			get
 			{
 				return SafeCall(CefString.ReadAndFree(NativeInstance->GetMimeType()));
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the download has been paused.
+		/// </summary>
+		public unsafe virtual bool IsPaused
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsPaused() != 0);
 			}
 		}
 	}

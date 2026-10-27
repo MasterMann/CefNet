@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Copyright (c) 2019 The CefNet Authors. All rights reserved.
 // Licensed under the MIT license.
 // See the licence file in the project root for full license information.
@@ -15,13 +15,13 @@ namespace CefGen
 	{
 		private Dictionary<string, string> Aliases;
 
-		public AliasResolver(CppCompilation compilation)
+		public AliasResolver(IEnumerable<CppTypedef> typedefs, IEnumerable<CppEnum> enums)
 		{
 			Aliases = new Dictionary<string, string>();
 
-			foreach (CppTypedef typedef in compilation.Typedefs)
+			foreach (CppTypedef typedef in typedefs)
 			{
-				string name = typedef.ElementType.GetDisplayName();
+				string name = typedef.ElementType.GetCName();
 				if (name.StartsWith("_"))
 				{
 					Aliases.Add(name, typedef.Name);
@@ -33,7 +33,7 @@ namespace CefGen
 				}
 			}
 
-			foreach (CppEnum enumType in compilation.Enums)
+			foreach (CppEnum enumType in enums)
 			{
 				string enumName = enumType.Name;
 				if (!enumName.EndsWith("_t"))

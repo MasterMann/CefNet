@@ -25,6 +25,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_urlparts_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// The complete URL specification.
 		/// </summary>
 		public cef_string_t spec;

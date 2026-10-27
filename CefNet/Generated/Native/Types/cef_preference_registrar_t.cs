@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure that manages custom preference registrations.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_preference_registrar_t
@@ -30,7 +31,7 @@ namespace CefNet.CApi
 		public cef_base_scoped_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_preference_registrar_t* self, const cef_string_t* name, _cef_value_t* default_value)*
+		/// int (*)(_cef_preference_registrar_t* self, cef_string_t const* name, _cef_value_t* default_value)*
 		/// </summary>
 		public void* add_preference;
 
@@ -51,6 +52,47 @@ namespace CefNet.CApi
 			fixed (cef_preference_registrar_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_preference_registrar_t*, cef_string_t*, cef_value_t*, int>)add_preference)(self, name, default_value);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_preference_registrar_t* self, cef_string_t const* name, _cef_value_t* value, cef_string_t* error)*
+		/// </summary>
+		public void* set_default_preference;
+
+		/// <summary>
+		/// Override the default value of a previously registered preference. |value|
+		/// is required and must have the same type as the registered default. Its
+		/// contents will be copied. User and managed values take precedence over this
+		/// default. Returns false (0) and sets |error| if the preference is not
+		/// registered or |value| is invalid or has the wrong type. This function must
+		/// be called from within OnRegisterCustomPreferences.
+		/// </summary>
+		[NativeName("set_default_preference")]
+		public unsafe int SetDefaultPreference([Immutable]cef_string_t* name, cef_value_t* value, cef_string_t* error)
+		{
+			fixed (cef_preference_registrar_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_preference_registrar_t*, cef_string_t*, cef_value_t*, cef_string_t*, int>)set_default_preference)(self, name, value, error);
+			}
+		}
+
+		/// <summary>
+		/// _cef_value_t* (*)(_cef_preference_registrar_t* self, cef_string_t const* name)*
+		/// </summary>
+		public void* get_default_preference;
+
+		/// <summary>
+		/// Returns a copy of the current default value for the preference with the
+		/// specified |name|, or NULL if the preference is not registered. This
+		/// function must be called from within OnRegisterCustomPreferences.
+		/// </summary>
+		[NativeName("get_default_preference")]
+		public unsafe cef_value_t* GetDefaultPreference([Immutable]cef_string_t* name)
+		{
+			fixed (cef_preference_registrar_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_preference_registrar_t*, cef_string_t*, cef_value_t*>)get_default_preference)(self, name);
 			}
 		}
 	}

@@ -25,6 +25,7 @@ namespace CefNet.CApi
 	/// then the image at scale factor 2.0 should be 200x200 pixels -- both images
 	/// will display with a DIP size of 100x100 units. The functions of this
 	/// structure can be called on any browser process thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_image_t
@@ -70,7 +71,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_image_t* self, float scale_factor, int pixel_width, int pixel_height, cef_color_type_t color_type, cef_alpha_type_t alpha_type, const void* pixel_data, size_t pixel_data_size)*
+		/// int (*)(_cef_image_t* self, float scale_factor, int pixel_width, int pixel_height, cef_color_type_t color_type, cef_alpha_type_t alpha_type, void const* pixel_data, size_t pixel_data_size)*
 		/// </summary>
 		public void* add_bitmap;
 
@@ -91,7 +92,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_image_t* self, float scale_factor, const void* png_data, size_t png_data_size)*
+		/// int (*)(_cef_image_t* self, float scale_factor, void const* png_data, size_t png_data_size)*
 		/// </summary>
 		public void* add_png;
 
@@ -110,7 +111,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_image_t* self, float scale_factor, const void* jpeg_data, size_t jpeg_data_size)*
+		/// int (*)(_cef_image_t* self, float scale_factor, void const* jpeg_data, size_t jpeg_data_size)*
 		/// </summary>
 		public void* add_jpeg;
 

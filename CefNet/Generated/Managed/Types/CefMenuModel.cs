@@ -25,6 +25,7 @@ namespace CefNet
 	/// command ids that have default implementations. All user-defined command ids
 	/// should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of
 	/// this structure can only be accessed on the browser process the UI thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -583,13 +584,14 @@ namespace CefNet
 		/// <summary>
 		/// Sets the font list for the specified |command_id|. If |font_list| is NULL
 		/// the system font will be used. Returns true (1) on success. The format is
-		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where: - FONT_FAMILY_LIST is a
-		/// comma-separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names
-		/// (case-sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where:
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
 		public unsafe virtual bool SetFontList(int commandId, string fontList)
 		{
@@ -602,22 +604,21 @@ namespace CefNet
 
 		/// <summary>
 		/// Sets the font list for the specified |index|. Specify an |index| value of
-		/// -1 to set the default font. If |font_list| is NULL the system font will be
-		/// used. Returns true (1) on success. The format is
-		/// &quot;&lt;FONT_FAMILY_LIST&gt;,[STYLES] &lt;SIZE&gt;&quot;, where: - FONT_FAMILY_LIST is a
-		/// comma-separated list of font family names, - STYLES is an optional space-
-		/// separated list of style names
-		/// (case-sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
+		/// - 1 to set the default font. If |font_list| is NULL the system font will
+		/// - FONT_FAMILY_LIST is a comma-separated list of font family names,
+		/// - STYLES is an optional space-separated list of style names (case-
+		/// sensitive &quot;Bold&quot; and &quot;Italic&quot; are supported), and
 		/// - SIZE is an integer font size in pixels with the suffix &quot;px&quot;.
-		/// Here are examples of valid font description strings: - &quot;Arial, Helvetica,
-		/// Bold Italic 14px&quot; - &quot;Arial, 14px&quot;
+		/// Here are examples of valid font description strings:
+		/// - &quot;Arial, Helvetica, Bold Italic 14px&quot;
+		/// - &quot;Arial, 14px&quot;
 		/// </summary>
-		public unsafe virtual bool SetFontListAt(int index, string fontList)
+		public unsafe virtual int SetFontListAt(int index, string fontList)
 		{
 			fixed (char* s1 = fontList)
 			{
 				var cstr1 = new cef_string_t { Str = s1, Length = fontList != null ? fontList.Length : 0 };
-				return SafeCall(NativeInstance->SetFontListAt(index, &cstr1) != 0);
+				return SafeCall(NativeInstance->SetFontListAt(index, &cstr1));
 			}
 		}
 	}

@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle menu model events. The functions of this
 	/// structure will be called on the browser process UI thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -125,7 +126,7 @@ namespace CefNet
 		private unsafe delegate void MouseOutsideMenuDelegate(cef_menu_model_delegate_t* self, cef_menu_model_t* menu_model, cef_point_t* screen_point);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, const cef_point_t* screen_point)*
+		// void (*)(_cef_menu_model_delegate_t* self, _cef_menu_model_t* menu_model, cef_point_t const* screen_point)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

@@ -24,6 +24,7 @@ namespace CefNet.CApi
 	/// returned from cef_app_t::GetResourceBundleHandler. See CefSettings for
 	/// additional options related to resource bundle loading. The functions of this
 	/// structure may be called on any thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_resource_bundle_t
@@ -40,8 +41,9 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns the localized string for the specified |string_id| or an NULL
-		/// string if the value is not found. Include cef_pack_strings.h for a listing
-		/// of valid string ID values.
+		/// string if the value is not found. Use the cef_id_for_pack_string_name()
+		/// function for version-safe mapping of string IDS names from
+		/// cef_pack_strings.h to version-specific numerical |string_id| values.
 		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		[NativeName("get_localized_string")]
@@ -60,8 +62,10 @@ namespace CefNet.CApi
 
 		/// <summary>
 		/// Returns a cef_binary_value_t containing the decompressed contents of the
-		/// specified scale independent |resource_id| or NULL if not found. Include
-		/// cef_pack_resources.h for a listing of valid resource ID values.
+		/// specified scale independent |resource_id| or NULL if not found. Use the
+		/// cef_id_for_pack_resource_name() function for version-safe mapping of
+		/// resource IDR names from cef_pack_resources.h to version-specific numerical
+		/// |resource_id| values.
 		/// </summary>
 		[NativeName("get_data_resource")]
 		public unsafe cef_binary_value_t* GetDataResource(int resource_id)
@@ -81,8 +85,10 @@ namespace CefNet.CApi
 		/// Returns a cef_binary_value_t containing the decompressed contents of the
 		/// specified |resource_id| nearest the scale factor |scale_factor| or NULL if
 		/// not found. Use a |scale_factor| value of SCALE_FACTOR_NONE for scale
-		/// independent resources or call GetDataResource instead.Include
-		/// cef_pack_resources.h for a listing of valid resource ID values.
+		/// independent resources or call GetDataResource instead. Use the
+		/// cef_id_for_pack_resource_name() function for version-safe mapping of
+		/// resource IDR names from cef_pack_resources.h to version-specific numerical
+		/// |resource_id| values.
 		/// </summary>
 		[NativeName("get_data_resource_for_scale")]
 		public unsafe cef_binary_value_t* GetDataResourceForScale(int resource_id, CefScaleFactor scale_factor)

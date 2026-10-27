@@ -25,6 +25,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_box_layout_settings_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// If true (1) the layout will be horizontal, otherwise the layout will be
 		/// vertical.
 		/// </summary>
@@ -55,12 +60,12 @@ namespace CefNet.CApi
 		/// <summary>
 		/// Specifies where along the main axis the child views should be laid out.
 		/// </summary>
-		public CefMainAxisAlignment main_axis_alignment;
+		public CefAxisAlignment main_axis_alignment;
 
 		/// <summary>
 		/// Specifies where along the cross axis the child views should be laid out.
 		/// </summary>
-		public CefCrossAxisAlignment cross_axis_alignment;
+		public CefAxisAlignment cross_axis_alignment;
 
 		/// <summary>
 		/// Minimum cross axis size.

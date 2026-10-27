@@ -29,6 +29,8 @@ namespace CefNet.Internal
 		bool AvoidOnCertificateError();
 		bool AvoidOnSelectClientCertificate();
 		bool AvoidOnRenderViewReady();
+		bool AvoidOnRenderProcessUnresponsive();
+		bool AvoidOnRenderProcessResponsive();
 		bool AvoidOnRenderProcessTerminated();
 		bool AvoidOnDocumentAvailableInMainFrame();
 	}

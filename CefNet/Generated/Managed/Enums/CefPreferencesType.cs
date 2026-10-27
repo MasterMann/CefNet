@@ -34,6 +34,12 @@ namespace CefNet
 		/// is created.
 		/// </summary>
 		RequestContext = 1,
+
+		/// <summary>
+		/// Request context preferences registered each time a new CefRequestContext
+		/// is created.
+		/// </summary>
+		NumValues = 2,
 	}
 }
 

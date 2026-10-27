@@ -30,6 +30,8 @@ namespace CefNet
 		LongEdge = 1,
 
 		ShortEdge = 2,
+
+		NumValues = 3,
 	}
 }
 

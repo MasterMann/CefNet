@@ -84,8 +84,8 @@ namespace CefNet
 		/// The maximum rate in frames per second (fps) that CefRenderHandler::OnPaint
 		/// will be called for a windowless browser. The actual fps may be lower if
 		/// the browser cannot generate frames at the requested rate. The minimum
-		/// value is 1 and the maximum value is 60 (default 30). This value can also
-		/// be changed dynamically via CefBrowserHost::SetWindowlessFrameRate.
+		/// value is 1 and the default value is 30. This value can also be changed
+		/// dynamically via CefBrowserHost::SetWindowlessFrameRate.
 		/// </summary>
 		public int WindowlessFrameRate
 		{
@@ -405,19 +405,15 @@ namespace CefNet
 			}
 		}
 
-		/// <summary>
-		/// Controls whether databases can be used. Also configurable using the
-		/// &quot;disable-databases&quot; command-line switch.
-		/// </summary>
-		public CefState Databases
+		public CefState DatabasesDeprecated
 		{
 			get
 			{
-				return _instance->databases;
+				return _instance->databases_deprecated;
 			}
 			set
 			{
-				_instance->databases = value;
+				_instance->databases_deprecated = value;
 			}
 		}
 
@@ -461,26 +457,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Comma delimited ordered list of language codes without any whitespace that
-		/// will be used in the &quot;Accept-Language&quot; HTTP header. May be set globally
-		/// using the CefSettings.accept_language_list value. If both values are
-		/// empty then &quot;en-US,en&quot; will be used.
-		/// </summary>
-		public string AcceptLanguageList
-		{
-			get
-			{
-				return CefString.Read(&_instance->accept_language_list);
-			}
-			set
-			{
-				CefString.Replace(&_instance->accept_language_list, value);
-			}
-		}
-
-		/// <summary>
 		/// Controls whether the Chrome status bubble will be used. Only supported
-		/// with the Chrome runtime. For details about the status bubble see
+		/// with Chrome style. For details about the status bubble see
 		/// https://www.chromium.org/user-experience/status-bubble/
 		/// </summary>
 		public CefState ChromeStatusBubble
@@ -492,6 +470,22 @@ namespace CefNet
 			set
 			{
 				_instance->chrome_status_bubble = value;
+			}
+		}
+
+		/// <summary>
+		/// Controls whether the Chrome zoom bubble will be shown when zooming. Only
+		/// supported with Chrome style.
+		/// </summary>
+		public CefState ChromeZoomBubble
+		{
+			get
+			{
+				return _instance->chrome_zoom_bubble;
+			}
+			set
+			{
+				_instance->chrome_zoom_bubble = value;
 			}
 		}
 
@@ -512,7 +506,6 @@ namespace CefNet
 				CursiveFontFamily = null;
 				FantasyFontFamily = null;
 				DefaultEncoding = null;
-				AcceptLanguageList = null;
 				Marshal.FreeHGlobal((IntPtr)_instance);
 				_instance = null;}
 		}

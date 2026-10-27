@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure that supports the reading of XML data via the libxml streaming
 	/// API. The functions of this structure should only be called on the thread
 	/// that creates the object.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

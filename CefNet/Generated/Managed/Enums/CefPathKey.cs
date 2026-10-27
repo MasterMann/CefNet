@@ -71,6 +71,12 @@ namespace CefNet
 		/// CefSettings.resources_dir_path.
 		/// </summary>
 		DirResources = 8,
+
+		/// <summary>
+		/// Directory containing application resources. Can be configured via
+		/// CefSettings.resources_dir_path.
+		/// </summary>
+		NumValues = 9,
 	}
 }
 

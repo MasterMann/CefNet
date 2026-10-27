@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefDialogHandlerPrivate::AvoidOnFileDialog()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefDialogHandler::OnFileDialog(class CefNet.CefBrowser, valuetype CefNet.CefFileDialogMode, string, string, class CefNet.CefStringList, class CefNet.CefFileDialogCallback)
-			ldftn instance bool CefNet.CefDialogHandler::OnFileDialog(class CefNet.CefBrowser, valuetype CefNet.CefFileDialogMode, string, string, class CefNet.CefStringList, class CefNet.CefFileDialogCallback)
+			ldvirtftn instance bool CefNet.CefDialogHandler::OnFileDialog(class CefNet.CefBrowser, valuetype CefNet.CefFileDialogMode, string, string, class CefNet.CefStringList, class CefNet.CefStringList, class CefNet.CefStringList, class CefNet.CefFileDialogCallback)
+			ldftn instance bool CefNet.CefDialogHandler::OnFileDialog(class CefNet.CefBrowser, valuetype CefNet.CefFileDialogMode, string, string, class CefNet.CefStringList, class CefNet.CefStringList, class CefNet.CefStringList, class CefNet.CefFileDialogCallback)
 			ceq
 			ret
 		}

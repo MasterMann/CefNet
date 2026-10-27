@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to filter cookies that may be sent or received from
 	/// resource requests. The functions of this structure will be called on the IO
 	/// thread unless otherwise indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -78,7 +79,7 @@ namespace CefNet
 		private unsafe delegate int CanSendCookieDelegate(cef_cookie_access_filter_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_cookie_t* cookie);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, const _cef_cookie_t* cookie)*
+		// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_cookie_t const* cookie)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -92,7 +93,7 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)request);
 				return default;
 			}
-			return instance.CanSendCookie(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), *(CefCookie*)cookie) ? 1 : 0;
+			return instance.CanSendCookie(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), new CefCookie(cookie)) ? 1 : 0;
 		}
 
 		[MethodImpl(MethodImplOptions.ForwardRef)]
@@ -116,7 +117,7 @@ namespace CefNet
 		private unsafe delegate int CanSaveCookieDelegate(cef_cookie_access_filter_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_response_t* response, cef_cookie_t* cookie);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, const _cef_cookie_t* cookie)*
+		// int (*)(_cef_cookie_access_filter_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, _cef_response_t* response, _cef_cookie_t const* cookie)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -131,7 +132,7 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)response);
 				return default;
 			}
-			return instance.CanSaveCookie(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response), *(CefCookie*)cookie) ? 1 : 0;
+			return instance.CanSaveCookie(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response), new CefCookie(cookie)) ? 1 : 0;
 		}
 	}
 }

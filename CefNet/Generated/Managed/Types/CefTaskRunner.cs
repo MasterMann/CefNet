@@ -27,6 +27,7 @@ namespace CefNet
 	/// types of tasks in different processes. The cef_thread_id_t definitions in
 	/// cef_types.h list the common CEF threads. Task runners are also available for
 	/// other CEF threads as appropriate (for example, V8 WebWorker threads).
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

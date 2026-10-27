@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used for managing cookies. The functions of this structure may be
 	/// called on any thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_cookie_manager_t
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, int includeHttpOnly, _cef_cookie_visitor_t* visitor)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, int includeHttpOnly, _cef_cookie_visitor_t* visitor)*
 		/// </summary>
 		public void* visit_url_cookies;
 
@@ -71,7 +72,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, const _cef_cookie_t* cookie, _cef_set_cookie_callback_t* callback)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, _cef_cookie_t const* cookie, _cef_set_cookie_callback_t* callback)*
 		/// </summary>
 		public void* set_cookie;
 
@@ -94,7 +95,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_cookie_manager_t* self, const cef_string_t* url, const cef_string_t* cookie_name, _cef_delete_cookies_callback_t* callback)*
+		/// int (*)(_cef_cookie_manager_t* self, cef_string_t const* url, cef_string_t const* cookie_name, _cef_delete_cookies_callback_t* callback)*
 		/// </summary>
 		public void* delete_cookies;
 

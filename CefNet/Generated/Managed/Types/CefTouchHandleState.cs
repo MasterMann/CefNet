@@ -23,9 +23,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefTouchHandleState
+	public unsafe partial class CefTouchHandleState
 	{
-		private cef_touch_handle_state_t _instance;
+		private cef_touch_handle_state_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefTouchHandleState()
+		{
+			_disposable = true;
+			_instance = (cef_touch_handle_state_t*)CefStructure.Allocate(sizeof(cef_touch_handle_state_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_touch_handle_state_t));
+		}
+
+		internal static unsafe CefTouchHandleState Create(IntPtr instance)
+		{
+			return new CefTouchHandleState((cef_touch_handle_state_t*)instance);
+		}
+
+		public CefTouchHandleState(cef_touch_handle_state_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_touch_handle_state_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_touch_handle_state_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Touch handle id. Increments for each new touch handle.
@@ -34,11 +81,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.touch_handle_id;
+				return _instance->touch_handle_id;
 			}
 			set
 			{
-				_instance.touch_handle_id = value;
+				_instance->touch_handle_id = value;
 			}
 		}
 
@@ -50,11 +97,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.flags;
+				return _instance->flags;
 			}
 			set
 			{
-				_instance.flags = value;
+				_instance->flags = value;
 			}
 		}
 
@@ -65,11 +112,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.enabled;
+				return _instance->enabled;
 			}
 			set
 			{
-				_instance.enabled = value;
+				_instance->enabled = value;
 			}
 		}
 
@@ -80,11 +127,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.orientation;
+				return _instance->orientation;
 			}
 			set
 			{
-				_instance.orientation = value;
+				_instance->orientation = value;
 			}
 		}
 
@@ -92,11 +139,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.mirror_vertical;
+				return _instance->mirror_vertical;
 			}
 			set
 			{
-				_instance.mirror_vertical = value;
+				_instance->mirror_vertical = value;
 			}
 		}
 
@@ -104,11 +151,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.mirror_horizontal;
+				return _instance->mirror_horizontal;
 			}
 			set
 			{
-				_instance.mirror_horizontal = value;
+				_instance->mirror_horizontal = value;
 			}
 		}
 
@@ -119,11 +166,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.origin;
+				return _instance->origin;
 			}
 			set
 			{
-				_instance.origin = value;
+				_instance->origin = value;
 			}
 		}
 
@@ -134,22 +181,12 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.alpha;
+				return _instance->alpha;
 			}
 			set
 			{
-				_instance.alpha = value;
+				_instance->alpha = value;
 			}
-		}
-
-		public static implicit operator CefTouchHandleState(cef_touch_handle_state_t instance)
-		{
-			return new CefTouchHandleState { _instance = instance };
-		}
-
-		public static implicit operator cef_touch_handle_state_t(CefTouchHandleState instance)
-		{
-			return instance._instance;
 		}
 	}
 }

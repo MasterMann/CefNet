@@ -27,6 +27,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_screen_info_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// Device scale factor. Specifies the ratio between physical and logical
 		/// pixels.
 		/// </summary>

@@ -24,15 +24,23 @@ namespace CefNet
 	/// </summary>
 	public enum CefChromeToolbarButtonType
 	{
-		Cast = 0,
+		CastDeprecated = 0,
 
-		Download = 1,
+		DownloadDeprecated = 1,
 
-		SendTabToSelf = 2,
+		SendTabToSelfDeprecated = 2,
 
-		SidePanel = 3,
+		SidePanelDeprecated = 3,
 
-		MaxValue = SidePanel,
+		Media = 4,
+
+		TabSearchDeprecated = 5,
+
+		BatterySaver = 6,
+
+		Avatar = 7,
+
+		NumValues = 8,
 	}
 }
 

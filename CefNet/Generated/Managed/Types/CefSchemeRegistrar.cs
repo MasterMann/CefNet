@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure that manages custom scheme registrations.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

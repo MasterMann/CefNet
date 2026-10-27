@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implement this structure to receive notification when tracing has completed.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_end_tracing_callback_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_end_tracing_callback_t* self, const cef_string_t* tracing_file)*
+		/// void (*)(_cef_end_tracing_callback_t* self, cef_string_t const* tracing_file)*
 		/// </summary>
 		public void* on_end_tracing_complete;
 

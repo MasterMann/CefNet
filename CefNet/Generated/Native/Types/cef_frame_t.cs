@@ -23,6 +23,7 @@ namespace CefNet.CApi
 	/// browser process the functions of this structure may be called on any thread
 	/// unless otherwise indicated in the comments. When used in the render process
 	/// the functions of this structure may only be called on the main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_frame_t
@@ -137,6 +138,23 @@ namespace CefNet.CApi
 		/// <summary>
 		/// void (*)(_cef_frame_t* self)*
 		/// </summary>
+		public void* paste_and_match_style;
+
+		/// <summary>
+		/// Execute paste and match style in this frame.
+		/// </summary>
+		[NativeName("paste_and_match_style")]
+		public unsafe void PasteAndMatchStyle()
+		{
+			fixed (cef_frame_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_frame_t*, void>)paste_and_match_style)(self);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_frame_t* self)*
+		/// </summary>
 		public void* del;
 
 		/// <summary>
@@ -244,7 +262,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_frame_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_frame_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* load_url;
 
@@ -261,7 +279,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line)*
+		/// void (*)(_cef_frame_t* self, cef_string_t const* code, cef_string_t const* script_url, int start_line)*
 		/// </summary>
 		public void* execute_java_script;
 
@@ -338,22 +356,21 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_frame_t* self)*
+		/// cef_string_userfree_t (*)(_cef_frame_t* self)*
 		/// </summary>
 		public void* get_identifier;
 
 		/// <summary>
-		/// Returns the globally unique identifier for this frame or 
-		/// &lt;
-		/// 0 if the
+		/// Returns the globally unique identifier for this frame or NULL if the
 		/// underlying frame does not yet exist.
+		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
 		[NativeName("get_identifier")]
-		public unsafe long GetIdentifier()
+		public unsafe cef_string_userfree_t GetIdentifier()
 		{
 			fixed (cef_frame_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_frame_t*, long>)get_identifier)(self);
+				return ((delegate* unmanaged[Stdcall]<cef_frame_t*, cef_string_userfree_t>)get_identifier)(self);
 			}
 		}
 
@@ -411,20 +428,20 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_v8context_t* (*)(_cef_frame_t* self)*
+		/// _cef_v8_context_t* (*)(_cef_frame_t* self)*
 		/// </summary>
-		public void* get_v8context;
+		public void* get_v8_context;
 
 		/// <summary>
 		/// Get the V8 context associated with the frame. This function can only be
 		/// called from the render process.
 		/// </summary>
-		[NativeName("get_v8context")]
-		public unsafe cef_v8context_t* GetV8Context()
+		[NativeName("get_v8_context")]
+		public unsafe cef_v8_context_t* GetV8Context()
 		{
 			fixed (cef_frame_t* self = &this)
 			{
-				return ((delegate* unmanaged[Stdcall]<cef_frame_t*, cef_v8context_t*>)get_v8context)(self);
+				return ((delegate* unmanaged[Stdcall]<cef_frame_t*, cef_v8_context_t*>)get_v8_context)(self);
 			}
 		}
 

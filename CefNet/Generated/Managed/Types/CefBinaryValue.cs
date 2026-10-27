@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure representing a binary value. Can be used on any process and
 	/// thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -100,6 +101,15 @@ namespace CefNet
 		public unsafe virtual CefBinaryValue Copy()
 		{
 			return SafeCall(CefBinaryValue.Wrap(CefBinaryValue.Create, NativeInstance->Copy()));
+		}
+
+		/// <summary>
+		/// Returns a pointer to the beginning of the memory block. The returned
+		/// pointer is valid as long as the cef_binary_value_t is alive.
+		/// </summary>
+		public unsafe virtual IntPtr GetRawData()
+		{
+			return SafeCall(NativeInstance->GetRawData());
 		}
 
 		/// <summary>

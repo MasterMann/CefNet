@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Callback structure used for continuation of custom quick menu display.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

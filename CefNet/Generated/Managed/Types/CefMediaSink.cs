@@ -24,6 +24,7 @@ namespace CefNet
 	/// Represents a sink to which media can be routed. Instances of this object are
 	/// retrieved via cef_media_observer_t::OnSinks. The functions of this structure
 	/// may be called on any browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

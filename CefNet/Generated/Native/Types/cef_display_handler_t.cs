@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to browser display state.
 	/// The functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_display_handler_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* url)*
+		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* url)*
 		/// </summary>
 		public void* on_address_change;
 
@@ -48,7 +49,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_string_t* title)*
+		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_string_t const* title)*
 		/// </summary>
 		public void* on_title_change;
 
@@ -90,8 +91,12 @@ namespace CefNet.CApi
 		/// Called when web content in the page has toggled fullscreen mode. If
 		/// |fullscreen| is true (1) the content will automatically be sized to fill
 		/// the browser content area. If |fullscreen| is false (0) the content will
-		/// automatically return to its original size and position. The client is
-		/// responsible for resizing the browser if desired.
+		/// automatically return to its original size and position. With Alloy style
+		/// the client is responsible for triggering the fullscreen transition (for
+		/// example, by calling cef_window_t::SetFullscreen when using Views). With
+		/// Chrome style the fullscreen transition will be triggered automatically.
+		/// The cef_window_delegate_t::OnWindowFullscreenTransition function will be
+		/// called during the fullscreen transition for notification purposes.
 		/// </summary>
 		[NativeName("on_fullscreen_mode_change")]
 		public unsafe void OnFullscreenModeChange(cef_browser_t* browser, int fullscreen)
@@ -125,7 +130,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_string_t* value)*
+		/// void (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_string_t const* value)*
 		/// </summary>
 		public void* on_status_message;
 
@@ -143,7 +148,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_log_severity_t level, const cef_string_t* message, const cef_string_t* source, int line)*
+		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_log_severity_t level, cef_string_t const* message, cef_string_t const* source, int line)*
 		/// </summary>
 		public void* on_console_message;
 
@@ -161,14 +166,14 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, const cef_size_t* new_size)*
+		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_size_t const* new_size)*
 		/// </summary>
 		public void* on_auto_resize;
 
 		/// <summary>
 		/// Called when auto-resize is enabled via
 		/// cef_browser_host_t::SetAutoResizeEnabled and the contents have auto-
-		/// resized. |new_size| will be the desired size in view coordinates. Return
+		/// resized. |new_size| will be the desired size in DIP coordinates. Return
 		/// true (1) if the resize was handled or false (0) for default handling.
 		/// </summary>
 		[NativeName("on_auto_resize")]
@@ -199,7 +204,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, HCURSOR cursor, cef_cursor_type_t type, const cef_cursor_info_t* custom_cursor_info)*
+		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_cursor_handle_t cursor, cef_cursor_type_t type, cef_cursor_info_t const* custom_cursor_info)*
 		/// </summary>
 		public void* on_cursor_change;
 
@@ -233,6 +238,59 @@ namespace CefNet.CApi
 			fixed (cef_display_handler_t* self = &this)
 			{
 				((delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, int, int, void>)on_media_access_change)(self, browser, has_video_access, has_audio_access);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_rect_t const* new_bounds)*
+		/// </summary>
+		public void* on_contents_bounds_change;
+
+		/// <summary>
+		/// Called when JavaScript is requesting new bounds via window.moveTo/By() or
+		/// window.resizeTo/By(). |new_bounds| are in DIP screen coordinates.
+		/// With Views-hosted browsers |new_bounds| are the desired bounds for the
+		/// containing cef_window_t and may be passed directly to
+		/// cef_window_t::SetBounds. With external (client-provided) parent on macOS
+		/// and Windows |new_bounds| are the desired frame bounds for the containing
+		/// root window. With other non-Views browsers |new_bounds| are the desired
+		/// bounds for the browser content only unless the client implements either
+		/// cef_display_handler_t::GetRootWindowScreenRect for windowed browsers or
+		/// cef_render_handler_t::GetWindowScreenRect for windowless browsers. Clients
+		/// may expand browser content bounds to window bounds using OS-specific or
+		/// cef_display_t functions.
+		/// Return true (1) if this function was handled or false (0) for default
+		/// handling. Default move/resize behavior is only provided with Views-hosted
+		/// Chrome style browsers.
+		/// </summary>
+		[NativeName("on_contents_bounds_change")]
+		public unsafe int OnContentsBoundsChange(cef_browser_t* browser, [Immutable]cef_rect_t* new_bounds)
+		{
+			fixed (cef_display_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_rect_t*, int>)on_contents_bounds_change)(self, browser, new_bounds);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, cef_rect_t* rect)*
+		/// </summary>
+		public void* get_root_window_screen_rect;
+
+		/// <summary>
+		/// Called to retrieve the external (client-provided) root window rectangle in
+		/// screen DIP coordinates. Only called for windowed browsers on Windows and
+		/// Linux. Return true (1) if the rectangle was provided. Return false (0) to
+		/// use the root window bounds on Windows or the browser content bounds on
+		/// Linux. For additional usage details see
+		/// cef_browser_host_t::NotifyScreenInfoChanged.
+		/// </summary>
+		[NativeName("get_root_window_screen_rect")]
+		public unsafe int GetRootWindowScreenRect(cef_browser_t* browser, cef_rect_t* rect)
+		{
+			fixed (cef_display_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_rect_t*, int>)get_root_window_screen_rect)(self, browser, rect);
 			}
 		}
 	}

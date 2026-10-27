@@ -54,6 +54,16 @@ namespace CefNet.Internal
 			_implementation.OnBeforeChildProcessLaunch(commandLine);
 		}
 
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnAlreadyRunningAppRelaunch()
+		{
+			return _implementation.AvoidOnAlreadyRunningAppRelaunch();
+		}
+
+		protected internal unsafe override bool OnAlreadyRunningAppRelaunch(CefCommandLine commandLine, string currentDirectory)
+		{
+			return _implementation.OnAlreadyRunningAppRelaunch(commandLine, currentDirectory);
+		}
+
 		bool ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork()
 		{
 			return _implementation.AvoidOnScheduleMessagePumpWork();
@@ -67,6 +77,11 @@ namespace CefNet.Internal
 		protected internal unsafe override CefClient GetDefaultClient()
 		{
 			return _implementation.GetDefaultClient();
+		}
+
+		protected internal unsafe override CefRequestContextHandler GetDefaultRequestContextHandler()
+		{
+			return _implementation.GetDefaultRequestContextHandler();
 		}
 
 	}

@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events related to dragging. The functions
 	/// of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_drag_handler_t
@@ -51,7 +52,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_drag_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, size_t regionsCount, const cef_draggable_region_t* regions)*
+		/// void (*)(_cef_drag_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, size_t regionsCount, cef_draggable_region_t const* regions)*
 		/// </summary>
 		public void* on_draggable_regions_changed;
 

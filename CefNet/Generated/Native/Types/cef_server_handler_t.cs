@@ -25,6 +25,7 @@ namespace CefNet.CApi
 	/// It is therefore recommended to use a different cef_server_handler_t instance
 	/// for each cef_server_t::CreateServer call to avoid thread safety issues in
 	/// the cef_server_handler_t implementation.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_server_handler_t
@@ -118,7 +119,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const cef_string_t* client_address, _cef_request_t* request)*
+		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, cef_string_t const* client_address, _cef_request_t* request)*
 		/// </summary>
 		public void* on_http_request;
 
@@ -140,7 +141,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const cef_string_t* client_address, _cef_request_t* request, _cef_callback_t* callback)*
+		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, cef_string_t const* client_address, _cef_request_t* request, _cef_callback_t* callback)*
 		/// </summary>
 		public void* on_web_socket_request;
 
@@ -187,7 +188,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const void* data, size_t data_size)*
+		/// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, void const* data, size_t data_size)*
 		/// </summary>
 		public void* on_web_socket_message;
 

@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Manage access to preferences. Many built-in preferences are registered by
 	/// Chromium. Custom preferences can be registered in
 	/// cef_browser_process_handler_t::OnRegisterCustomPreferences.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_preference_manager_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// int (*)(_cef_preference_manager_t* self, const cef_string_t* name)*
+		/// int (*)(_cef_preference_manager_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* has_preference;
 
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// _cef_value_t* (*)(_cef_preference_manager_t* self, const cef_string_t* name)*
+		/// _cef_value_t* (*)(_cef_preference_manager_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* get_preference;
 
@@ -93,7 +94,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_preference_manager_t* self, const cef_string_t* name)*
+		/// int (*)(_cef_preference_manager_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* can_set_preference;
 
@@ -113,7 +114,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_preference_manager_t* self, const cef_string_t* name, _cef_value_t* value, cef_string_t* error)*
+		/// int (*)(_cef_preference_manager_t* self, cef_string_t const* name, _cef_value_t* value, cef_string_t* error)*
 		/// </summary>
 		public void* set_preference;
 
@@ -131,6 +132,28 @@ namespace CefNet.CApi
 			fixed (cef_preference_manager_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_preference_manager_t*, cef_string_t*, cef_value_t*, cef_string_t*, int>)set_preference)(self, name, value, error);
+			}
+		}
+
+		/// <summary>
+		/// _cef_registration_t* (*)(_cef_preference_manager_t* self, cef_string_t const* name, _cef_preference_observer_t* observer)*
+		/// </summary>
+		public void* add_preference_observer;
+
+		/// <summary>
+		/// Add an observer for preference changes. |name| is the name of the
+		/// preference to observe. If |name| is NULL then all preferences will be
+		/// observed. Observing all preferences has performance consequences and is
+		/// not recommended outside of testing scenarios. The observer will remain
+		/// registered until the returned Registration object is destroyed. This
+		/// function must be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("add_preference_observer")]
+		public unsafe cef_registration_t* AddPreferenceObserver([Immutable]cef_string_t* name, cef_preference_observer_t* observer)
+		{
+			fixed (cef_preference_manager_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_preference_manager_t*, cef_string_t*, cef_preference_observer_t*, cef_registration_t*>)add_preference_observer)(self, name, observer);
 			}
 		}
 	}

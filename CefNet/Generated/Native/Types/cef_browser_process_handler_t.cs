@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure used to implement browser process callbacks. The functions of this
 	/// structure will be called on the browser process main thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_browser_process_handler_t
@@ -42,16 +43,15 @@ namespace CefNet.CApi
 		/// If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be
 		/// accessed via cef_preference_manager_t::GetGlobalPreferences after
 		/// OnContextInitialized is called. Global preferences are registered a single
-		/// time at application startup. See related cef_settings_t.cache_path and
-		/// cef_settings_t.persist_user_preferences configuration.
+		/// time at application startup. See related cef_settings_t.cache_path
+		/// configuration.
 		/// If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be
 		/// accessed via the cef_request_context_t after
 		/// cef_request_context_handler_t::OnRequestContextInitialized is called.
 		/// Request context preferences are registered each time a new
 		/// cef_request_context_t is created. It is intended but not required that all
 		/// request contexts have the same registered preferences. See related
-		/// cef_request_context_settings_t.cache_path and
-		/// cef_request_context_settings_t.persist_user_preferences configuration.
+		/// cef_request_context_settings_t.cache_path configuration.
 		/// Do not keep a reference to the |registrar| object. This function is called
 		/// on the browser process UI thread.
 		/// </summary>
@@ -104,7 +104,37 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_browser_process_handler_t* self, int64 delay_ms)*
+		/// int (*)(_cef_browser_process_handler_t* self, _cef_command_line_t* command_line, cef_string_t const* current_directory)*
+		/// </summary>
+		public void* on_already_running_app_relaunch;
+
+		/// <summary>
+		/// Implement this function to provide app-specific behavior when an already
+		/// running app is relaunched with the same CefSettings.root_cache_path value.
+		/// For example, activate an existing app window or create a new app window.
+		/// |command_line| will be read-only. Do not keep a reference to
+		/// |command_line| outside of this function. Return true (1) if the relaunch
+		/// is handled or false (0) for default relaunch behavior. Default behavior
+		/// will create a new default styled Chrome window.
+		/// To avoid cache corruption only a single app instance is allowed to run for
+		/// a given CefSettings.root_cache_path value. On relaunch the app checks a
+		/// process singleton lock and then forwards the new launch arguments to the
+		/// already running app process before exiting early. Client apps should
+		/// therefore check the cef_initialize() return value for early exit before
+		/// proceeding.
+		/// This function will be called on the browser process UI thread.
+		/// </summary>
+		[NativeName("on_already_running_app_relaunch")]
+		public unsafe int OnAlreadyRunningAppRelaunch(cef_command_line_t* command_line, [Immutable]cef_string_t* current_directory)
+		{
+			fixed (cef_browser_process_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_command_line_t*, cef_string_t*, int>)on_already_running_app_relaunch)(self, command_line, current_directory);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_browser_process_handler_t* self, int64_t delay_ms)*
 		/// </summary>
 		public void* on_schedule_message_pump_work;
 
@@ -138,11 +168,12 @@ namespace CefNet.CApi
 		public void* get_default_client;
 
 		/// <summary>
-		/// Return the default client for use with a newly created browser window. If
-		/// null is returned the browser will be unmanaged (no callbacks will be
-		/// executed for that browser) and application shutdown will be blocked until
-		/// the browser window is closed manually. This function is currently only
-		/// used with the chrome runtime.
+		/// Return the default client for use with a newly created browser window
+		/// (cef_browser_t object). If null is returned the cef_browser_t will be
+		/// unmanaged (no callbacks will be executed for that cef_browser_t) and
+		/// application shutdown will be blocked until the browser window is closed
+		/// manually. This function is currently only used with Chrome style when
+		/// creating new browser windows via Chrome UI.
 		/// </summary>
 		[NativeName("get_default_client")]
 		public unsafe cef_client_t* GetDefaultClient()
@@ -150,6 +181,27 @@ namespace CefNet.CApi
 			fixed (cef_browser_process_handler_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_client_t*>)get_default_client)(self);
+			}
+		}
+
+		/// <summary>
+		/// _cef_request_context_handler_t* (*)(_cef_browser_process_handler_t* self)*
+		/// </summary>
+		public void* get_default_request_context_handler;
+
+		/// <summary>
+		/// Return the default handler for use with a new user or incognito profile
+		/// (cef_request_context_t object). If null is returned the
+		/// cef_request_context_t will be unmanaged (no callbacks will be executed for
+		/// that cef_request_context_t). This function is currently only used with
+		/// Chrome style when creating new browser windows via Chrome UI.
+		/// </summary>
+		[NativeName("get_default_request_context_handler")]
+		public unsafe cef_request_context_handler_t* GetDefaultRequestContextHandler()
+		{
+			fixed (cef_browser_process_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_browser_process_handler_t*, cef_request_context_handler_t*>)get_default_request_context_handler)(self);
 			}
 		}
 	}

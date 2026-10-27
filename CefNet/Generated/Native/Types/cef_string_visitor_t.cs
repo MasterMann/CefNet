@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Implement this structure to receive string values asynchronously.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_string_visitor_t
@@ -30,7 +31,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_string_visitor_t* self, const cef_string_t* string)*
+		/// void (*)(_cef_string_visitor_t* self, cef_string_t const* string)*
 		/// </summary>
 		public void* visit;
 

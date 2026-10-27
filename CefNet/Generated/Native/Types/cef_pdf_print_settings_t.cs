@@ -27,6 +27,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_pdf_print_settings_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// Set to true (1) for landscape mode or false (0) for portrait mode.
 		/// </summary>
 		public int landscape;
@@ -112,6 +117,16 @@ namespace CefNet.CApi
 		/// |header_template|.
 		/// </summary>
 		public cef_string_t footer_template;
+
+		/// <summary>
+		/// Set to true (1) to generate tagged (accessible) PDF.
+		/// </summary>
+		public int generate_tagged_pdf;
+
+		/// <summary>
+		/// Set to true (1) to generate a document outline.
+		/// </summary>
+		public int generate_document_outline;
 	}
 }
 

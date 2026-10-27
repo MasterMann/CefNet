@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle events related to permission requests.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -72,11 +73,11 @@ namespace CefNet
 		/// cef_media_access_permission_types_t that represent the requested
 		/// permissions. Return true (1) and call cef_media_access_callback_t
 		/// functions either in this function or at a later time to continue or cancel
-		/// the request. Return false (0) to proceed with default handling. With the
-		/// Chrome runtime, default handling will display the permission request UI.
-		/// With the Alloy runtime, default handling will deny the request. This
-		/// function will not be called if the &quot;--enable-media-stream&quot; command-line
-		/// switch is used to grant all permissions.
+		/// the request. Return false (0) to proceed with default handling. With
+		/// Chrome style, default handling will display the permission request UI.
+		/// With Alloy style, default handling will deny the request. This function
+		/// will not be called if the &quot;--enable-media-stream&quot; command-line switch is
+		/// used to grant all permissions.
 		/// </summary>
 		protected internal unsafe virtual bool OnRequestMediaAccessPermission(CefBrowser browser, CefFrame frame, string requestingOrigin, uint requestedPermissions, CefMediaAccessCallback callback)
 		{
@@ -88,7 +89,7 @@ namespace CefNet
 		private unsafe delegate int OnRequestMediaAccessPermissionDelegate(cef_permission_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* requesting_origin, uint requested_permissions, cef_media_access_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* requesting_origin, uint32 requested_permissions, _cef_media_access_callback_t* callback)*
+		// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* requesting_origin, uint32_t requested_permissions, _cef_media_access_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -115,9 +116,9 @@ namespace CefNet
 		/// cef_permission_request_types_t that represent the requested permissions.
 		/// Return true (1) and call cef_permission_prompt_callback_t::Continue either
 		/// in this function or at a later time to continue or cancel the request.
-		/// Return false (0) to proceed with default handling. With the Chrome
-		/// runtime, default handling will display the permission prompt UI. With the
-		/// Alloy runtime, default handling is CEF_PERMISSION_RESULT_IGNORE.
+		/// Return false (0) to proceed with default handling. With Chrome style,
+		/// default handling will display the permission prompt UI. With Alloy style,
+		/// default handling is CEF_PERMISSION_RESULT_IGNORE.
 		/// </summary>
 		protected internal unsafe virtual bool OnShowPermissionPrompt(CefBrowser browser, ulong promptId, string requestingOrigin, uint requestedPermissions, CefPermissionPromptCallback callback)
 		{
@@ -129,7 +130,7 @@ namespace CefNet
 		private unsafe delegate int OnShowPermissionPromptDelegate(cef_permission_handler_t* self, cef_browser_t* browser, ulong prompt_id, cef_string_t* requesting_origin, uint requested_permissions, cef_permission_prompt_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64 prompt_id, const cef_string_t* requesting_origin, uint32 requested_permissions, _cef_permission_prompt_callback_t* callback)*
+		// int (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64_t prompt_id, cef_string_t const* requesting_origin, uint32_t requested_permissions, _cef_permission_prompt_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -166,7 +167,7 @@ namespace CefNet
 		private unsafe delegate void OnDismissPermissionPromptDelegate(cef_permission_handler_t* self, cef_browser_t* browser, ulong prompt_id, CefPermissionRequestResult result);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64 prompt_id, cef_permission_request_result_t result)*
+		// void (*)(_cef_permission_handler_t* self, _cef_browser_t* browser, uint64_t prompt_id, cef_permission_request_result_t result)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

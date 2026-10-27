@@ -26,6 +26,7 @@ namespace CefNet
 	/// cef_media_observer_t::OnRoutes. Contains the status and metadata of a
 	/// routing operation. The functions of this structure may be called on any
 	/// browser process thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

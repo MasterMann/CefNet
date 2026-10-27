@@ -160,23 +160,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Set to true (1) to enable use of the Chrome runtime in CEF. This feature
-		/// is considered experimental and is not recommended for most users at this
-		/// time. See issue #2969 for details.
-		/// </summary>
-		public bool ChromeRuntime
-		{
-			get
-			{
-				return _instance->chrome_runtime != 0;
-			}
-			set
-			{
-				_instance->chrome_runtime = value ? 1 : 0;
-			}
-		}
-
-		/// <summary>
 		/// Set to true (1) to have the browser process message loop run in a separate
 		/// thread. If false (0) then the CefDoMessageLoopWork() function must be
 		/// called from your application message loop. This option is only supported
@@ -253,16 +236,18 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// The location where data for the global browser cache will be stored on
+		/// The directory where data for the global browser cache will be stored on
 		/// disk. If this value is non-empty then it must be an absolute path that is
 		/// either equal to or a child directory of CefSettings.root_cache_path. If
 		/// this value is empty then browsers will be created in &quot;incognito mode&quot;
-		/// where in-memory caches are used for storage and no data is persisted to
-		/// disk. HTML5 databases such as localStorage will only persist across
-		/// sessions if a cache path is specified. Can be overridden for individual
-		/// CefRequestContext instances via the CefRequestContextSettings.cache_path
-		/// value. When using the Chrome runtime the &quot;default&quot; profile will be used if
-		/// |cache_path| and |root_cache_path| have the same value.
+		/// where in-memory caches are used for storage and no profile-specific data
+		/// is persisted to disk (installation-specific data will still be persisted
+		/// in root_cache_path). HTML5 databases such as localStorage will only
+		/// persist across sessions if a cache path is specified. Can be overridden
+		/// for individual CefRequestContext instances via the
+		/// CefRequestContextSettings.cache_path value. Any child directory value will
+		/// be ignored and the &quot;default&quot; profile (also a child directory) will be used
+		/// instead.
 		/// </summary>
 		public string CachePath
 		{
@@ -277,13 +262,28 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// The root directory that all CefSettings.cache_path and
-		/// CefRequestContextSettings.cache_path values must have in common. If this
-		/// value is empty and CefSettings.cache_path is non-empty then it will
-		/// default to the CefSettings.cache_path value. If this value is non-empty
-		/// then it must be an absolute path. Failure to set this value correctly may
-		/// result in the sandbox blocking read/write access to the cache_path
-		/// directory.
+		/// The root directory for installation-specific data and the parent directory
+		/// for profile-specific data. All CefSettings.cache_path and
+		/// CefRequestContextSettings.cache_path values must have this parent
+		/// directory in common. If this value is empty and CefSettings.cache_path is
+		/// non-empty then it will default to the CefSettings.cache_path value. Any
+		/// non-empty value must be an absolute path. If both values are empty then
+		/// the default platform-specific directory will be used
+		/// (&quot;~/.config/cef_user_data&quot; directory on Linux, &quot;~/Library/Application
+		/// Support/CEF/User Data&quot; directory on MacOS, &quot;AppData@Local @CEF @User Data&quot;
+		/// directory under the user profile directory on Windows). Use of the default
+		/// directory is not recommended in production applications (see below).
+		/// Multiple application instances writing to the same root_cache_path
+		/// directory could result in data corruption. A process singleton lock based
+		/// on the root_cache_path value is therefore used to protect against this.
+		/// This singleton behavior applies to all CEF-based applications using
+		/// version 120 or newer. You should customize root_cache_path for your
+		/// application and implement CefBrowserProcessHandler::
+		/// OnAlreadyRunningAppRelaunch, which will then be called on any app relaunch
+		/// with the same root_cache_path value.
+		/// Failure to set the root_cache_path value correctly may result in startup
+		/// crashes or other unexpected behaviors (for example, the sandbox blocking
+		/// read/write access to certain files).
 		/// </summary>
 		public string RootCachePath
 		{
@@ -294,28 +294,6 @@ namespace CefNet
 			set
 			{
 				CefString.Replace(&_instance->root_cache_path, value);
-			}
-		}
-
-		/// <summary>
-		/// The location where user data such as the Widevine CDM module and spell
-		/// checking dictionary files will be stored on disk. If this value is empty
-		/// then the default platform-specific user data directory will be used
-		/// (&quot;~/.config/cef_user_data&quot; directory on Linux, &quot;~/Library/Application
-		/// Support/CEF/User Data&quot; directory on MacOS, &quot;AppData@Local @CEF @User Data&quot;
-		/// directory under the user profile directory on Windows). If this value is
-		/// non-empty then it must be an absolute path. When using the Chrome runtime
-		/// this value will be ignored in favor of the |root_cache_path| value.
-		/// </summary>
-		public string UserDataPath
-		{
-			get
-			{
-				return CefString.Read(&_instance->user_data_path);
-			}
-			set
-			{
-				CefString.Replace(&_instance->user_data_path, value);
 			}
 		}
 
@@ -338,26 +316,6 @@ namespace CefNet
 			set
 			{
 				_instance->persist_session_cookies = value ? 1 : 0;
-			}
-		}
-
-		/// <summary>
-		/// To persist user preferences as a JSON file in the cache path directory set
-		/// this value to true (1). A |cache_path| value must also be specified
-		/// to enable this feature. Also configurable using the
-		/// &quot;persist-user-preferences&quot; command-line switch. Can be overridden for
-		/// individual CefRequestContext instances via the
-		/// CefRequestContextSettings.persist_user_preferences value.
-		/// </summary>
-		public bool PersistUserPreferences
-		{
-			get
-			{
-				return _instance->persist_user_preferences != 0;
-			}
-			set
-			{
-				_instance->persist_user_preferences = value ? 1 : 0;
 			}
 		}
 
@@ -455,6 +413,24 @@ namespace CefNet
 		}
 
 		/// <summary>
+		/// The log items prepended to each log line. If not set the default log items
+		/// will be used. Also configurable using the &quot;log-items&quot; command-line switch
+		/// with a value of &quot;none&quot; for no log items, or a comma-delimited list of
+		/// values &quot;pid&quot;, &quot;tid&quot;, &quot;timestamp&quot; or &quot;tickcount&quot; for custom log items.
+		/// </summary>
+		public CefLogItems LogItems
+		{
+			get
+			{
+				return _instance->log_items;
+			}
+			set
+			{
+				_instance->log_items = value;
+			}
+		}
+
+		/// <summary>
 		/// Custom flags that will be used when initializing the V8 JavaScript engine.
 		/// The consequences of using custom flags may not be well tested. Also
 		/// configurable using the &quot;js-flags&quot; command-line switch.
@@ -511,31 +487,17 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Set to true (1) to disable loading of pack files for resources and
-		/// locales. A resource bundle handler must be provided for the browser and
-		/// render processes via CefApp::GetResourceBundleHandler() if loading of pack
-		/// files is disabled. Also configurable using the &quot;disable-pack-loading&quot;
-		/// command- line switch.
-		/// </summary>
-		public bool PackLoadingDisabled
-		{
-			get
-			{
-				return _instance->pack_loading_disabled != 0;
-			}
-			set
-			{
-				_instance->pack_loading_disabled = value ? 1 : 0;
-			}
-		}
-
-		/// <summary>
 		/// Set to a value between 1024 and 65535 to enable remote debugging on the
 		/// specified port. Also configurable using the &quot;remote-debugging-port&quot;
-		/// command-line switch. Remote debugging can be accessed by loading the
-		/// chrome://inspect page in Google Chrome. Port numbers 9222 and 9229 are
-		/// discoverable by default. Other port numbers may need to be configured via
-		/// &quot;Discover network targets&quot; on the Devices tab.
+		/// command-line switch. Specifying 0 via the command-line switch will result
+		/// in the selection of an ephemeral port and the port number will be printed
+		/// as part of the WebSocket endpoint URL to stderr. If a cache directory path
+		/// is provided the port will also be written to the
+		/// &lt;cache
+		/// -dir&gt;/DevToolsActivePort file. Remote debugging can be accessed by
+		/// loading the chrome://inspect page in Google Chrome. Port numbers 9222 and
+		/// 9229 are discoverable by default. Other port numbers may need to be
+		/// configured via &quot;Discover network targets&quot; on the Devices tab.
 		/// </summary>
 		public int RemoteDebuggingPort
 		{
@@ -593,10 +555,9 @@ namespace CefNet
 
 		/// <summary>
 		/// Comma delimited ordered list of language codes without any whitespace that
-		/// will be used in the &quot;Accept-Language&quot; HTTP header. May be overridden on a
-		/// per-browser basis using the CefBrowserSettings.accept_language_list value.
-		/// If both values are empty then &quot;en-US,en&quot; will be used. Can be overridden
-		/// for individual CefRequestContext instances via the
+		/// will be used in the &quot;Accept-Language&quot; HTTP request header and
+		/// &quot;navigator.language&quot; JS attribute. Can be overridden for individual
+		/// CefRequestContext instances via the
 		/// CefRequestContextSettings.accept_language_list value.
 		/// </summary>
 		public string AcceptLanguageList
@@ -646,6 +607,118 @@ namespace CefNet
 			}
 		}
 
+		/// <summary>
+		/// Specify an ID to enable Chrome policy management via Platform and OS-user
+		/// policies. On Windows, this is a registry key like
+		/// &quot;SOFTWARE\\Policies\\Google\\Chrome&quot;. On MacOS, this is a bundle ID like
+		/// &quot;com.google.Chrome&quot;. On Linux, this is an absolute directory path like
+		/// &quot;/etc/opt/chrome/policies&quot;. Only supported with Chrome style. See
+		/// https://support.google.com/chrome/a/answer/9037717 for details.
+		/// Chrome Browser Cloud Management integration, when enabled via the
+		/// &quot;enable-chrome-browser-cloud-management&quot; command-line flag, will also use
+		/// the specified ID. See https://support.google.com/chrome/a/answer/9116814
+		/// for details.
+		/// </summary>
+		public string ChromePolicyId
+		{
+			get
+			{
+				return CefString.Read(&_instance->chrome_policy_id);
+			}
+			set
+			{
+				CefString.Replace(&_instance->chrome_policy_id, value);
+			}
+		}
+
+		/// <summary>
+		/// Specify an ID for an ICON resource that can be loaded from the main
+		/// executable and used when creating default Chrome windows such as DevTools
+		/// and Task Manager. If unspecified the default Chromium ICON (IDR_MAINFRAME
+		/// [101]) will be loaded from libcef.dll. Only supported with Chrome style on
+		/// Windows.
+		/// </summary>
+		public int ChromeAppIconId
+		{
+			get
+			{
+				return _instance->chrome_app_icon_id;
+			}
+			set
+			{
+				_instance->chrome_app_icon_id = value;
+			}
+		}
+
+		/// <summary>
+		/// Specify whether signal handlers must be disabled on POSIX systems.
+		/// </summary>
+		public int DisableSignalHandlers
+		{
+			get
+			{
+				return _instance->disable_signal_handlers;
+			}
+			set
+			{
+				_instance->disable_signal_handlers = value;
+			}
+		}
+
+		/// <summary>
+		/// If true use a Views (bare-bones) window instead of a Chrome UI window when
+		/// creating default popups for Chrome style native-hosted (non-Views)
+		/// browsers. This applies when CefLifeSpanHandler::OnBeforePopup has not been
+		/// implemented to provide parent window information for the new popup.
+		/// </summary>
+		public bool UseViewsDefaultPopup
+		{
+			get
+			{
+				return _instance->use_views_default_popup != 0;
+			}
+			set
+			{
+				_instance->use_views_default_popup = value ? 1 : 0;
+			}
+		}
+
+		/// <summary>
+		/// The macOS Keychain service name used by OSCrypt. If this value is empty
+		/// then the default Chromium/Chrome service name will be used. Changing this
+		/// value will create or access a different Keychain item and may make
+		/// previously encrypted data unreadable.
+		/// </summary>
+		public string KeychainServiceName
+		{
+			get
+			{
+				return CefString.Read(&_instance->keychain_service_name);
+			}
+			set
+			{
+				CefString.Replace(&_instance->keychain_service_name, value);
+			}
+		}
+
+		/// <summary>
+		/// The macOS Keychain account name used by OSCrypt. If this value is empty
+		/// then the default Chromium/Chrome account name will be used. Changing this
+		/// value will create or access a different Keychain item and may make
+		/// previously encrypted data unreadable.
+		/// </summary>
+		public string KeychainAccountName
+		{
+			get
+			{
+				return CefString.Read(&_instance->keychain_account_name);
+			}
+			set
+			{
+				CefString.Replace(&_instance->keychain_account_name, value);
+			}
+		}
+
 		public void Dispose()
 		{
 			Dispose(true);
@@ -661,7 +734,6 @@ namespace CefNet
 				MainBundlePath = null;
 				CachePath = null;
 				RootCachePath = null;
-				UserDataPath = null;
 				UserAgent = null;
 				UserAgentProduct = null;
 				Locale = null;
@@ -671,6 +743,9 @@ namespace CefNet
 				LocalesDirPath = null;
 				AcceptLanguageList = null;
 				CookieableSchemesList = null;
+				ChromePolicyId = null;
+				KeychainServiceName = null;
+				KeychainAccountName = null;
 				Marshal.FreeHGlobal((IntPtr)_instance);
 				_instance = null;}
 		}

@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to provide handler implementations. Methods will be
 	/// called by the process and/or thread indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_app_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_app_t* self, const cef_string_t* process_type, _cef_command_line_t* command_line)*
+		/// void (*)(_cef_app_t* self, cef_string_t const* process_type, _cef_command_line_t* command_line)*
 		/// </summary>
 		public void* on_before_command_line_processing;
 
@@ -82,11 +83,9 @@ namespace CefNet.CApi
 		public void* get_resource_bundle_handler;
 
 		/// <summary>
-		/// Return the handler for resource bundle events. If
-		/// cef_settings_t.pack_loading_disabled is true (1) a handler must be
-		/// returned. If no handler is returned resources will be loaded from pack
-		/// files. This function is called by the browser and render processes on
-		/// multiple threads.
+		/// Return the handler for resource bundle events. If no handler is returned
+		/// resources will be loaded from pack files. This function is called by the
+		/// browser and render processes on multiple threads.
 		/// </summary>
 		[NativeName("get_resource_bundle_handler")]
 		public unsafe cef_resource_bundle_handler_t* GetResourceBundleHandler()

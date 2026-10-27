@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure that creates cef_resource_handler_t instances for handling scheme
 	/// requests. The functions of this structure will always be called on the IO
 	/// thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -75,7 +76,7 @@ namespace CefNet
 		private unsafe delegate cef_resource_handler_t* CreateDelegate(cef_scheme_handler_factory_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* scheme_name, cef_request_t* request);
 
 #endif // NET_LESS_5_0
-		// _cef_resource_handler_t* (*)(_cef_scheme_handler_factory_t* self, _cef_browser_t* browser, _cef_frame_t* frame, const cef_string_t* scheme_name, _cef_request_t* request)*
+		// _cef_resource_handler_t* (*)(_cef_scheme_handler_factory_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_string_t const* scheme_name, _cef_request_t* request)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

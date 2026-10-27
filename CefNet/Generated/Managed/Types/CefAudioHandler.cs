@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Implement this structure to handle audio events.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -77,7 +78,7 @@ namespace CefNet
 		/// cancel it. All members of |params| can optionally be configured here, but
 		/// they are also pre-filled with some sensible defaults.
 		/// </summary>
-		protected internal unsafe virtual bool GetAudioParameters(CefBrowser browser, ref CefAudioParameters @params)
+		protected internal unsafe virtual bool GetAudioParameters(CefBrowser browser, CefAudioParameters @params)
 		{
 			return default;
 		}
@@ -99,7 +100,7 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return default;
 			}
-			return instance.GetAudioParameters(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefAudioParameters*)@params) ? 1 : 0;
+			return instance.GetAudioParameters(CefBrowser.Wrap(CefBrowser.Create, browser), new CefAudioParameters(@params)) ? 1 : 0;
 		}
 
 		[MethodImpl(MethodImplOptions.ForwardRef)]
@@ -121,7 +122,7 @@ namespace CefNet
 		private unsafe delegate void OnAudioStreamStartedDelegate(cef_audio_handler_t* self, cef_browser_t* browser, cef_audio_parameters_t* @params, int channels);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_audio_parameters_t* params, int channels)*
+		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_audio_parameters_t const* params, int channels)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -133,7 +134,7 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return;
 			}
-			instance.OnAudioStreamStarted(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefAudioParameters*)@params, channels);
+			instance.OnAudioStreamStarted(CefBrowser.Wrap(CefBrowser.Create, browser), new CefAudioParameters(@params), channels);
 		}
 
 		[MethodImpl(MethodImplOptions.ForwardRef)]
@@ -158,7 +159,7 @@ namespace CefNet
 		private unsafe delegate void OnAudioStreamPacketDelegate(cef_audio_handler_t* self, cef_browser_t* browser, float** data, int frames, long pts);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const float** data, int frames, int64 pts)*
+		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, float const** data, int frames, int64_t pts)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -223,7 +224,7 @@ namespace CefNet
 		private unsafe delegate void OnAudioStreamErrorDelegate(cef_audio_handler_t* self, cef_browser_t* browser, cef_string_t* message);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, const cef_string_t* message)*
+		// void (*)(_cef_audio_handler_t* self, _cef_browser_t* browser, cef_string_t const* message)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

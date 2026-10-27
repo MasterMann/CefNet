@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Callback structure for cef_browser_host_t::DownloadImage. The functions of
 	/// this structure will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_download_image_callback_t
@@ -31,7 +32,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_download_image_callback_t* self, const cef_string_t* image_url, int http_status_code, _cef_image_t* image)*
+		/// void (*)(_cef_download_image_callback_t* self, cef_string_t const* image_url, int http_status_code, _cef_image_t* image)*
 		/// </summary>
 		public void* on_download_image_finished;
 

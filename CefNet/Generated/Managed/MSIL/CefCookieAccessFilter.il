@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefCookieAccessFilterPrivate::AvoidCanSendCookie()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefCookieAccessFilter::CanSendCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, valuetype CefNet.CefCookie)
-			ldftn instance bool CefNet.CefCookieAccessFilter::CanSendCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, valuetype CefNet.CefCookie)
+			ldvirtftn instance bool CefNet.CefCookieAccessFilter::CanSendCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefCookie)
+			ldftn instance bool CefNet.CefCookieAccessFilter::CanSendCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefCookie)
 			ceq
 			ret
 		}
@@ -30,8 +30,8 @@
 			.override method instance bool CefNet.Internal.ICefCookieAccessFilterPrivate::AvoidCanSaveCookie()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefCookieAccessFilter::CanSaveCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefResponse, valuetype CefNet.CefCookie)
-			ldftn instance bool CefNet.CefCookieAccessFilter::CanSaveCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefResponse, valuetype CefNet.CefCookie)
+			ldvirtftn instance bool CefNet.CefCookieAccessFilter::CanSaveCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefResponse, class CefNet.CefCookie)
+			ldftn instance bool CefNet.CefCookieAccessFilter::CanSaveCookie(class CefNet.CefBrowser, class CefNet.CefFrame, class CefNet.CefRequest, class CefNet.CefResponse, class CefNet.CefCookie)
 			ceq
 			ret
 		}

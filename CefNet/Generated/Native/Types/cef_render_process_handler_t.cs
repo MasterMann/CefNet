@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure used to implement render process callbacks. The functions of this
 	/// structure will be called on the render process main thread (TID_RENDERER)
 	/// unless otherwise indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_render_process_handler_t
@@ -106,29 +107,29 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context)*
+		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context)*
 		/// </summary>
 		public void* on_context_created;
 
 		/// <summary>
 		/// Called immediately after the V8 context for a frame has been created. To
 		/// retrieve the JavaScript &apos;window&apos; object use the
-		/// cef_v8context_t::get_global() function. V8 handles can only be accessed
+		/// cef_v8_context_t::get_global() function. V8 handles can only be accessed
 		/// from the thread on which they are created. A task runner for posting tasks
 		/// on the associated thread can be retrieved via the
-		/// cef_v8context_t::get_task_runner() function.
+		/// cef_v8_context_t::get_task_runner() function.
 		/// </summary>
 		[NativeName("on_context_created")]
-		public unsafe void OnContextCreated(cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context)
+		public unsafe void OnContextCreated(cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context)
 		{
 			fixed (cef_render_process_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, void>)on_context_created)(self, browser, frame, context);
+				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, void>)on_context_created)(self, browser, frame, context);
 			}
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context)*
+		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context)*
 		/// </summary>
 		public void* on_context_released;
 
@@ -137,16 +138,16 @@ namespace CefNet.CApi
 		/// references to the context should be kept after this function is called.
 		/// </summary>
 		[NativeName("on_context_released")]
-		public unsafe void OnContextReleased(cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context)
+		public unsafe void OnContextReleased(cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context)
 		{
 			fixed (cef_render_process_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, void>)on_context_released)(self, browser, frame, context);
+				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, void>)on_context_released)(self, browser, frame, context);
 			}
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8context_t* context, _cef_v8exception_t* exception, _cef_v8stack_trace_t* stackTrace)*
+		/// void (*)(_cef_render_process_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_v8_context_t* context, _cef_v8_exception_t* exception, _cef_v8_stack_trace_t* stackTrace)*
 		/// </summary>
 		public void* on_uncaught_exception;
 
@@ -156,11 +157,11 @@ namespace CefNet.CApi
 		/// cef_settings_t.uncaught_exception_stack_size &gt; 0.
 		/// </summary>
 		[NativeName("on_uncaught_exception")]
-		public unsafe void OnUncaughtException(cef_browser_t* browser, cef_frame_t* frame, cef_v8context_t* context, cef_v8exception_t* exception, cef_v8stack_trace_t* stackTrace)
+		public unsafe void OnUncaughtException(cef_browser_t* browser, cef_frame_t* frame, cef_v8_context_t* context, cef_v8_exception_t* exception, cef_v8_stack_trace_t* stackTrace)
 		{
 			fixed (cef_render_process_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8context_t*, cef_v8exception_t*, cef_v8stack_trace_t*, void>)on_uncaught_exception)(self, browser, frame, context, exception, stackTrace);
+				((delegate* unmanaged[Stdcall]<cef_render_process_handler_t*, cef_browser_t*, cef_frame_t*, cef_v8_context_t*, cef_v8_exception_t*, cef_v8_stack_trace_t*, void>)on_uncaught_exception)(self, browser, frame, context, exception, stackTrace);
 			}
 		}
 

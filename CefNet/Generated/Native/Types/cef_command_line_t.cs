@@ -28,6 +28,7 @@ namespace CefNet.CApi
 	/// arguments. Switch names should be lowercase ASCII and will be converted to
 	/// such if necessary. Switch values will retain the original case and UTF8
 	/// encoding. This structure can be used before cef_initialize() is called.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_command_line_t
@@ -91,7 +92,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, int argc, const const char** argv)*
+		/// const void (*)(_cef_command_line_t* self, int argc, char const** argv)*
 		/// </summary>
 		public void* init_from_argv;
 
@@ -110,7 +111,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* command_line)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* command_line)*
 		/// </summary>
 		public void* init_from_string;
 
@@ -201,7 +202,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* program)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* program)*
 		/// </summary>
 		public void* set_program;
 
@@ -235,7 +236,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_command_line_t* self, const cef_string_t* name)*
+		/// int (*)(_cef_command_line_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* has_switch;
 
@@ -252,7 +253,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_command_line_t* self, const cef_string_t* name)*
+		/// cef_string_userfree_t (*)(_cef_command_line_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* get_switch_value;
 
@@ -289,7 +290,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* name)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* append_switch;
 
@@ -306,7 +307,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* name, const cef_string_t* value)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* name, cef_string_t const* value)*
 		/// </summary>
 		public void* append_switch_with_value;
 
@@ -358,7 +359,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* argument)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* argument)*
 		/// </summary>
 		public void* append_argument;
 
@@ -375,7 +376,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_command_line_t* self, const cef_string_t* wrapper)*
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* wrapper)*
 		/// </summary>
 		public void* prepend_wrapper;
 
@@ -389,6 +390,24 @@ namespace CefNet.CApi
 			fixed (cef_command_line_t* self = &this)
 			{
 				((delegate* unmanaged[Stdcall]<cef_command_line_t*, cef_string_t*, void>)prepend_wrapper)(self, wrapper);
+			}
+		}
+
+		/// <summary>
+		/// void (*)(_cef_command_line_t* self, cef_string_t const* name)*
+		/// </summary>
+		public void* remove_switch;
+
+		/// <summary>
+		/// Remove a switch from the command line. If no such switch is present, this
+		/// has no effect.
+		/// </summary>
+		[NativeName("remove_switch")]
+		public unsafe void RemoveSwitch([Immutable]cef_string_t* name)
+		{
+			fixed (cef_command_line_t* self = &this)
+			{
+				((delegate* unmanaged[Stdcall]<cef_command_line_t*, cef_string_t*, void>)remove_switch)(self, name);
 			}
 		}
 	}

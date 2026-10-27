@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure used to implement a custom request handler structure. The
 	/// functions of this structure will be called on the IO thread unless otherwise
 	/// indicated.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_resource_handler_t
@@ -78,7 +79,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_resource_handler_t* self, _cef_response_t* response, int64* response_length, cef_string_t* redirectUrl)*
+		/// void (*)(_cef_resource_handler_t* self, _cef_response_t* response, int64_t* response_length, cef_string_t* redirectUrl)*
 		/// </summary>
 		public void* get_response_headers;
 
@@ -107,7 +108,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_resource_handler_t* self, int64 bytes_to_skip, int64* bytes_skipped, _cef_resource_skip_callback_t* callback)*
+		/// int (*)(_cef_resource_handler_t* self, int64_t bytes_to_skip, int64_t* bytes_skipped, _cef_resource_skip_callback_t* callback)*
 		/// </summary>
 		public void* skip;
 

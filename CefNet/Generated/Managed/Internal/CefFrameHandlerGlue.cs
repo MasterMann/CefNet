@@ -39,6 +39,16 @@ namespace CefNet.Internal
 			_implementation.OnFrameCreated(browser, frame);
 		}
 
+		bool ICefFrameHandlerPrivate.AvoidOnFrameDestroyed()
+		{
+			return _implementation.AvoidOnFrameDestroyed();
+		}
+
+		protected internal unsafe override void OnFrameDestroyed(CefBrowser browser, CefFrame frame)
+		{
+			_implementation.OnFrameDestroyed(browser, frame);
+		}
+
 		bool ICefFrameHandlerPrivate.AvoidOnFrameAttached()
 		{
 			return _implementation.AvoidOnFrameAttached();

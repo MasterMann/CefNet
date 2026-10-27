@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to represent a DOM node. The functions of this structure
 	/// should only be called on the render process main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -96,13 +97,12 @@ namespace CefNet
 
 		/// <summary>
 		/// Gets the type of this form control element node.
-		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
-		public unsafe virtual string FormControlElementType
+		public unsafe virtual CefDOMFormControlType FormControlElementType
 		{
 			get
 			{
-				return SafeCall(CefString.ReadAndFree(NativeInstance->GetFormControlElementType()));
+				return SafeCall(NativeInstance->GetFormControlElementType());
 			}
 		}
 

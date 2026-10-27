@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to represent a web request. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_request_t
@@ -66,7 +67,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_url;
 
@@ -102,7 +103,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* method)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* method)*
 		/// </summary>
 		public void* set_method;
 
@@ -119,7 +120,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* referrer_url, cef_referrer_policy_t policy)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* referrer_url, cef_referrer_policy_t policy)*
 		/// </summary>
 		public void* set_referrer;
 
@@ -242,7 +243,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_request_t* self, const cef_string_t* name)*
+		/// cef_string_userfree_t (*)(_cef_request_t* self, cef_string_t const* name)*
 		/// </summary>
 		public void* get_header_by_name;
 
@@ -262,7 +263,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* name, const cef_string_t* value, int overwrite)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* name, cef_string_t const* value, int overwrite)*
 		/// </summary>
 		public void* set_header_by_name;
 
@@ -282,7 +283,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url, const cef_string_t* method, _cef_post_data_t* postData, cef_string_multimap_t headerMap)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url, cef_string_t const* method, _cef_post_data_t* postData, cef_string_multimap_t headerMap)*
 		/// </summary>
 		public void* set;
 
@@ -354,7 +355,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_request_t* self, const cef_string_t* url)*
+		/// void (*)(_cef_request_t* self, cef_string_t const* url)*
 		/// </summary>
 		public void* set_first_party_for_cookies;
 
@@ -409,7 +410,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// uint64 (*)(_cef_request_t* self)*
+		/// uint64_t (*)(_cef_request_t* self)*
 		/// </summary>
 		public void* get_identifier;
 

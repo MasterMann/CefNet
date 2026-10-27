@@ -85,72 +85,72 @@ namespace CefNet
 		CEF_CHANNEL_LAYOUT_5_1_BACK = 12,
 
 		/// <summary>
-		/// Front L, Front R, Front C, Side L, Side R, Back L, Back R
+		/// Front L, Front R, Front C, Back L, Back R, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_7_0 = 13,
 
 		/// <summary>
-		/// Front L, Front R, Front C, LFE, Side L, Side R, Back L, Back R
+		/// Front L, Front R, Front C, LFE, Back L, Back R, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_7_1 = 14,
 
 		/// <summary>
-		/// Front L, Front R, Front C, LFE, Side L, Side R, Front LofC, Front RofC
+		/// Front L, Front R, Front C, LFE, Front LofC, Front RofC, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_7_1_WIDE = 15,
 
 		/// <summary>
-		/// Stereo L, Stereo R
+		/// Front L, Front R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_STEREO_DOWNMIX = 16,
 
 		/// <summary>
-		/// Stereo L, Stereo R, LFE
+		/// Front L, Front R, LFE
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_2POINT1 = 17,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, LFE
+		/// Front L, Front R, Front C, LFE
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_3_1 = 18,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, Rear C, LFE
+		/// Front L, Front R, Front C, LFE, Back C
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_4_1 = 19,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, Side L, Side R, Back C
+		/// Front L, Front R, Front C, Back C, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_6_0 = 20,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Side L, Side R, Front LofC, Front RofC
+		/// Front L, Front R, Front LofC, Front RofC, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_6_0_FRONT = 21,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, Rear L, Rear R, Rear C
+		/// Front L, Front R, Front C, Back L, Back R, Back C
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_HEXAGONAL = 22,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, LFE, Side L, Side R, Rear Center
+		/// Front L, Front R, Front C, LFE, Back C, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_6_1 = 23,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Front C, LFE, Back L, Back R, Rear Center
+		/// Front L, Front R, Front C, LFE, Back L, Back R, Back C
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_6_1_BACK = 24,
 
 		/// <summary>
-		/// Stereo L, Stereo R, Side L, Side R, Front LofC, Front RofC, LFE
+		/// Front L, Front R, LFE, Front LofC, Front RofC, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_6_1_FRONT = 25,
 
 		/// <summary>
-		/// Front L, Front R, Front C, Side L, Side R, Front LofC, Front RofC
+		/// Front L, Front R, Front C, Front LofC, Front RofC, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_7_0_FRONT = 26,
 
@@ -160,7 +160,7 @@ namespace CefNet
 		CEF_CHANNEL_LAYOUT_7_1_WIDE_BACK = 27,
 
 		/// <summary>
-		/// Front L, Front R, Front C, Side L, Side R, Rear L, Back R, Back C.
+		/// Front L, Front R, Front C, Back L, Back R, Back C, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_OCTAGONAL = 28,
 
@@ -170,6 +170,7 @@ namespace CefNet
 		CEF_CHANNEL_LAYOUT_DISCRETE = 29,
 
 		/// <summary>
+		/// Deprecated, but keeping the enum value for UMA consistency.
 		/// Front L, Front R, Front C. Front C contains the keyboard mic audio. This
 		/// layout is only intended for input for WebRTC. The Front C channel
 		/// is stripped away in the WebRTC audio input pipeline and never seen outside
@@ -178,7 +179,7 @@ namespace CefNet
 		CEF_CHANNEL_LAYOUT_STEREO_AND_KEYBOARD_MIC = 30,
 
 		/// <summary>
-		/// Front L, Front R, Side L, Side R, LFE
+		/// Front L, Front R, LFE, Side L, Side R
 		/// </summary>
 		CEF_CHANNEL_LAYOUT_4_1_QUAD_SIDE = 31,
 
@@ -198,9 +199,28 @@ namespace CefNet
 		CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX = 33,
 
 		/// <summary>
-		/// Max value, must always equal the largest entry ever logged.
+		/// Front C, LFE
 		/// </summary>
-		CEF_CHANNEL_LAYOUT_MAX = CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX,
+		CEF_CHANNEL_LAYOUT_1_1 = 34,
+
+		/// <summary>
+		/// Front L, Front R, LFE, Back C
+		/// </summary>
+		CEF_CHANNEL_LAYOUT_3_1_BACK = 35,
+
+		/// <summary>
+		/// Front L, Front R, Front C, LFE, Side L, Side R,
+		/// Top Front L, Top Front R, Top Back L, Top Back R
+		/// </summary>
+		CEF_CHANNEL_LAYOUT_5_1_4 = 36,
+
+		/// <summary>
+		/// Front L, Front R, Front C, LFE, Back L, Back R, Side L, Side R,
+		/// Top Front L, Top Front R, Top Back L, Top Back R
+		/// </summary>
+		CEF_CHANNEL_LAYOUT_7_1_4 = 37,
+
+		CEF_CHANNEL_NUM_VALUES = 38,
 	}
 }
 

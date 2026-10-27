@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle printing on Linux. Each browser will have
 	/// only one print job in progress at a time. The functions of this structure
 	/// will be called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -193,7 +194,7 @@ namespace CefNet
 		private unsafe delegate int OnPrintJobDelegate(cef_print_handler_t* self, cef_browser_t* browser, cef_string_t* document_name, cef_string_t* pdf_file_path, cef_print_job_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, const cef_string_t* document_name, const cef_string_t* pdf_file_path, _cef_print_job_callback_t* callback)*
+		// int (*)(_cef_print_handler_t* self, _cef_browser_t* browser, cef_string_t const* document_name, cef_string_t const* pdf_file_path, _cef_print_job_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

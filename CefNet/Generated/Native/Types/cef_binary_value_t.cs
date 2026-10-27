@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure representing a binary value. Can be used on any process and
 	/// thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_binary_value_t
@@ -118,6 +119,24 @@ namespace CefNet.CApi
 			fixed (cef_binary_value_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_binary_value_t*, cef_binary_value_t*>)copy)(self);
+			}
+		}
+
+		/// <summary>
+		/// const void* (*)(_cef_binary_value_t* self)*
+		/// </summary>
+		public void* get_raw_data;
+
+		/// <summary>
+		/// Returns a pointer to the beginning of the memory block. The returned
+		/// pointer is valid as long as the cef_binary_value_t is alive.
+		/// </summary>
+		[NativeName("get_raw_data")]
+		public unsafe IntPtr GetRawData()
+		{
+			fixed (cef_binary_value_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_binary_value_t*, IntPtr>)get_raw_data)(self);
 			}
 		}
 

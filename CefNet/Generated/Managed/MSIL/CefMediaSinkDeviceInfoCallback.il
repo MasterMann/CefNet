@@ -19,8 +19,8 @@
 			.override method instance bool CefNet.Internal.ICefMediaSinkDeviceInfoCallbackPrivate::AvoidOnMediaSinkDeviceInfo()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefMediaSinkDeviceInfoCallback::OnMediaSinkDeviceInfo(valuetype CefNet.CefMediaSinkDeviceInfo)
-			ldftn instance void CefNet.CefMediaSinkDeviceInfoCallback::OnMediaSinkDeviceInfo(valuetype CefNet.CefMediaSinkDeviceInfo)
+			ldvirtftn instance void CefNet.CefMediaSinkDeviceInfoCallback::OnMediaSinkDeviceInfo(class CefNet.CefMediaSinkDeviceInfo)
+			ldftn instance void CefNet.CefMediaSinkDeviceInfoCallback::OnMediaSinkDeviceInfo(class CefNet.CefMediaSinkDeviceInfo)
 			ceq
 			ret
 		}

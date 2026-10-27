@@ -30,6 +30,8 @@ namespace CefNet
 		Dash = 2,
 
 		None = 3,
+
+		NumValues = 4,
 	}
 }
 

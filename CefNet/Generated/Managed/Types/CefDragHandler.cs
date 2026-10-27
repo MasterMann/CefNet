@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to dragging. The functions
 	/// of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -111,7 +112,7 @@ namespace CefNet
 		private unsafe delegate void OnDraggableRegionsChangedDelegate(cef_drag_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, UIntPtr regionsCount, cef_draggable_region_t* regions);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_drag_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, size_t regionsCount, const cef_draggable_region_t* regions)*
+		// void (*)(_cef_drag_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, size_t regionsCount, cef_draggable_region_t const* regions)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure that wraps other data value types. Complex types (binary,
 	/// dictionary and list) will be referenced but not owned by this object. Can be
 	/// used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

@@ -52,8 +52,8 @@
 			.override method instance bool CefNet.Internal.ICefRenderHandlerPrivate::AvoidGetScreenInfo()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance bool CefNet.CefRenderHandler::GetScreenInfo(class CefNet.CefBrowser, valuetype CefNet.CefScreenInfo&)
-			ldftn instance bool CefNet.CefRenderHandler::GetScreenInfo(class CefNet.CefBrowser, valuetype CefNet.CefScreenInfo&)
+			ldvirtftn instance bool CefNet.CefRenderHandler::GetScreenInfo(class CefNet.CefBrowser, class CefNet.CefScreenInfo)
+			ldftn instance bool CefNet.CefRenderHandler::GetScreenInfo(class CefNet.CefBrowser, class CefNet.CefScreenInfo)
 			ceq
 			ret
 		}
@@ -96,8 +96,8 @@
 			.override method instance bool CefNet.Internal.ICefRenderHandlerPrivate::AvoidOnAcceleratedPaint()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefRenderHandler::OnAcceleratedPaint(class CefNet.CefBrowser, valuetype CefNet.CefPaintElementType, class CefNet.CefRect[], native int)
-			ldftn instance void CefNet.CefRenderHandler::OnAcceleratedPaint(class CefNet.CefBrowser, valuetype CefNet.CefPaintElementType, class CefNet.CefRect[], native int)
+			ldvirtftn instance void CefNet.CefRenderHandler::OnAcceleratedPaint(class CefNet.CefBrowser, valuetype CefNet.CefPaintElementType, class CefNet.CefRect[], class CefNet.CefAcceleratedPaintInfo)
+			ldftn instance void CefNet.CefRenderHandler::OnAcceleratedPaint(class CefNet.CefBrowser, valuetype CefNet.CefPaintElementType, class CefNet.CefRect[], class CefNet.CefAcceleratedPaintInfo)
 			ceq
 			ret
 		}
@@ -118,8 +118,8 @@
 			.override method instance bool CefNet.Internal.ICefRenderHandlerPrivate::AvoidOnTouchHandleStateChanged()
 			.maxstack 2
 			ldarg.0
-			ldvirtftn instance void CefNet.CefRenderHandler::OnTouchHandleStateChanged(class CefNet.CefBrowser, valuetype CefNet.CefTouchHandleState)
-			ldftn instance void CefNet.CefRenderHandler::OnTouchHandleStateChanged(class CefNet.CefBrowser, valuetype CefNet.CefTouchHandleState)
+			ldvirtftn instance void CefNet.CefRenderHandler::OnTouchHandleStateChanged(class CefNet.CefBrowser, class CefNet.CefTouchHandleState)
+			ldftn instance void CefNet.CefRenderHandler::OnTouchHandleStateChanged(class CefNet.CefBrowser, class CefNet.CefTouchHandleState)
 			ceq
 			ret
 		}

@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to handle events related to browser load status.
 	/// The functions of this structure will be called on the browser process UI
 	/// thread or render process main thread (TID_RENDERER).
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -197,7 +198,7 @@ namespace CefNet
 		private unsafe delegate void OnLoadErrorDelegate(cef_load_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, CefErrorCode errorCode, cef_string_t* errorText, cef_string_t* failedUrl);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_load_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_errorcode_t errorCode, const cef_string_t* errorText, const cef_string_t* failedUrl)*
+		// void (*)(_cef_load_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, cef_errorcode_t errorCode, cef_string_t const* errorText, cef_string_t const* failedUrl)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

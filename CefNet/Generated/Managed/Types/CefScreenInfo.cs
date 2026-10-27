@@ -28,9 +28,56 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial struct CefScreenInfo
+	public unsafe partial class CefScreenInfo
 	{
-		private cef_screen_info_t _instance;
+		private cef_screen_info_t* _instance;
+
+		private readonly bool _disposable;
+
+		public CefScreenInfo()
+		{
+			_disposable = true;
+			_instance = (cef_screen_info_t*)CefStructure.Allocate(sizeof(cef_screen_info_t));
+			_instance->size = new UIntPtr((uint)sizeof(cef_screen_info_t));
+		}
+
+		internal static unsafe CefScreenInfo Create(IntPtr instance)
+		{
+			return new CefScreenInfo((cef_screen_info_t*)instance);
+		}
+
+		public CefScreenInfo(cef_screen_info_t* instance)
+		{
+			_instance = instance;
+		}
+
+		public cef_screen_info_t* NativeInstance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+
+		public cef_screen_info_t* GetNativeInstance()
+		{
+			return _instance;
+		}
+
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public long Size
+		{
+			get
+			{
+				return (long)(_instance->size);
+			}
+			set
+			{
+				_instance->size = new UIntPtr((ulong)value);
+			}
+		}
 
 		/// <summary>
 		/// Device scale factor. Specifies the ratio between physical and logical
@@ -40,11 +87,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.device_scale_factor;
+				return _instance->device_scale_factor;
 			}
 			set
 			{
-				_instance.device_scale_factor = value;
+				_instance->device_scale_factor = value;
 			}
 		}
 
@@ -55,11 +102,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.depth;
+				return _instance->depth;
 			}
 			set
 			{
-				_instance.depth = value;
+				_instance->depth = value;
 			}
 		}
 
@@ -71,11 +118,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.depth_per_component;
+				return _instance->depth_per_component;
 			}
 			set
 			{
-				_instance.depth_per_component = value;
+				_instance->depth_per_component = value;
 			}
 		}
 
@@ -86,11 +133,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.is_monochrome != 0;
+				return _instance->is_monochrome != 0;
 			}
 			set
 			{
-				_instance.is_monochrome = value ? 1 : 0;
+				_instance->is_monochrome = value ? 1 : 0;
 			}
 		}
 
@@ -107,11 +154,11 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.rect;
+				return _instance->rect;
 			}
 			set
 			{
-				_instance.rect = value;
+				_instance->rect = value;
 			}
 		}
 
@@ -131,22 +178,12 @@ namespace CefNet
 		{
 			get
 			{
-				return _instance.available_rect;
+				return _instance->available_rect;
 			}
 			set
 			{
-				_instance.available_rect = value;
+				_instance->available_rect = value;
 			}
-		}
-
-		public static implicit operator CefScreenInfo(cef_screen_info_t instance)
-		{
-			return new CefScreenInfo { _instance = instance };
-		}
-
-		public static implicit operator cef_screen_info_t(CefScreenInfo instance)
-		{
-			return instance._instance;
 		}
 	}
 }

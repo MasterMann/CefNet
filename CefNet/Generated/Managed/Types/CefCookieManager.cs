@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used for managing cookies. The functions of this structure may be
 	/// called on any thread unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -79,7 +80,7 @@ namespace CefNet
 			fixed (char* s0 = url)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = url != null ? url.Length : 0 };
-				return SafeCall(NativeInstance->SetCookie(&cstr0, (cef_cookie_t*)&cookie, (callback != null) ? callback.GetNativeInstance() : null) != 0);
+				return SafeCall(NativeInstance->SetCookie(&cstr0, cookie.GetNativeInstance(), (callback != null) ? callback.GetNativeInstance() : null) != 0);
 			}
 		}
 

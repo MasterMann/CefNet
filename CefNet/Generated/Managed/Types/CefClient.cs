@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Implement this structure to provide handler implementations.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -279,7 +280,8 @@ namespace CefNet
 
 		/// <summary>
 		/// Return the handler for download events. If no handler is returned
-		/// downloads will not be allowed.
+		/// downloads will be canceled with Alloy style and will proceed with default
+		/// handling with Chrome style.
 		/// </summary>
 		protected internal unsafe virtual CefDownloadHandler GetDownloadHandler()
 		{

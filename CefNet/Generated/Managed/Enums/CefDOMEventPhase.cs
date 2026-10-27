@@ -30,6 +30,8 @@ namespace CefNet
 		AtTarget = 2,
 
 		Bubbling = 3,
+
+		NumValues = 4,
 	}
 }
 

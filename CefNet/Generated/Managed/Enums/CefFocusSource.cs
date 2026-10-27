@@ -32,6 +32,11 @@ namespace CefNet
 		/// The source is a system-generated focus event.
 		/// </summary>
 		System = 1,
+
+		/// <summary>
+		/// The source is a system-generated focus event.
+		/// </summary>
+		NumValues = 2,
 	}
 }
 

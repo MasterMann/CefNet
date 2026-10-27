@@ -30,6 +30,7 @@ namespace CefNet
 	/// This structure should only be used for tasks that require a dedicated
 	/// thread. In most cases you can post tasks to an existing CEF thread instead
 	/// of creating a new one; see cef_task.h for details.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy

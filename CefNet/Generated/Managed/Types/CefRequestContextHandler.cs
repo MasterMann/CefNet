@@ -24,6 +24,7 @@ namespace CefNet
 	/// Implement this structure to provide handler implementations. The handler
 	/// instance will not be released until all objects related to the context have
 	/// been destroyed.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -109,7 +110,9 @@ namespace CefNet
 		/// cef_resource_request_handler_t object. This function will not be called if
 		/// the client associated with |browser| returns a non-NULL value from
 		/// cef_request_handler_t::GetResourceRequestHandler for the same request
-		/// (identified by cef_request_t::GetIdentifier).
+		/// (identified by cef_request_t::GetIdentifier). For worker requests without
+		/// an associated frame or process handler, an arbitrary non-NULL handler from
+		/// the contexts sharing the same storage will be used.
 		/// </summary>
 		protected internal unsafe virtual CefResourceRequestHandler GetResourceRequestHandler(CefBrowser browser, CefFrame frame, CefRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref int disableDefaultHandling)
 		{
@@ -121,7 +124,7 @@ namespace CefNet
 		private unsafe delegate cef_resource_request_handler_t* GetResourceRequestHandlerDelegate(cef_request_context_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, int is_navigation, int is_download, cef_string_t* request_initiator, int* disable_default_handling);
 
 #endif // NET_LESS_5_0
-		// _cef_resource_request_handler_t* (*)(_cef_request_context_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, const cef_string_t* request_initiator, int* disable_default_handling)*
+		// _cef_resource_request_handler_t* (*)(_cef_request_context_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, _cef_request_t* request, int is_navigation, int is_download, cef_string_t const* request_initiator, int* disable_default_handling)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

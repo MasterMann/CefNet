@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Callback structure used to asynchronously continue a download.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_before_download_callback_t
@@ -30,7 +31,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_before_download_callback_t* self, const cef_string_t* download_path, int show_dialog)*
+		/// void (*)(_cef_before_download_callback_t* self, cef_string_t const* download_path, int show_dialog)*
 		/// </summary>
 		public void* cont;
 

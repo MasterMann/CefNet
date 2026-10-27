@@ -25,6 +25,7 @@ namespace CefNet
 	/// browser process the functions of this structure may be called on any thread
 	/// unless otherwise indicated in the comments. When used in the render process
 	/// the functions of this structure may only be called on the main thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -91,16 +92,15 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the globally unique identifier for this frame or
-		/// &lt;
-		/// 0 if the
+		/// Gets the globally unique identifier for this frame or NULL if the
 		/// underlying frame does not yet exist.
+		/// The resulting string must be freed by calling cef_string_userfree_free().
 		/// </summary>
-		public unsafe virtual long Identifier
+		public unsafe virtual string Identifier
 		{
 			get
 			{
-				return SafeCall(NativeInstance->GetIdentifier());
+				return SafeCall(CefString.ReadAndFree(NativeInstance->GetIdentifier()));
 			}
 		}
 
@@ -193,6 +193,15 @@ namespace CefNet
 		public unsafe virtual void Paste()
 		{
 			NativeInstance->Paste();
+			GC.KeepAlive(this);
+		}
+
+		/// <summary>
+		/// Execute paste and match style in this frame.
+		/// </summary>
+		public unsafe virtual void PasteAndMatchStyle()
+		{
+			NativeInstance->PasteAndMatchStyle();
 			GC.KeepAlive(this);
 		}
 

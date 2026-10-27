@@ -26,6 +26,7 @@ namespace CefNet
 	/// simultaneous connections (e.g. for communicating between applications on
 	/// localhost). The functions of this structure are safe to call from any thread
 	/// in the brower process unless otherwise indicated.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -118,12 +119,12 @@ namespace CefNet
 		/// of |data| in bytes. The contents of |data| will be copied. The connection
 		/// will be closed automatically after the response is sent.
 		/// </summary>
-		public unsafe virtual void SendHttp200response(int connectionId, string contentType, IntPtr data, long dataSize)
+		public unsafe virtual void SendHttp200Response(int connectionId, string contentType, IntPtr data, long dataSize)
 		{
 			fixed (char* s1 = contentType)
 			{
 				var cstr1 = new cef_string_t { Str = s1, Length = contentType != null ? contentType.Length : 0 };
-				NativeInstance->SendHttp200response(connectionId, &cstr1, (void*)data, new UIntPtr((ulong)dataSize));
+				NativeInstance->SendHttp200Response(connectionId, &cstr1, (void*)data, new UIntPtr((ulong)dataSize));
 			}
 			GC.KeepAlive(this);
 		}
@@ -133,9 +134,9 @@ namespace CefNet
 		/// |connection_id|. The connection will be closed automatically after the
 		/// response is sent.
 		/// </summary>
-		public unsafe virtual void SendHttp404response(int connectionId)
+		public unsafe virtual void SendHttp404Response(int connectionId)
 		{
-			NativeInstance->SendHttp404response(connectionId);
+			NativeInstance->SendHttp404Response(connectionId);
 			GC.KeepAlive(this);
 		}
 
@@ -145,12 +146,12 @@ namespace CefNet
 		/// message. The connection will be closed automatically after the response is
 		/// sent.
 		/// </summary>
-		public unsafe virtual void SendHttp500response(int connectionId, string errorMessage)
+		public unsafe virtual void SendHttp500Response(int connectionId, string errorMessage)
 		{
 			fixed (char* s1 = errorMessage)
 			{
 				var cstr1 = new cef_string_t { Str = s1, Length = errorMessage != null ? errorMessage.Length : 0 };
-				NativeInstance->SendHttp500response(connectionId, &cstr1);
+				NativeInstance->SendHttp500Response(connectionId, &cstr1);
 			}
 			GC.KeepAlive(this);
 		}

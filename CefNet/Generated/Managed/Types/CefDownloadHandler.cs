@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure used to handle file downloads. The functions of this structure
 	/// will called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -51,7 +52,7 @@ namespace CefNet
 			self->on_download_updated = (void*)Marshal.GetFunctionPointerForDelegate(fnOnDownloadUpdated);
 			#else
 			self->can_download = (delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_string_t*, cef_string_t*, int>)&CanDownloadImpl;
-			self->on_before_download = (delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_download_item_t*, cef_string_t*, cef_before_download_callback_t*, void>)&OnBeforeDownloadImpl;
+			self->on_before_download = (delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_download_item_t*, cef_string_t*, cef_before_download_callback_t*, int>)&OnBeforeDownloadImpl;
 			self->on_download_updated = (delegate* unmanaged[Stdcall]<cef_download_handler_t*, cef_browser_t*, cef_download_item_t*, cef_download_item_callback_t*, void>)&OnDownloadUpdatedImpl;
 			#endif
 		}
@@ -70,6 +71,8 @@ namespace CefNet
 		/// attachment` response from the server). |url| is the target download URL
 		/// and |request_function| is the target function (GET, POST, etc). Return
 		/// true (1) to proceed with the download or false (0) to cancel the download.
+		/// This function is not called for downloads initiated by
+		/// cef_browser_host_t::start_download().
 		/// </summary>
 		protected internal unsafe virtual bool CanDownload(CefBrowser browser, string url, string requestMethod)
 		{
@@ -81,7 +84,7 @@ namespace CefNet
 		private unsafe delegate int CanDownloadDelegate(cef_download_handler_t* self, cef_browser_t* browser, cef_string_t* url, cef_string_t* request_method);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, const cef_string_t* url, const cef_string_t* request_method)*
+		// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, cef_string_t const* url, cef_string_t const* request_method)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -101,25 +104,30 @@ namespace CefNet
 
 		/// <summary>
 		/// Called before a download begins. |suggested_name| is the suggested name
-		/// for the download file. By default the download will be canceled. Execute
-		/// |callback| either asynchronously or in this function to continue the
-		/// download if desired. Do not keep a reference to |download_item| outside of
-		/// this function.
+		/// for the download file. Return true (1) and execute |callback| either
+		/// asynchronously or in this function to continue the download. Return false
+		/// (0) to proceed with default handling (cancel with Alloy style, default
+		/// download handling with Chrome style). To cancel the download with either
+		/// style execute the callback passed to on_download_updated(). If this
+		/// function returns true (1) and |callback| is destroyed without being
+		/// executed, the download will be canceled. Do not keep a reference to
+		/// |download_item| outside of this function.
 		/// </summary>
-		protected internal unsafe virtual void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
+		protected internal unsafe virtual bool OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
 		{
+			return default;
 		}
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnBeforeDownloadDelegate(cef_download_handler_t* self, cef_browser_t* browser, cef_download_item_t* download_item, cef_string_t* suggested_name, cef_before_download_callback_t* callback);
+		private unsafe delegate int OnBeforeDownloadDelegate(cef_download_handler_t* self, cef_browser_t* browser, cef_download_item_t* download_item, cef_string_t* suggested_name, cef_before_download_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_download_handler_t* self, _cef_browser_t* browser, _cef_download_item_t* download_item, const cef_string_t* suggested_name, _cef_before_download_callback_t* callback)*
+		// int (*)(_cef_download_handler_t* self, _cef_browser_t* browser, _cef_download_item_t* download_item, cef_string_t const* suggested_name, _cef_before_download_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnBeforeDownloadImpl(cef_download_handler_t* self, cef_browser_t* browser, cef_download_item_t* download_item, cef_string_t* suggested_name, cef_before_download_callback_t* callback)
+		private static unsafe int OnBeforeDownloadImpl(cef_download_handler_t* self, cef_browser_t* browser, cef_download_item_t* download_item, cef_string_t* suggested_name, cef_before_download_callback_t* callback)
 		{
 			var instance = GetInstance((IntPtr)self) as CefDownloadHandler;
 			if (instance == null || ((ICefDownloadHandlerPrivate)instance).AvoidOnBeforeDownload())
@@ -127,9 +135,9 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				ReleaseIfNonNull((cef_base_ref_counted_t*)download_item);
 				ReleaseIfNonNull((cef_base_ref_counted_t*)callback);
-				return;
+				return default;
 			}
-			instance.OnBeforeDownload(CefBrowser.Wrap(CefBrowser.Create, browser), CefDownloadItem.Wrap(CefDownloadItem.Create, download_item), CefString.Read(suggested_name), CefBeforeDownloadCallback.Wrap(CefBeforeDownloadCallback.Create, callback));
+			return instance.OnBeforeDownload(CefBrowser.Wrap(CefBrowser.Create, browser), CefDownloadItem.Wrap(CefDownloadItem.Create, download_item), CefString.Read(suggested_name), CefBeforeDownloadCallback.Wrap(CefBeforeDownloadCallback.Create, callback)) ? 1 : 0;
 		}
 
 		[MethodImpl(MethodImplOptions.ForwardRef)]

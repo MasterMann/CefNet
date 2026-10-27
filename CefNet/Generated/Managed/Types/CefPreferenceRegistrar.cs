@@ -22,6 +22,7 @@ namespace CefNet
 {
 	/// <summary>
 	/// Structure that manages custom preference registrations.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Proxy
@@ -55,6 +56,42 @@ namespace CefNet
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
 				return SafeCall(NativeInstance->AddPreference(&cstr0, (defaultValue != null) ? defaultValue.GetNativeInstance() : null) != 0);
+			}
+		}
+
+		/// <summary>
+		/// Override the default value of a previously registered preference. |value|
+		/// is required and must have the same type as the registered default. Its
+		/// contents will be copied. User and managed values take precedence over this
+		/// default. Returns false (0) and sets |error| if the preference is not
+		/// registered or |value| is invalid or has the wrong type. This function must
+		/// be called from within OnRegisterCustomPreferences.
+		/// </summary>
+		public unsafe virtual bool SetDefaultPreference(string name, CefValue value, ref string error)
+		{
+			fixed (char* s0 = name)
+			fixed (char* s2 = error)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
+				var cstr2 = new cef_string_t { Str = s2, Length = error != null ? error.Length : 0 };
+				var rv = NativeInstance->SetDefaultPreference(&cstr0, (value != null) ? value.GetNativeInstance() : null, &cstr2) != 0;
+				error = CefString.ReadAndFree(&cstr2);
+				GC.KeepAlive(this);
+				return rv;
+			}
+		}
+
+		/// <summary>
+		/// Returns a copy of the current default value for the preference with the
+		/// specified |name|, or NULL if the preference is not registered. This
+		/// function must be called from within OnRegisterCustomPreferences.
+		/// </summary>
+		public unsafe virtual CefValue GetDefaultPreference(string name)
+		{
+			fixed (char* s0 = name)
+			{
+				var cstr0 = new cef_string_t { Str = s0, Length = name != null ? name.Length : 0 };
+				return SafeCall(CefValue.Wrap(CefValue.Create, NativeInstance->GetDefaultPreference(&cstr0)));
 			}
 		}
 	}

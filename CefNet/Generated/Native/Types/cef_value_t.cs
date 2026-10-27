@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Structure that wraps other data value types. Complex types (binary,
 	/// dictionary and list) will be referenced but not owned by this object. Can be
 	/// used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_value_t
@@ -367,7 +368,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_value_t* self, const cef_string_t* value)*
+		/// int (*)(_cef_value_t* self, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 

@@ -24,6 +24,7 @@ namespace CefNet
 	/// Structure that should be implemented by the cef_urlrequest_t client. The
 	/// functions of this structure will be called on the same thread that created
 	/// the request unless otherwise documented.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -120,7 +121,7 @@ namespace CefNet
 		private unsafe delegate void OnUploadProgressDelegate(cef_urlrequest_client_t* self, cef_urlrequest_t* request, long current, long total);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64 current, int64 total)*
+		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64_t current, int64_t total)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -152,7 +153,7 @@ namespace CefNet
 		private unsafe delegate void OnDownloadProgressDelegate(cef_urlrequest_client_t* self, cef_urlrequest_t* request, long current, long total);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64 current, int64 total)*
+		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, int64_t current, int64_t total)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -184,7 +185,7 @@ namespace CefNet
 		private unsafe delegate void OnDownloadDataDelegate(cef_urlrequest_client_t* self, cef_urlrequest_t* request, void* data, UIntPtr data_length);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, const void* data, size_t data_length)*
+		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, void const* data, size_t data_length)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
@@ -224,7 +225,7 @@ namespace CefNet
 		private unsafe delegate int GetAuthCredentialsDelegate(cef_urlrequest_client_t* self, int isProxy, cef_string_t* host, int port, cef_string_t* realm, cef_string_t* scheme, cef_auth_callback_t* callback);
 
 #endif // NET_LESS_5_0
-		// int (*)(_cef_urlrequest_client_t* self, int isProxy, const cef_string_t* host, int port, const cef_string_t* realm, const cef_string_t* scheme, _cef_auth_callback_t* callback)*
+		// int (*)(_cef_urlrequest_client_t* self, int isProxy, cef_string_t const* host, int port, cef_string_t const* realm, cef_string_t const* scheme, _cef_auth_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif

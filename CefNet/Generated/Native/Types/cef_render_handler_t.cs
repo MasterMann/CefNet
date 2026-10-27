@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Implement this structure to handle events when window rendering is disabled.
 	/// The functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_render_handler_t
@@ -146,7 +147,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_rect_t* rect)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_rect_t const* rect)*
 		/// </summary>
 		public void* on_popup_size;
 
@@ -164,7 +165,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, const void* buffer, int width, int height)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, cef_rect_t const* dirtyRects, void const* buffer, int width, int height)*
 		/// </summary>
 		public void* on_paint;
 
@@ -189,7 +190,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, void* shared_handle)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, cef_rect_t const* dirtyRects, cef_accelerated_paint_info_t const* info)*
 		/// </summary>
 		public void* on_accelerated_paint;
 
@@ -197,17 +198,25 @@ namespace CefNet.CApi
 		/// Called when an element has been rendered to the shared texture handle.
 		/// |type| indicates whether the element is the view or the popup widget.
 		/// |dirtyRects| contains the set of rectangles in pixel coordinates that need
-		/// to be repainted. |shared_handle| is the handle for a D3D11 Texture2D that
-		/// can be accessed via ID3D11Device using the OpenSharedResource function.
-		/// This function is only called when cef_window_tInfo::shared_texture_enabled
-		/// is set to true (1), and is currently only supported on Windows.
+		/// to be repainted. |info| contains the shared handle; on Windows it is a
+		/// HANDLE to a texture that can be opened with D3D11 OpenSharedResource1 or
+		/// D3D12 OpenSharedHandle, on macOS it is an IOSurface pointer that can be
+		/// opened with Metal or OpenGL, and on Linux it contains several planes, each
+		/// with an fd to the underlying system native buffer.
+		/// The underlying implementation uses a pool to deliver frames. As a result,
+		/// the handle may differ every frame depending on how many frames are in-
+		/// progress. The handle&apos;s resource cannot be cached and cannot be accessed
+		/// outside of this callback. It should be reopened each time this callback is
+		/// executed and the contents should be copied to a texture owned by the
+		/// client application. The contents of |info| will be released back to the
+		/// pool after this callback returns.
 		/// </summary>
 		[NativeName("on_accelerated_paint")]
-		public unsafe void OnAcceleratedPaint(cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, [Immutable]cef_rect_t* dirtyRects, void* shared_handle)
+		public unsafe void OnAcceleratedPaint(cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, [Immutable]cef_rect_t* dirtyRects, [Immutable]cef_accelerated_paint_info_t* info)
 		{
 			fixed (cef_render_handler_t* self = &this)
 			{
-				((delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, void*, void>)on_accelerated_paint)(self, browser, type, dirtyRectsCount, dirtyRects, shared_handle);
+				((delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, cef_accelerated_paint_info_t*, void>)on_accelerated_paint)(self, browser, type, dirtyRectsCount, dirtyRects, info);
 			}
 		}
 
@@ -230,7 +239,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_touch_handle_state_t* state)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_touch_handle_state_t const* state)*
 		/// </summary>
 		public void* on_touch_handle_state_changed;
 
@@ -311,7 +320,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_range_t* selected_range, size_t character_boundsCount, const cef_rect_t* character_bounds)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_range_t const* selected_range, size_t character_boundsCount, cef_rect_t const* character_bounds)*
 		/// </summary>
 		public void* on_ime_composition_range_changed;
 
@@ -330,7 +339,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_string_t* selected_text, const cef_range_t* selected_range)*
+		/// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_string_t const* selected_text, cef_range_t const* selected_range)*
 		/// </summary>
 		public void* on_text_selection_changed;
 

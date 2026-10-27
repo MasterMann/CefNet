@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Structure representing a list value. Can be used on any process and thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_list_value_t
@@ -465,7 +466,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_list_value_t* self, size_t index, const cef_string_t* value)*
+		/// int (*)(_cef_list_value_t* self, size_t index, cef_string_t const* value)*
 		/// </summary>
 		public void* set_string;
 

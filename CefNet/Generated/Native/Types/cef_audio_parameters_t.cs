@@ -26,6 +26,11 @@ namespace CefNet.CApi
 	public unsafe partial struct cef_audio_parameters_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// Layout of the audio channels
 		/// </summary>
 		public CefChannelLayout channel_layout;

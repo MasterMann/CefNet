@@ -21,6 +21,7 @@ namespace CefNet.CApi
 	/// <summary>
 	/// Structure used to read data from a stream. The functions of this structure
 	/// may be called on any thread.
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_stream_reader_t
@@ -48,7 +49,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int (*)(_cef_stream_reader_t* self, int64 offset, int whence)*
+		/// int (*)(_cef_stream_reader_t* self, int64_t offset, int whence)*
 		/// </summary>
 		public void* seek;
 
@@ -67,7 +68,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// int64 (*)(_cef_stream_reader_t* self)*
+		/// int64_t (*)(_cef_stream_reader_t* self)*
 		/// </summary>
 		public void* tell;
 

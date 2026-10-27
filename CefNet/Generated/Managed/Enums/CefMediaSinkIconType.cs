@@ -40,10 +40,7 @@ namespace CefNet
 
 		Generic = 7,
 
-		/// <summary>
-		/// The total number of values.
-		/// </summary>
-		TotalCount = 8,
+		NumValues = 8,
 	}
 }
 

@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Structure to implement to be notified of asynchronous completion via
 	/// cef_cookie_manager_t::set_cookie().
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler

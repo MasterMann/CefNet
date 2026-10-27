@@ -22,6 +22,7 @@ namespace CefNet.CApi
 	/// Implemented by the client to observe MediaRouter events and registered via
 	/// cef_media_router_t::AddObserver. The functions of this structure will be
 	/// called on the browser process UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_media_observer_t
@@ -32,7 +33,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_media_observer_t* self, size_t sinksCount, const _cef_media_sink_t** sinks)*
+		/// const void (*)(_cef_media_observer_t* self, size_t sinksCount, _cef_media_sink_t** sinks)*
 		/// </summary>
 		public void* on_sinks;
 
@@ -50,7 +51,7 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_media_observer_t* self, size_t routesCount, const _cef_media_route_t** routes)*
+		/// const void (*)(_cef_media_observer_t* self, size_t routesCount, _cef_media_route_t** routes)*
 		/// </summary>
 		public void* on_routes;
 
@@ -85,12 +86,12 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// void (*)(_cef_media_observer_t* self, _cef_media_route_t* route, const void* message, size_t message_size)*
+		/// void (*)(_cef_media_observer_t* self, _cef_media_route_t* route, void const* message, size_t message_size)*
 		/// </summary>
 		public void* on_route_message_received;
 
 		/// <summary>
-		/// A message was recieved over |route|. |message| is only valid for the scope
+		/// A message was received over |route|. |message| is only valid for the scope
 		/// of this callback and should be copied if necessary.
 		/// </summary>
 		[NativeName("on_route_message_received")]

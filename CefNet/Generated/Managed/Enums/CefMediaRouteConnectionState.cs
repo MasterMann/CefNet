@@ -19,19 +19,22 @@ using CefNet.WinApi;
 namespace CefNet
 {
 	/// <summary>
-	/// Connection state for a MediaRoute object.
+	/// Connection state for a MediaRoute object. Should be kept in sync with
+	/// Chromium&apos;s blink::mojom::PresentationConnectionState type.
 	/// </summary>
 	public enum CefMediaRouteConnectionState
 	{
-		Unknown = 0,
+		Unknown = -1,
 
-		Connecting = 1,
+		Connecting = 0,
 
-		Connected = 2,
+		Connected = 1,
 
-		Closed = 3,
+		Closed = 2,
 
-		Terminated = 4,
+		Terminated = 3,
+
+		NumValues = 4,
 	}
 }
 

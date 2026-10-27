@@ -20,6 +20,7 @@ namespace CefNet.CApi
 {
 	/// <summary>
 	/// Callback for asynchronous continuation of cef_resource_handler_t::skip().
+	/// NOTE: This struct is allocated DLL-side.
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_resource_skip_callback_t
@@ -30,7 +31,7 @@ namespace CefNet.CApi
 		public cef_base_ref_counted_t @base;
 
 		/// <summary>
-		/// void (*)(_cef_resource_skip_callback_t* self, int64 bytes_skipped)*
+		/// void (*)(_cef_resource_skip_callback_t* self, int64_t bytes_skipped)*
 		/// </summary>
 		public void* cont;
 

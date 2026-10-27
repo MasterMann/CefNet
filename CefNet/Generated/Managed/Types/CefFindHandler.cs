@@ -23,6 +23,7 @@ namespace CefNet
 	/// <summary>
 	/// Implement this structure to handle events related to find results. The
 	/// functions of this structure will be called on the UI thread.
+	/// NOTE: This struct is allocated client-side.
 	/// </summary>
 	/// <remarks>
 	/// Role: Handler
@@ -74,7 +75,7 @@ namespace CefNet
 		private unsafe delegate void OnFindResultDelegate(cef_find_handler_t* self, cef_browser_t* browser, int identifier, int count, cef_rect_t* selectionRect, int activeMatchOrdinal, int finalUpdate);
 
 #endif // NET_LESS_5_0
-		// void (*)(_cef_find_handler_t* self, _cef_browser_t* browser, int identifier, int count, const cef_rect_t* selectionRect, int activeMatchOrdinal, int finalUpdate)*
+		// void (*)(_cef_find_handler_t* self, _cef_browser_t* browser, int identifier, int count, cef_rect_t const* selectionRect, int activeMatchOrdinal, int finalUpdate)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
