@@ -44,6 +44,8 @@ namespace CefNet.Internal
 			_device = device;
 			_context = context;
 			_root = compositor.CreateContainerVisual();
+			// The container keeps a zero size; without this its children are clipped away.
+			_root.ClipToBounds = false;
 			_view = new Layer(compositor, CefPaintElementType.View);
 			_popup = new Layer(compositor, CefPaintElementType.Popup);
 			_popup.Visual.Visible = false;
@@ -168,6 +170,8 @@ namespace CefNet.Internal
 						{
 							Width = layer.Width,
 							Height = layer.Height,
+							// D3D11 textures start at the top row; GL-based compositors (ANGLE) otherwise flip them.
+							TopLeftOrigin = true,
 							Format = layer.Format == Format.R8G8B8A8_UNorm ? PlatformGraphicsExternalImageFormat.R8G8B8A8UNorm : PlatformGraphicsExternalImageFormat.B8G8R8A8UNorm,
 						});
 					layer.ImageHandle = layer.SharedHandle;
