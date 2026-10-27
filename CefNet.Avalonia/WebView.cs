@@ -31,6 +31,12 @@ namespace CefNet.Avalonia
 		private PointerPressedEventArgs _lastPointerPressedEventArgs;
 		private Dictionary<InitialPropertyKeys, object> InitialPropertyBag = new Dictionary<InitialPropertyKeys, object>();
 
+		static WebView()
+		{
+			// Keyboard input reaches the browser only while the control has keyboard focus.
+			FocusableProperty.OverrideDefaultValue<WebView>(true);
+		}
+
 		/// <summary>
 		/// Identifies the <see cref="StartDragging"/> routed event.
 		/// </summary>
@@ -311,7 +317,7 @@ namespace CefNet.Avalonia
 			if (this.ViewGlue != null)
 			{
 				SetState(State.Closing, true);
-				BrowserObject?.Host.CloseBrowser(true);
+				BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				this.ViewGlue = null;
 			}
 		}

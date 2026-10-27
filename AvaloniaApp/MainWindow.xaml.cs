@@ -144,20 +144,32 @@ namespace AvaloniaApp
 			AddTab(true);
 		}
 
+		private void BackButton_Click(object sender, RoutedEventArgs e)
+		{
+			SelectedView?.GoBack();
+		}
+
+		private void ForwardButton_Click(object sender, RoutedEventArgs e)
+		{
+			SelectedView?.GoForward();
+		}
+
 		private void NavigateButton_Click(object sender, RoutedEventArgs e)
 		{
-			//SelectedView?.Navigate("http://yandex.ru");
-			SelectedView?.Navigate("https://cefnet.github.io/winsize.html");
+			NavigateToAddress();
 		}
 
 		private void txtAddress_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Enter)
+				NavigateToAddress();
+		}
+
+		private void NavigateToAddress()
+		{
+			if (Uri.TryCreate(txtAddress.Text, UriKind.Absolute, out Uri url))
 			{
-				if (Uri.TryCreate(txtAddress.Text, UriKind.Absolute, out Uri url))
-				{
-					SelectedView?.Navigate(url.AbsoluteUri);
-				}
+				SelectedView?.Navigate(url.AbsoluteUri);
 			}
 		}
 
@@ -210,7 +222,14 @@ namespace AvaloniaApp
 				return;
 
 			dynamic scriptableObject = await webView.GetMainFrame().GetScriptableObjectAsync(CancellationToken.None).ConfigureAwait(false);
-			scriptableObject.window.alert("hello");
+			try
+			{
+				scriptableObject.window.alert("hello");
+			}
+			catch (TimeoutException)
+			{
+				// alert() returns only after the user closes the dialog, which can outlast the script call timeout.
+			}
 		}
 
 	}

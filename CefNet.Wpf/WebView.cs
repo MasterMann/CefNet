@@ -205,7 +205,7 @@ namespace CefNet.Wpf
 			if (this.ViewGlue != null)
 			{
 				SetState(State.Closing, true);
-				BrowserObject?.Host.CloseBrowser(true);
+				BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				this.ViewGlue = null;
 			}
 		}

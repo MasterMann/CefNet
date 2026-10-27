@@ -176,7 +176,7 @@ namespace CefNet.Windows.Forms
 				SetState(State.Closing, true);
 				if (!this.DesignMode)
 				{
-					ViewGlue.BrowserObject?.Host.CloseBrowser(true);
+					ViewGlue.BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				}
 			}
 		}

@@ -71,7 +71,7 @@ namespace CefNet
 		{
 			if (this.ViewGlue != null)
 			{
-				BrowserObject?.Host.CloseBrowser(true);
+				BrowserObject?.Host.CloseBrowserAndDevTools(true);
 				this.ViewGlue = null;
 			}
 		}
