@@ -67,8 +67,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLoadHandlerPrivate.AvoidOnLoadingStateChange();
+		bool ICefLoadHandlerPrivate.AvoidOnLoadingStateChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLoadHandler), nameof(OnLoadingStateChange));
+		}
 
 		/// <summary>
 		/// Called when the loading state has changed. This callback will be executed
@@ -101,8 +103,10 @@ namespace CefNet
 			instance.OnLoadingStateChange(CefBrowser.Wrap(CefBrowser.Create, browser), isLoading != 0, canGoBack != 0, canGoForward != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLoadHandlerPrivate.AvoidOnLoadStart();
+		bool ICefLoadHandlerPrivate.AvoidOnLoadStart()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLoadHandler), nameof(OnLoadStart));
+		}
 
 		/// <summary>
 		/// Called after a navigation has been committed and before the browser begins
@@ -141,8 +145,10 @@ namespace CefNet
 			instance.OnLoadStart(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), transition_type);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLoadHandlerPrivate.AvoidOnLoadEnd();
+		bool ICefLoadHandlerPrivate.AvoidOnLoadEnd()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLoadHandler), nameof(OnLoadEnd));
+		}
 
 		/// <summary>
 		/// Called when the browser is done loading a frame. The |frame| value will
@@ -179,8 +185,10 @@ namespace CefNet
 			instance.OnLoadEnd(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), httpStatusCode);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLoadHandlerPrivate.AvoidOnLoadError();
+		bool ICefLoadHandlerPrivate.AvoidOnLoadError()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLoadHandler), nameof(OnLoadError));
+		}
 
 		/// <summary>
 		/// Called when a navigation fails or is canceled. This function may be called

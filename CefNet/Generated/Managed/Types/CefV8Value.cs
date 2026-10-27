@@ -313,9 +313,9 @@ namespace CefNet
 		/// caught and not re-thrown. Returns true (1) on success. This attribute
 		/// exists only in the scope of the current CEF value object.
 		/// </summary>
-		public unsafe virtual bool SetRethrowExceptions(int rethrow)
+		public unsafe virtual bool SetRethrowExceptions(bool rethrow)
 		{
-			return SafeCall(NativeInstance->SetRethrowExceptions(rethrow) != 0);
+			return SafeCall(NativeInstance->SetRethrowExceptions(rethrow ? 1 : 0) != 0);
 		}
 
 		/// <summary>

@@ -131,8 +131,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFrameHandlerPrivate.AvoidOnFrameCreated();
+		bool ICefFrameHandlerPrivate.AvoidOnFrameCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFrameHandler), nameof(OnFrameCreated));
+		}
 
 		/// <summary>
 		/// Called when a new frame is created. This will be the first notification
@@ -167,8 +169,10 @@ namespace CefNet
 			instance.OnFrameCreated(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFrameHandlerPrivate.AvoidOnFrameDestroyed();
+		bool ICefFrameHandlerPrivate.AvoidOnFrameDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFrameHandler), nameof(OnFrameDestroyed));
+		}
 
 		/// <summary>
 		/// Called when an existing frame is destroyed. This will be the last
@@ -203,8 +207,10 @@ namespace CefNet
 			instance.OnFrameDestroyed(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFrameHandlerPrivate.AvoidOnFrameAttached();
+		bool ICefFrameHandlerPrivate.AvoidOnFrameAttached()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFrameHandler), nameof(OnFrameAttached));
+		}
 
 		/// <summary>
 		/// Called when a frame can begin routing commands to/from the associated
@@ -239,8 +245,10 @@ namespace CefNet
 			instance.OnFrameAttached(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), reattached != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFrameHandlerPrivate.AvoidOnFrameDetached();
+		bool ICefFrameHandlerPrivate.AvoidOnFrameDetached()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFrameHandler), nameof(OnFrameDetached));
+		}
 
 		/// <summary>
 		/// Called when a frame loses its connection to the renderer process. This may
@@ -282,8 +290,10 @@ namespace CefNet
 			instance.OnFrameDetached(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFrameHandlerPrivate.AvoidOnMainFrameChanged();
+		bool ICefFrameHandlerPrivate.AvoidOnMainFrameChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFrameHandler), nameof(OnMainFrameChanged));
+		}
 
 		/// <summary>
 		/// Called when the main frame changes due to (a) initial browser creation,

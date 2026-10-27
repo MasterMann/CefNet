@@ -162,6 +162,7 @@ namespace CefGen
 			{
 					MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
 					MetadataReference.CreateFromFile(typeof(HashSet<>).GetTypeInfo().Assembly.Location),
+					MetadataReference.CreateFromFile(typeof(System.Collections.Concurrent.ConcurrentDictionary<,>).GetTypeInfo().Assembly.Location),
 			};
 
 			CSharpCompilation compilation = CSharpCompilation.Create(

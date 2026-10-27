@@ -284,12 +284,12 @@ namespace CefNet
 		/// <summary>
 		/// Returns the frame with the specified identifier, or null if not found.
 		/// </summary>
-		CefFrame GetFrame(long identifier);
+		CefFrame GetFrameByIdentifier(string identifier);
 
 		/// <summary>
 		/// Returns the frame with the specified name, or null if not found.
 		/// </summary>
-		CefFrame GetFrame(string name);
+		CefFrame GetFrameByName(string name);
 
 		/// <summary>
 		/// Returns the number of frames that currently exist.
@@ -299,7 +299,7 @@ namespace CefNet
 		/// <summary>
 		/// Gets the identifiers of all existing frames.
 		/// </summary>
-		long[] GetFrameIdentifiers();
+		string[] GetFrameIdentifiers();
 
 		/// <summary>
 		/// Gets the names of all existing frames.

@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCookieVisitorPrivate.AvoidVisit();
+		bool ICefCookieVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCookieVisitor), nameof(Visit));
+		}
 
 		/// <summary>
 		/// Method that will be called once for each cookie. |count| is the 0-based

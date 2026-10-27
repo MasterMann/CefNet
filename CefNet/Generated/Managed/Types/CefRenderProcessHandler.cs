@@ -113,8 +113,10 @@ namespace CefNet
 			instance.OnWebKitInitialized();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserCreated();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnBrowserCreated));
+		}
 
 		/// <summary>
 		/// Called after a browser has been created. When browsing cross-origin a new
@@ -150,8 +152,10 @@ namespace CefNet
 			instance.OnBrowserCreated(CefBrowser.Wrap(CefBrowser.Create, browser), CefDictionaryValue.Wrap(CefDictionaryValue.Create, extra_info));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserDestroyed();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnBrowserDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnBrowserDestroyed));
+		}
 
 		/// <summary>
 		/// Called before a browser is destroyed.
@@ -210,8 +214,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnContextCreated();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnContextCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnContextCreated));
+		}
 
 		/// <summary>
 		/// Called immediately after the V8 context for a frame has been created. To
@@ -247,8 +253,10 @@ namespace CefNet
 			instance.OnContextCreated(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnContextReleased();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnContextReleased()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnContextReleased));
+		}
 
 		/// <summary>
 		/// Called immediately before the V8 context for a frame is released. No
@@ -280,8 +288,10 @@ namespace CefNet
 			instance.OnContextReleased(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnUncaughtException();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnUncaughtException()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnUncaughtException));
+		}
 
 		/// <summary>
 		/// Called for global uncaught exceptions in a frame. Execution of this
@@ -316,8 +326,10 @@ namespace CefNet
 			instance.OnUncaughtException(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefV8Context.Wrap(CefV8Context.Create, context), CefV8Exception.Wrap(CefV8Exception.Create, exception), CefV8StackTrace.Wrap(CefV8StackTrace.Create, stackTrace));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnFocusedNodeChanged();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnFocusedNodeChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnFocusedNodeChanged));
+		}
 
 		/// <summary>
 		/// Called when a new node in the the browser gets focus. The |node| value may
@@ -353,8 +365,10 @@ namespace CefNet
 			instance.OnFocusedNodeChanged(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefDOMNode.Wrap(CefDOMNode.Create, node));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderProcessHandlerPrivate.AvoidOnProcessMessageReceived();
+		bool ICefRenderProcessHandlerPrivate.AvoidOnProcessMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderProcessHandler), nameof(OnProcessMessageReceived));
+		}
 
 		/// <summary>
 		/// Called when a new message is received from a different process. Return

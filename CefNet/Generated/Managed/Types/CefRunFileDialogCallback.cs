@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRunFileDialogCallbackPrivate.AvoidOnFileDialogDismissed();
+		bool ICefRunFileDialogCallbackPrivate.AvoidOnFileDialogDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRunFileDialogCallback), nameof(OnFileDialogDismissed));
+		}
 
 		/// <summary>
 		/// Called asynchronously after the file dialog is dismissed. |file_paths|

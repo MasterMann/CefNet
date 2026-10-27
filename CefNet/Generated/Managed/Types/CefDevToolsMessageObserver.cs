@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsMessage();
+		bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDevToolsMessageObserver), nameof(OnDevToolsMessage));
+		}
 
 		/// <summary>
 		/// Method that will be called on receipt of a DevTools protocol message.
@@ -119,8 +121,10 @@ namespace CefNet
 			return instance.OnDevToolsMessage(CefBrowser.Wrap(CefBrowser.Create, browser), unchecked((IntPtr)message), (long)message_size) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsMethodResult();
+		bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsMethodResult()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDevToolsMessageObserver), nameof(OnDevToolsMethodResult));
+		}
 
 		/// <summary>
 		/// Method that will be called after attempted execution of a DevTools
@@ -158,8 +162,10 @@ namespace CefNet
 			instance.OnDevToolsMethodResult(CefBrowser.Wrap(CefBrowser.Create, browser), message_id, success != 0, unchecked((IntPtr)result), (long)result_size);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsEvent();
+		bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsEvent()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDevToolsMessageObserver), nameof(OnDevToolsEvent));
+		}
 
 		/// <summary>
 		/// Method that will be called on receipt of a DevTools protocol event.
@@ -193,8 +199,10 @@ namespace CefNet
 			instance.OnDevToolsEvent(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(method), unchecked((IntPtr)@params), (long)params_size);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsAgentAttached();
+		bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsAgentAttached()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDevToolsMessageObserver), nameof(OnDevToolsAgentAttached));
+		}
 
 		/// <summary>
 		/// Method that will be called when the DevTools agent has attached. |browser|
@@ -225,8 +233,10 @@ namespace CefNet
 			instance.OnDevToolsAgentAttached(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsAgentDetached();
+		bool ICefDevToolsMessageObserverPrivate.AvoidOnDevToolsAgentDetached()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDevToolsMessageObserver), nameof(OnDevToolsAgentDetached));
+		}
 
 		/// <summary>
 		/// Method that will be called when the DevTools agent has detached. |browser|

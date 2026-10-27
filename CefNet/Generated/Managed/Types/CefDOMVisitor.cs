@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDOMVisitorPrivate.AvoidVisit();
+		bool ICefDOMVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDOMVisitor), nameof(Visit));
+		}
 
 		/// <summary>
 		/// Method executed for visiting the DOM. The document object passed to this

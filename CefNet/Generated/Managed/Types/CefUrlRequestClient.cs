@@ -71,8 +71,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefUrlRequestClientPrivate.AvoidOnRequestComplete();
+		bool ICefUrlRequestClientPrivate.AvoidOnRequestComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefUrlRequestClient), nameof(OnRequestComplete));
+		}
 
 		/// <summary>
 		/// Notifies the client that the request has completed. Use the
@@ -103,8 +105,10 @@ namespace CefNet
 			instance.OnRequestComplete(CefUrlRequest.Wrap(CefUrlRequest.Create, request));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefUrlRequestClientPrivate.AvoidOnUploadProgress();
+		bool ICefUrlRequestClientPrivate.AvoidOnUploadProgress()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefUrlRequestClient), nameof(OnUploadProgress));
+		}
 
 		/// <summary>
 		/// Notifies the client of upload progress. |current| denotes the number of
@@ -136,8 +140,10 @@ namespace CefNet
 			instance.OnUploadProgress(CefUrlRequest.Wrap(CefUrlRequest.Create, request), current, total);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefUrlRequestClientPrivate.AvoidOnDownloadProgress();
+		bool ICefUrlRequestClientPrivate.AvoidOnDownloadProgress()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefUrlRequestClient), nameof(OnDownloadProgress));
+		}
 
 		/// <summary>
 		/// Notifies the client of download progress. |current| denotes the number of
@@ -168,8 +174,10 @@ namespace CefNet
 			instance.OnDownloadProgress(CefUrlRequest.Wrap(CefUrlRequest.Create, request), current, total);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefUrlRequestClientPrivate.AvoidOnDownloadData();
+		bool ICefUrlRequestClientPrivate.AvoidOnDownloadData()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefUrlRequestClient), nameof(OnDownloadData));
+		}
 
 		/// <summary>
 		/// Called when some part of the response is read. |data| contains the current
@@ -200,8 +208,10 @@ namespace CefNet
 			instance.OnDownloadData(CefUrlRequest.Wrap(CefUrlRequest.Create, request), unchecked((IntPtr)data), (long)data_length);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefUrlRequestClientPrivate.AvoidGetAuthCredentials();
+		bool ICefUrlRequestClientPrivate.AvoidGetAuthCredentials()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefUrlRequestClient), nameof(GetAuthCredentials));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when the browser needs credentials from the user.

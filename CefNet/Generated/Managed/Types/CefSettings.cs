@@ -746,8 +746,9 @@ namespace CefNet
 				ChromePolicyId = null;
 				KeychainServiceName = null;
 				KeychainAccountName = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefSettings()

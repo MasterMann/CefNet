@@ -94,15 +94,12 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the global object for this context. The context must be entered
-		/// before calling this property.
+		/// Returns the global object for this context. The context must be entered
+		/// before calling this function.
 		/// </summary>
-		public unsafe virtual CefV8Value Global
+		public unsafe virtual CefV8Value GetGlobal()
 		{
-			get
-			{
-				return SafeCall(CefV8Value.Wrap(CefV8Value.Create, NativeInstance->GetGlobal()));
-			}
+			return SafeCall(CefV8Value.Wrap(CefV8Value.Create, NativeInstance->GetGlobal()));
 		}
 
 		/// <summary>

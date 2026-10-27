@@ -55,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefSettingObserverPrivate.AvoidOnSettingChanged();
+		bool ICefSettingObserverPrivate.AvoidOnSettingChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefSettingObserver), nameof(OnSettingChanged));
+		}
 
 		/// <summary>
 		/// Called when a content or website setting has changed. The new value can be

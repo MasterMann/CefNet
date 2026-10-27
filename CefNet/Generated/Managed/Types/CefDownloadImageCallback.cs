@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDownloadImageCallbackPrivate.AvoidOnDownloadImageFinished();
+		bool ICefDownloadImageCallbackPrivate.AvoidOnDownloadImageFinished()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDownloadImageCallback), nameof(OnDownloadImageFinished));
+		}
 
 		/// <summary>
 		/// Method that will be executed when the image download has completed.

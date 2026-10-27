@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaRouteCreateCallbackPrivate.AvoidOnMediaRouteCreateFinished();
+		bool ICefMediaRouteCreateCallbackPrivate.AvoidOnMediaRouteCreateFinished()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaRouteCreateCallback), nameof(OnMediaRouteCreateFinished));
+		}
 
 		/// <summary>
 		/// Method that will be executed when the route creation has finished.

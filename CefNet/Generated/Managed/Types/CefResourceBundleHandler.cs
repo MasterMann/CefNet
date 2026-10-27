@@ -63,8 +63,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceBundleHandlerPrivate.AvoidGetLocalizedString();
+		bool ICefResourceBundleHandlerPrivate.AvoidGetLocalizedString()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceBundleHandler), nameof(GetLocalizedString));
+		}
 
 		/// <summary>
 		/// Called to retrieve a localized translation for the specified |string_id|.
@@ -103,8 +105,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceBundleHandlerPrivate.AvoidGetDataResource();
+		bool ICefResourceBundleHandlerPrivate.AvoidGetDataResource()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceBundleHandler), nameof(GetDataResource));
+		}
 
 		/// <summary>
 		/// Called to retrieve data for the specified scale independent |resource_id|.
@@ -142,8 +146,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceBundleHandlerPrivate.AvoidGetDataResourceForScale();
+		bool ICefResourceBundleHandlerPrivate.AvoidGetDataResourceForScale()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceBundleHandler), nameof(GetDataResourceForScale));
+		}
 
 		/// <summary>
 		/// Called to retrieve data for the specified |resource_id| nearest the scale

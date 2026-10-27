@@ -19,13 +19,27 @@ namespace CefNet.JSInterop
 		[FieldOffset(12)]
 		public long iRaw;
 
-		public XrayHandle(long frameid, IntPtr handle, XrayDataType dataType)
+		public XrayHandle(string frameIdentifier, IntPtr handle, XrayDataType dataType)
 		{
 			this.dataType = dataType;
 			iRaw = 0;
 			fRaw = 0;
-			frame = frameid;
+			frame = GetFrameKey(frameIdentifier);
 			this.gcHandle = handle;
+		}
+
+		/// <summary>
+		/// Returns a 64-bit key for a CEF frame identifier that is identical in every process
+		/// (FNV-1a), so handles can carry it in their fixed binary layout.
+		/// </summary>
+		public static long GetFrameKey(string frameIdentifier)
+		{
+			ulong hash = 14695981039346656037UL;
+			foreach (char c in frameIdentifier ?? string.Empty)
+			{
+				hash = (hash ^ c) * 1099511628211UL;
+			}
+			return (long)hash;
 		}
 
 		public void Release()
@@ -43,7 +57,7 @@ namespace CefNet.JSInterop
 			if (this.gcHandle == IntPtr.Zero)
 				return null;
 
-			if(frame is null || frame.Identifier != this.frame)
+			if(frame is null || GetFrameKey(frame.Identifier) != this.frame)
 				throw new ObjectDeadException();
 
 			GCHandle handle = GCHandle.FromIntPtr(this.gcHandle);

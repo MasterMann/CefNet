@@ -175,12 +175,12 @@ namespace CefNet
 			return _bounds;
 		}
 
-		bool IChromiumWebViewPrivate.GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		bool IChromiumWebViewPrivate.GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
-			return GetCefScreenInfo(ref screenInfo);
+			return GetCefScreenInfo(screenInfo);
 		}
 
-		protected virtual bool GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		protected virtual bool GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
 			return false;
 		}

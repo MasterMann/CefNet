@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFindHandlerPrivate.AvoidOnFindResult();
+		bool ICefFindHandlerPrivate.AvoidOnFindResult()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFindHandler), nameof(OnFindResult));
+		}
 
 		/// <summary>
 		/// Called to report find results returned by cef_browser_host_t::find().

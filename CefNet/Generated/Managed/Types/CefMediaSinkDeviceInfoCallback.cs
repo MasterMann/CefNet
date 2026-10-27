@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaSinkDeviceInfoCallbackPrivate.AvoidOnMediaSinkDeviceInfo();
+		bool ICefMediaSinkDeviceInfoCallbackPrivate.AvoidOnMediaSinkDeviceInfo()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaSinkDeviceInfoCallback), nameof(OnMediaSinkDeviceInfo));
+		}
 
 		/// <summary>
 		/// Method that will be executed asyncronously once device information has

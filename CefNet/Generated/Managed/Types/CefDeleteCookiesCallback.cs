@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDeleteCookiesCallbackPrivate.AvoidOnComplete();
+		bool ICefDeleteCookiesCallbackPrivate.AvoidOnComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDeleteCookiesCallback), nameof(OnComplete));
+		}
 
 		/// <summary>
 		/// Method that will be called upon completion. |num_deleted| will be the

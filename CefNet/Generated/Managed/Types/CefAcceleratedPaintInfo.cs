@@ -28,7 +28,7 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefAcceleratedPaintInfo
+	public unsafe partial class CefAcceleratedPaintInfo : IDisposable
 	{
 		private cef_accelerated_paint_info_t* _instance;
 
@@ -153,6 +153,26 @@ namespace CefNet
 			{
 				_instance->extra = *value.GetNativeInstance();
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefAcceleratedPaintInfo()
+		{
+			Dispose(false);
 		}
 	}
 }

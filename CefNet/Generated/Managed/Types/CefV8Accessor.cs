@@ -60,8 +60,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8AccessorPrivate.AvoidGet();
+		bool ICefV8AccessorPrivate.AvoidGet()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Accessor), nameof(Get));
+		}
 
 		/// <summary>
 		/// Handle retrieval the accessor value identified by |name|. |object| is the
@@ -102,8 +104,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8AccessorPrivate.AvoidSet();
+		bool ICefV8AccessorPrivate.AvoidSet()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Accessor), nameof(Set));
+		}
 
 		/// <summary>
 		/// Handle assignment of the accessor value identified by |name|. |object| is

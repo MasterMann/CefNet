@@ -26,7 +26,7 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefKeyEvent
+	public unsafe partial class CefKeyEvent : IDisposable
 	{
 		private cef_key_event_t* _instance;
 
@@ -203,6 +203,26 @@ namespace CefNet
 			{
 				_instance->focus_on_editable_field = value ? 1 : 0;
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefKeyEvent()
+		{
+			Dispose(false);
 		}
 	}
 }

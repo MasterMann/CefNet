@@ -4,19 +4,19 @@ using CefNet.Unsafe;
 namespace CefNet.CApi
 {
 #pragma warning disable CS1591
-	public unsafe partial struct cef_v8value_t
+	public unsafe partial struct cef_v8_value_t
 #pragma warning restore CS1591
 	{
 		/// <summary>
 		/// Returns the hash code for this instance.
 		/// </summary>
-		/// <returns>A hash code for the <see cref="cef_v8value_t"/> object.</returns>
+		/// <returns>A hash code for the <see cref="cef_v8_value_t"/> object.</returns>
 		public override int GetHashCode()
 		{
 			if (IsValid() == 0)
 				return 0;
 
-			fixed (cef_v8value_t* self = &this)
+			fixed (cef_v8_value_t* self = &this)
 			{
 				RefCountedWrapperStruct* ws = RefCountedWrapperStruct.FromRefCounted(self);
 				V8ValueImplLayout* v8impl = V8ValueImplLayout.FromCppObject(ws->cppObject);

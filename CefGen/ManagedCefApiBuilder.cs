@@ -182,31 +182,30 @@ namespace CefGen
 				GenerateSimpleProperty(field);
 			}
 
+			// Instances created by the public constructor own their native structure; strings
+			// inside it are released by assigning null before the structure is freed.
 			CodeProperty[] disposable = Class.Members.OfType<CodeProperty>().Where(prop => prop.Type.Type == "string").ToArray();
-			if (disposable.Length > 0)
-			{
-				Class.BaseType = "IDisposable";
+			Class.BaseType = "IDisposable";
 
-				var dispose = new CodeMethod("Dispose");
-				dispose.Attributes = CodeAttributes.Public;
-				dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
-				dispose.Body = "Dispose(true);\r\nGC.SuppressFinalize(this);";
-				Class.Members.Add(dispose);
+			var dispose = new CodeMethod("Dispose");
+			dispose.Attributes = CodeAttributes.Public;
+			dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
+			dispose.Body = "Dispose(true);\r\nGC.SuppressFinalize(this);";
+			Class.Members.Add(dispose);
 
-				dispose = new CodeMethod("Dispose");
-				dispose.Attributes = CodeAttributes.Protected | CodeAttributes.Virtual;
-				dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
-				dispose.Parameters.Add(new CodeMethodParameter("disposing") { Type = "bool" });
-				dispose.Body = "if (_disposable && _instance != null)\r\n{\r\n\t"
-					+ string.Join("\r\n\t", disposable.Select(prop => prop.Name + " = null;"))
-					+ "\r\n\tMarshal.FreeHGlobal((IntPtr)_instance);\r\n\t_instance = null;"
-					+ "}";
-				Class.Members.Add(dispose);
+			dispose = new CodeMethod("Dispose");
+			dispose.Attributes = CodeAttributes.Protected | CodeAttributes.Virtual;
+			dispose.RetVal = new CodeMethodParameter(null) { Type = "void" };
+			dispose.Parameters.Add(new CodeMethodParameter("disposing") { Type = "bool" });
+			dispose.Body = "if (_disposable && _instance != null)\r\n{\r\n\t"
+				+ string.Concat(disposable.Select(prop => prop.Name + " = null;\r\n\t"))
+				+ "CefStructure.Free((IntPtr)_instance);\r\n\t_instance = null;\r\n"
+				+ "}";
+			Class.Members.Add(dispose);
 
-				var dtor = new CodeFinalizer(Class.Name);
-				dtor.Body = "Dispose(false);";
-				Class.Members.Add(dtor);
-			}
+			var dtor = new CodeFinalizer(Class.Name);
+			dtor.Body = "Dispose(false);";
+			Class.Members.Add(dtor);
 
 			ns.Types.Add(Class);
 
@@ -279,8 +278,6 @@ namespace CefGen
 				throw new NotImplementedException();
 			if (symbolInfo.IsPointedType)
 			{
-				if (field.Type.ToString() != "void*")
-					throw new NotImplementedException();
 				prop.Type = new CodeMethodParameter("value") { Type = "IntPtr" };
 			}
 			else
@@ -309,10 +306,10 @@ namespace CefGen
 					prop.SetterBody = "CefString.Replace(&_instance->" + fieldName + ", value);";
 				}
 			}
-			else if (field.Type.ToString() == "void*")
+			else if (symbolInfo.IsPointedType)
 			{
 				prop.GetterBody = "return new IntPtr(_instance" + accessOp + fieldName + ");";
-				prop.SetterBody = string.Format("_instance{0}{1} = (void*)value;", accessOp, fieldName);
+				prop.SetterBody = string.Format("_instance{0}{1} = ({2})value;", accessOp, fieldName, field.Type.ToCefDisplayString());
 			}
 			else if (field.Type.Name == "UIntPtr")
 			{
@@ -534,7 +531,7 @@ namespace CefGen
 								methods.Add(method);
 								continue;
 							}
-							if (TypeSymbol.Name == "cef_v8context_t" && method.Name == "GetGlobal")
+							if (TypeSymbol.Name == "cef_v8_context_t" && method.Name == "GetGlobal")
 							{
 								methods.Add(method);
 								continue;
@@ -998,9 +995,8 @@ namespace CefGen
 			if (method.Parameters.Length == 0)
 				return null;
 			var decl = new CodeMethod("I" + Class.Name + "Private.Avoid" + method.Name);
-			decl.Attributes = CodeAttributes.External;
-			decl.CustomAttributes.AddMethodImplForwardRefAttribute();
 			decl.RetVal = new CodeMethodParameter(null) { Type = "bool" };
+			decl.Body = string.Format("return !VirtualMethods.IsOverridden(this, typeof({0}), nameof({1}));", Class.Name, method.Name);
 			Class.Members.Add(decl);
 			return decl;
 		}

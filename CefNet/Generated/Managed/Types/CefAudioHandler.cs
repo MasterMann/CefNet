@@ -69,8 +69,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAudioHandlerPrivate.AvoidGetAudioParameters();
+		bool ICefAudioHandlerPrivate.AvoidGetAudioParameters()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAudioHandler), nameof(GetAudioParameters));
+		}
 
 		/// <summary>
 		/// Called on the UI thread to allow configuration of audio stream parameters.
@@ -103,8 +105,10 @@ namespace CefNet
 			return instance.GetAudioParameters(CefBrowser.Wrap(CefBrowser.Create, browser), new CefAudioParameters(@params)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAudioHandlerPrivate.AvoidOnAudioStreamStarted();
+		bool ICefAudioHandlerPrivate.AvoidOnAudioStreamStarted()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAudioHandler), nameof(OnAudioStreamStarted));
+		}
 
 		/// <summary>
 		/// Called on a browser audio capture thread when the browser starts streaming
@@ -137,8 +141,10 @@ namespace CefNet
 			instance.OnAudioStreamStarted(CefBrowser.Wrap(CefBrowser.Create, browser), new CefAudioParameters(@params), channels);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAudioHandlerPrivate.AvoidOnAudioStreamPacket();
+		bool ICefAudioHandlerPrivate.AvoidOnAudioStreamPacket()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAudioHandler), nameof(OnAudioStreamPacket));
+		}
 
 		/// <summary>
 		/// Called on the audio stream thread when a PCM packet is received for the
@@ -174,8 +180,10 @@ namespace CefNet
 			instance.OnAudioStreamPacket(CefBrowser.Wrap(CefBrowser.Create, browser), (IntPtr)data, frames, pts);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAudioHandlerPrivate.AvoidOnAudioStreamStopped();
+		bool ICefAudioHandlerPrivate.AvoidOnAudioStreamStopped()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAudioHandler), nameof(OnAudioStreamStopped));
+		}
 
 		/// <summary>
 		/// Called on the UI thread when the stream has stopped. OnAudioSteamStopped
@@ -206,8 +214,10 @@ namespace CefNet
 			instance.OnAudioStreamStopped(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAudioHandlerPrivate.AvoidOnAudioStreamError();
+		bool ICefAudioHandlerPrivate.AvoidOnAudioStreamError()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefAudioHandler), nameof(OnAudioStreamError));
+		}
 
 		/// <summary>
 		/// Called on the UI or audio stream thread when an error occurred. During the

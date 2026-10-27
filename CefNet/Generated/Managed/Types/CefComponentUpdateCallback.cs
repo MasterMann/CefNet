@@ -53,8 +53,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefComponentUpdateCallbackPrivate.AvoidOnComplete();
+		bool ICefComponentUpdateCallbackPrivate.AvoidOnComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefComponentUpdateCallback), nameof(OnComplete));
+		}
 
 		/// <summary>
 		/// Called when the component update operation completes. |component_id| is

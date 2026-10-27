@@ -58,8 +58,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDragHandlerPrivate.AvoidOnDragEnter();
+		bool ICefDragHandlerPrivate.AvoidOnDragEnter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDragHandler), nameof(OnDragEnter));
+		}
 
 		/// <summary>
 		/// Called when an external drag event enters the browser window. |dragData|
@@ -93,8 +95,10 @@ namespace CefNet
 			return instance.OnDragEnter(CefBrowser.Wrap(CefBrowser.Create, browser), CefDragData.Wrap(CefDragData.Create, dragData), mask) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDragHandlerPrivate.AvoidOnDraggableRegionsChanged();
+		bool ICefDragHandlerPrivate.AvoidOnDraggableRegionsChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDragHandler), nameof(OnDraggableRegionsChanged));
+		}
 
 		/// <summary>
 		/// Called whenever draggable regions for the browser window change. These can

@@ -380,6 +380,16 @@ namespace CefGen
 		{
 			if (method.ReturnType.Name != "Int32")
 				return false;
+
+			// BooleanIntParams.txt marks boolean return values with the pseudo-argument "return".
+			AttributeData nativeNameAttribute = method.GetAttributes().FirstOrDefault(attr => attr.AttributeClass.Name == "NativeNameAttribute");
+			if (nativeNameAttribute?.ConstructorArguments[0].Value is string methodNativeName)
+			{
+				string methodName = (method.ContainingType.Name + "::" + methodNativeName).TrimStart('_');
+				if (BooleanInt.Value.Any(boolInt => boolInt.Method == methodName && boolInt.Arg == "return"))
+					return true;
+			}
+
 			string comment = method.GetComment();
 			if (comment == null)
 				return false;

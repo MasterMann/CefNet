@@ -7,8 +7,10 @@ namespace CefNet.Internal
 {
 	public partial class WebViewGlue
 	{
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOverloadGetCookieAccessFilter();
+		internal bool AvoidOverloadGetCookieAccessFilter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.GetCookieAccessFilter));
+		}
 
 		internal bool AvoidGetCookieAccessFilter()
 		{
@@ -35,8 +37,10 @@ namespace CefNet.Internal
 			return CookieAccessFilterGlue;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOverloadOnBeforeResourceLoad();
+		internal bool AvoidOverloadOnBeforeResourceLoad()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnBeforeResourceLoad));
+		}
 
 		internal bool AvoidOnBeforeResourceLoad()
 		{
@@ -67,8 +71,10 @@ namespace CefNet.Internal
 			return CefReturnValue.Continue;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidGetResourceHandler();
+		internal bool AvoidGetResourceHandler()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.GetResourceHandler));
+		}
 
 		/// <summary>
 		/// Called on the IO thread before a resource request is loaded.
@@ -90,8 +96,10 @@ namespace CefNet.Internal
 			return null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnResourceRedirect();
+		internal bool AvoidOnResourceRedirect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnResourceRedirect));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource load is redirected.
@@ -116,8 +124,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnResourceResponse();
+		internal bool AvoidOnResourceResponse()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnResourceResponse));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource response is received. Modification of the request URL will be treated as a redirect.
@@ -145,8 +155,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidGetResourceResponseFilter();
+		internal bool AvoidGetResourceResponseFilter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.GetResourceResponseFilter));
+		}
 
 		/// <summary>
 		/// Called on the IO thread to optionally filter resource response content.
@@ -169,8 +181,10 @@ namespace CefNet.Internal
 			return null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnResourceLoadComplete();
+		internal bool AvoidOnResourceLoadComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnResourceLoadComplete));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource load has completed. This method will be called for all requests, including requests
@@ -202,8 +216,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnProtocolExecution();
+		internal bool AvoidOnProtocolExecution()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnProtocolExecution));
+		}
 
 		/// <summary>
 		/// Called on the IO thread to handle requests for URLs with an unknown protocol component.

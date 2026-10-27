@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAppPrivate.AvoidOnBeforeCommandLineProcessing();
+		bool ICefAppPrivate.AvoidOnBeforeCommandLineProcessing()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefApp), nameof(OnBeforeCommandLineProcessing));
+		}
 
 		/// <summary>
 		/// Provides an opportunity to view and/or modify command-line arguments
@@ -109,8 +111,10 @@ namespace CefNet
 			instance.OnBeforeCommandLineProcessing(CefString.Read(process_type), CefCommandLine.Wrap(CefCommandLine.Create, command_line));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefAppPrivate.AvoidOnRegisterCustomSchemes();
+		bool ICefAppPrivate.AvoidOnRegisterCustomSchemes()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefApp), nameof(OnRegisterCustomSchemes));
+		}
 
 		/// <summary>
 		/// Provides an opportunity to register custom schemes. Do not keep a

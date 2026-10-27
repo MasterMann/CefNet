@@ -674,8 +674,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefClientPrivate.AvoidOnProcessMessageReceived();
+		bool ICefClientPrivate.AvoidOnProcessMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefClient), nameof(OnProcessMessageReceived));
+		}
 
 		/// <summary>
 		/// Called when a new message is received from a different process. Return

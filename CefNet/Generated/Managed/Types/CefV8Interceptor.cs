@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8InterceptorPrivate.AvoidGetByName();
+		bool ICefV8InterceptorPrivate.AvoidGetByName()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Interceptor), nameof(GetByName));
+		}
 
 		/// <summary>
 		/// Handle retrieval of the interceptor value identified by |name|. |object|
@@ -114,8 +116,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8InterceptorPrivate.AvoidGetByIndex();
+		bool ICefV8InterceptorPrivate.AvoidGetByIndex()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Interceptor), nameof(GetByIndex));
+		}
 
 		/// <summary>
 		/// Handle retrieval of the interceptor value identified by |index|. |object|
@@ -157,8 +161,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8InterceptorPrivate.AvoidSetByName();
+		bool ICefV8InterceptorPrivate.AvoidSetByName()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Interceptor), nameof(SetByName));
+		}
 
 		/// <summary>
 		/// Handle assignment of the interceptor value identified by |name|. |object|
@@ -199,8 +205,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8InterceptorPrivate.AvoidSetByIndex();
+		bool ICefV8InterceptorPrivate.AvoidSetByIndex()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Interceptor), nameof(SetByIndex));
+		}
 
 		/// <summary>
 		/// Handle assignment of the interceptor value identified by |index|. |object|

@@ -86,8 +86,10 @@ namespace CefNet
 			return instance.InitFilter() ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResponseFilterPrivate.AvoidFilter();
+		bool ICefResponseFilterPrivate.AvoidFilter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResponseFilter), nameof(Filter));
+		}
 
 		/// <summary>
 		/// Called to filter a chunk of data. Expected usage is as follows:

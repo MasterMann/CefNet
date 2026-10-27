@@ -10,10 +10,10 @@ namespace CefNet
 		private struct HashKey
 		{
 			public int hashcode;
-			public cef_v8value_t* raw;
+			public cef_v8_value_t* raw;
 			public WeakReference<CefV8Value> wrapped;
 
-			public HashKey(int hashcode, cef_v8value_t* raw)
+			public HashKey(int hashcode, cef_v8_value_t* raw)
 			{
 				this.wrapped = null;
 				this.hashcode = hashcode;

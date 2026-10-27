@@ -59,8 +59,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCookieAccessFilterPrivate.AvoidCanSendCookie();
+		bool ICefCookieAccessFilterPrivate.AvoidCanSendCookie()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCookieAccessFilter), nameof(CanSendCookie));
+		}
 
 		/// <summary>
 		/// Called on the IO thread before a resource request is sent. The |browser|
@@ -96,8 +98,10 @@ namespace CefNet
 			return instance.CanSendCookie(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), new CefCookie(cookie)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCookieAccessFilterPrivate.AvoidCanSaveCookie();
+		bool ICefCookieAccessFilterPrivate.AvoidCanSaveCookie()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCookieAccessFilter), nameof(CanSaveCookie));
+		}
 
 		/// <summary>
 		/// Called on the IO thread after a resource response is received. The

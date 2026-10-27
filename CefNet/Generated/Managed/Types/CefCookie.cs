@@ -273,8 +273,9 @@ namespace CefNet
 				Value = null;
 				Domain = null;
 				Path = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefCookie()

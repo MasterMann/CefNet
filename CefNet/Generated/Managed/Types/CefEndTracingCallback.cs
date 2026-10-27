@@ -55,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefEndTracingCallbackPrivate.AvoidOnEndTracingComplete();
+		bool ICefEndTracingCallbackPrivate.AvoidOnEndTracingComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefEndTracingCallback), nameof(OnEndTracingComplete));
+		}
 
 		/// <summary>
 		/// Called after all processes have sent their trace data. |tracing_file| is

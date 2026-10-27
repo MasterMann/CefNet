@@ -53,8 +53,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8ArrayBufferReleaseCallbackPrivate.AvoidReleaseBuffer();
+		bool ICefV8ArrayBufferReleaseCallbackPrivate.AvoidReleaseBuffer()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8ArrayBufferReleaseCallback), nameof(ReleaseBuffer));
+		}
 
 		/// <summary>
 		/// Called to release |buffer| when the ArrayBuffer JS object is garbage

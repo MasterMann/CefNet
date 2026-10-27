@@ -21,8 +21,10 @@ namespace CefNet.Internal
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnTakeFocus();
+		internal bool AvoidOnTakeFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnTakeFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component is about to loose focus. For instance, if focus
@@ -38,8 +40,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnSetFocus();
+		internal bool AvoidOnSetFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnSetFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component is requesting focus. Return false to allow
@@ -55,8 +59,10 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnGotFocus();
+		internal bool AvoidOnGotFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnGotFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component has received focus.

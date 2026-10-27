@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPdfPrintCallbackPrivate.AvoidOnPdfPrintFinished();
+		bool ICefPdfPrintCallbackPrivate.AvoidOnPdfPrintFinished()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPdfPrintCallback), nameof(OnPdfPrintFinished));
+		}
 
 		/// <summary>
 		/// Method that will be executed when the PDF printing has completed. |path|

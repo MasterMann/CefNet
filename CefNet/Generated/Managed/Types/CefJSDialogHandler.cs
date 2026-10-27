@@ -66,8 +66,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnJSDialog();
+		bool ICefJSDialogHandlerPrivate.AvoidOnJSDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnJSDialog));
+		}
 
 		/// <summary>
 		/// Called to run a JavaScript dialog. If |origin_url| is non-NULL it can be
@@ -112,8 +114,10 @@ namespace CefNet
 			return instance.OnJSDialog(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(origin_url), dialog_type, CefString.Read(message_text), CefString.Read(default_prompt_text), CefJSDialogCallback.Wrap(CefJSDialogCallback.Create, callback), ref *suppress_message) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnBeforeUnloadDialog();
+		bool ICefJSDialogHandlerPrivate.AvoidOnBeforeUnloadDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnBeforeUnloadDialog));
+		}
 
 		/// <summary>
 		/// Called to run a dialog asking the user if they want to leave a page.
@@ -149,8 +153,10 @@ namespace CefNet
 			return instance.OnBeforeUnloadDialog(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(message_text), is_reload != 0, CefJSDialogCallback.Wrap(CefJSDialogCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnResetDialogState();
+		bool ICefJSDialogHandlerPrivate.AvoidOnResetDialogState()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnResetDialogState));
+		}
 
 		/// <summary>
 		/// Called to cancel any pending dialogs and reset any saved dialog state.
@@ -181,8 +187,10 @@ namespace CefNet
 			instance.OnResetDialogState(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefJSDialogHandlerPrivate.AvoidOnDialogClosed();
+		bool ICefJSDialogHandlerPrivate.AvoidOnDialogClosed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefJSDialogHandler), nameof(OnDialogClosed));
+		}
 
 		/// <summary>
 		/// Called when the dialog is closed.

@@ -59,8 +59,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestContextHandlerPrivate.AvoidOnRequestContextInitialized();
+		bool ICefRequestContextHandlerPrivate.AvoidOnRequestContextInitialized()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestContextHandler), nameof(OnRequestContextInitialized));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread immediately after the request
@@ -90,8 +92,10 @@ namespace CefNet
 			instance.OnRequestContextInitialized(CefRequestContext.Wrap(CefRequestContext.Create, request_context));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestContextHandlerPrivate.AvoidGetResourceRequestHandler();
+		bool ICefRequestContextHandlerPrivate.AvoidGetResourceRequestHandler()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestContextHandler), nameof(GetResourceRequestHandler));
+		}
 
 		/// <summary>
 		/// Called on the browser process IO thread before a resource request is

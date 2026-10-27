@@ -78,8 +78,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnBeforeContextMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidOnBeforeContextMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnBeforeContextMenu));
+		}
 
 		/// <summary>
 		/// Called before a context menu is displayed. |params| provides information
@@ -115,8 +117,10 @@ namespace CefNet
 			instance.OnBeforeContextMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), CefMenuModel.Wrap(CefMenuModel.Create, model));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidRunContextMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidRunContextMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(RunContextMenu));
+		}
 
 		/// <summary>
 		/// Called to allow custom display of the context menu. |params| provides
@@ -155,8 +159,10 @@ namespace CefNet
 			return instance.RunContextMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), CefMenuModel.Wrap(CefMenuModel.Create, model), CefRunContextMenuCallback.Wrap(CefRunContextMenuCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuCommand();
+		bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnContextMenuCommand));
+		}
 
 		/// <summary>
 		/// Called to execute a command selected from the context menu. Return true
@@ -194,8 +200,10 @@ namespace CefNet
 			return instance.OnContextMenuCommand(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefContextMenuParams.Wrap(CefContextMenuParams.Create, @params), command_id, event_flags) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuDismissed();
+		bool ICefContextMenuHandlerPrivate.AvoidOnContextMenuDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnContextMenuDismissed));
+		}
 
 		/// <summary>
 		/// Called when the context menu is dismissed irregardless of whether the menu
@@ -226,8 +234,10 @@ namespace CefNet
 			instance.OnContextMenuDismissed(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidRunQuickMenu();
+		bool ICefContextMenuHandlerPrivate.AvoidRunQuickMenu()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(RunQuickMenu));
+		}
 
 		/// <summary>
 		/// Called to allow custom display of the quick menu for a windowless browser.
@@ -265,8 +275,10 @@ namespace CefNet
 			return instance.RunQuickMenu(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), *(CefPoint*)location, *(CefSize*)size, edit_state_flags, CefRunQuickMenuCallback.Wrap(CefRunQuickMenuCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuCommand();
+		bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnQuickMenuCommand));
+		}
 
 		/// <summary>
 		/// Called to execute a command selected from the quick menu for a windowless
@@ -300,8 +312,10 @@ namespace CefNet
 			return instance.OnQuickMenuCommand(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), command_id, event_flags) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuDismissed();
+		bool ICefContextMenuHandlerPrivate.AvoidOnQuickMenuDismissed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefContextMenuHandler), nameof(OnQuickMenuDismissed));
+		}
 
 		/// <summary>
 		/// Called when the quick menu for a windowless browser is dismissed

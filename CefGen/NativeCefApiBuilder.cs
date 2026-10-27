@@ -304,7 +304,11 @@ namespace CefGen
 			CodeMethod caller = null;
 
 			TypeDesc fieldType = GetTypeDesc(field.Type);
-			var fld = new CodeField(ResolveCefType(fieldType.ToString()), field.Name.EscapeName());
+			string fieldTypeName = fieldType.ToString();
+			// Constness does not affect the layout of a data field.
+			while (fieldTypeName.StartsWith("const "))
+				fieldTypeName = fieldTypeName.Substring(6);
+			var fld = new CodeField(ResolveCefType(fieldTypeName), field.Name.EscapeName());
 			if (fieldType.IsCallable)
 			{
 				fld.Attributes = CodeAttributes.Public;// | CodeAttributes.ReadOnly;

@@ -149,8 +149,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetRootScreenRect();
+		bool ICefRenderHandlerPrivate.AvoidGetRootScreenRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetRootScreenRect));
+		}
 
 		/// <summary>
 		/// Called to retrieve the root window rectangle in screen DIP coordinates.
@@ -182,8 +184,10 @@ namespace CefNet
 			return instance.GetRootScreenRect(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefRect*)rect) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetViewRect();
+		bool ICefRenderHandlerPrivate.AvoidGetViewRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetViewRect));
+		}
 
 		/// <summary>
 		/// Called to retrieve the view rectangle in screen DIP coordinates. This
@@ -213,8 +217,10 @@ namespace CefNet
 			instance.GetViewRect(CefBrowser.Wrap(CefBrowser.Create, browser), ref *(CefRect*)rect);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetScreenPoint();
+		bool ICefRenderHandlerPrivate.AvoidGetScreenPoint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetScreenPoint));
+		}
 
 		/// <summary>
 		/// Called to retrieve the translation from view DIP coordinates to screen
@@ -247,8 +253,10 @@ namespace CefNet
 			return instance.GetScreenPoint(CefBrowser.Wrap(CefBrowser.Create, browser), viewX, viewY, ref *screenX, ref *screenY) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetScreenInfo();
+		bool ICefRenderHandlerPrivate.AvoidGetScreenInfo()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetScreenInfo));
+		}
 
 		/// <summary>
 		/// Called to allow the client to fill in the CefScreenInfo object with
@@ -283,8 +291,10 @@ namespace CefNet
 			return instance.GetScreenInfo(CefBrowser.Wrap(CefBrowser.Create, browser), new CefScreenInfo(screen_info)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPopupShow();
+		bool ICefRenderHandlerPrivate.AvoidOnPopupShow()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPopupShow));
+		}
 
 		/// <summary>
 		/// Called when the browser wants to show or hide the popup widget. The popup
@@ -314,8 +324,10 @@ namespace CefNet
 			instance.OnPopupShow(CefBrowser.Wrap(CefBrowser.Create, browser), show != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPopupSize();
+		bool ICefRenderHandlerPrivate.AvoidOnPopupSize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPopupSize));
+		}
 
 		/// <summary>
 		/// Called when the browser wants to move or resize the popup widget. |rect|
@@ -345,8 +357,10 @@ namespace CefNet
 			instance.OnPopupSize(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRect*)rect);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnPaint();
+		bool ICefRenderHandlerPrivate.AvoidOnPaint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnPaint));
+		}
 
 		/// <summary>
 		/// Called when an element should be painted. Pixel values passed to this
@@ -388,8 +402,10 @@ namespace CefNet
 			instance.OnPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, unchecked((IntPtr)buffer), width, height);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnAcceleratedPaint();
+		bool ICefRenderHandlerPrivate.AvoidOnAcceleratedPaint()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnAcceleratedPaint));
+		}
 
 		/// <summary>
 		/// Called when an element has been rendered to the shared texture handle.
@@ -437,8 +453,10 @@ namespace CefNet
 			instance.OnAcceleratedPaint(CefBrowser.Wrap(CefBrowser.Create, browser), type, obj_dirtyRects, new CefAcceleratedPaintInfo(info));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize();
+		bool ICefRenderHandlerPrivate.AvoidGetTouchHandleSize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(GetTouchHandleSize));
+		}
 
 		/// <summary>
 		/// Called to retrieve the size of the touch handle for the specified
@@ -468,8 +486,10 @@ namespace CefNet
 			instance.GetTouchHandleSize(CefBrowser.Wrap(CefBrowser.Create, browser), orientation, ref *(CefSize*)size);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnTouchHandleStateChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnTouchHandleStateChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnTouchHandleStateChanged));
+		}
 
 		/// <summary>
 		/// Called when touch handle state is updated. The client is responsible for
@@ -499,8 +519,10 @@ namespace CefNet
 			instance.OnTouchHandleStateChanged(CefBrowser.Wrap(CefBrowser.Create, browser), new CefTouchHandleState(state));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidStartDragging();
+		bool ICefRenderHandlerPrivate.AvoidStartDragging()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(StartDragging));
+		}
 
 		/// <summary>
 		/// Called when the user starts dragging content in the web view. Contextual
@@ -540,8 +562,10 @@ namespace CefNet
 			return instance.StartDragging(CefBrowser.Wrap(CefBrowser.Create, browser), CefDragData.Wrap(CefDragData.Create, drag_data), allowed_ops, x, y) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidUpdateDragCursor();
+		bool ICefRenderHandlerPrivate.AvoidUpdateDragCursor()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(UpdateDragCursor));
+		}
 
 		/// <summary>
 		/// Called when the web view wants to update the mouse cursor during a drag
@@ -573,8 +597,10 @@ namespace CefNet
 			instance.UpdateDragCursor(CefBrowser.Wrap(CefBrowser.Create, browser), operation);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnScrollOffsetChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnScrollOffsetChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnScrollOffsetChanged));
+		}
 
 		/// <summary>
 		/// Called when the scroll offset has changed.
@@ -603,8 +629,10 @@ namespace CefNet
 			instance.OnScrollOffsetChanged(CefBrowser.Wrap(CefBrowser.Create, browser), x, y);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnImeCompositionRangeChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnImeCompositionRangeChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnImeCompositionRangeChanged));
+		}
 
 		/// <summary>
 		/// Called when the IME composition range has changed. |selected_range| is the
@@ -640,8 +668,10 @@ namespace CefNet
 			instance.OnImeCompositionRangeChanged(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRange*)selected_range, obj_character_bounds);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnTextSelectionChanged();
+		bool ICefRenderHandlerPrivate.AvoidOnTextSelectionChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnTextSelectionChanged));
+		}
 
 		/// <summary>
 		/// Called when text selection has changed for the specified |browser|.
@@ -672,8 +702,10 @@ namespace CefNet
 			instance.OnTextSelectionChanged(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(selected_text), *(CefRange*)selected_range);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRenderHandlerPrivate.AvoidOnVirtualKeyboardRequested();
+		bool ICefRenderHandlerPrivate.AvoidOnVirtualKeyboardRequested()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRenderHandler), nameof(OnVirtualKeyboardRequested));
+		}
 
 		/// <summary>
 		/// Called when an on-screen keyboard should be shown or hidden for the

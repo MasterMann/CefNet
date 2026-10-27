@@ -458,17 +458,17 @@ namespace CefNet
 		/// <summary>
 		/// Returns the frame with the specified identifier, or null if not found.
 		/// </summary>
-		public CefFrame GetFrame(long identifier)
+		public CefFrame GetFrameByIdentifier(string identifier)
 		{
-			return BrowserObject?.GetFrameByIdent(identifier);
+			return BrowserObject?.GetFrameByIdentifier(identifier);
 		}
 
 		/// <summary>
 		/// Returns the frame with the specified name, or null if not found.
 		/// </summary>
-		public CefFrame GetFrame(string name)
+		public CefFrame GetFrameByName(string name)
 		{
-			return BrowserObject?.GetFrame(name);
+			return BrowserObject?.GetFrameByName(name);
 		}
 
 		/// <summary>
@@ -482,17 +482,9 @@ namespace CefNet
 		/// <summary>
 		/// Gets the identifiers of all existing frames.
 		/// </summary>
-		public long[] GetFrameIdentifiers()
+		public string[] GetFrameIdentifiers()
 		{
-			CefBrowser browser = BrowserObject;
-			if (browser == null)
-				return new long[0];
-
-			long count = browser.FrameCount << 1;
-			var identifiers = new long[count];
-			browser.GetFrameIdentifiers(ref count, ref identifiers);
-			GC.KeepAlive(browser);
-			return identifiers;
+			return BrowserObject?.GetFrameIdentifiers() ?? Array.Empty<string>();
 		}
 
 		/// <summary>

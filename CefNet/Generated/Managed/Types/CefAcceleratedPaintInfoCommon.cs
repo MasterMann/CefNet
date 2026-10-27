@@ -28,7 +28,7 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefAcceleratedPaintInfoCommon
+	public unsafe partial class CefAcceleratedPaintInfoCommon : IDisposable
 	{
 		private cef_accelerated_paint_info_common_t* _instance;
 
@@ -258,6 +258,26 @@ namespace CefNet
 			{
 				_instance->has_capture_counter = value;
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefAcceleratedPaintInfoCommon()
+		{
+			Dispose(false);
 		}
 	}
 }

@@ -53,8 +53,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefStringVisitorPrivate.AvoidVisit();
+		bool ICefStringVisitorPrivate.AvoidVisit()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefStringVisitor), nameof(Visit));
+		}
 
 		/// <summary>
 		/// Method that will be executed.

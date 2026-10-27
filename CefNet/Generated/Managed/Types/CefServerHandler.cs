@@ -86,8 +86,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnServerCreated();
+		bool ICefServerHandlerPrivate.AvoidOnServerCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnServerCreated));
+		}
 
 		/// <summary>
 		/// Called when |server| is created. If the server was started successfully
@@ -120,8 +122,10 @@ namespace CefNet
 			instance.OnServerCreated(CefServer.Wrap(CefServer.Create, server));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnServerDestroyed();
+		bool ICefServerHandlerPrivate.AvoidOnServerDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnServerDestroyed));
+		}
 
 		/// <summary>
 		/// Called when |server| is destroyed. The server thread will be stopped after
@@ -153,8 +157,10 @@ namespace CefNet
 			instance.OnServerDestroyed(CefServer.Wrap(CefServer.Create, server));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnClientConnected();
+		bool ICefServerHandlerPrivate.AvoidOnClientConnected()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnClientConnected));
+		}
 
 		/// <summary>
 		/// Called when a client connects to |server|. |connection_id| uniquely
@@ -185,8 +191,10 @@ namespace CefNet
 			instance.OnClientConnected(CefServer.Wrap(CefServer.Create, server), connection_id);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnClientDisconnected();
+		bool ICefServerHandlerPrivate.AvoidOnClientDisconnected()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnClientDisconnected));
+		}
 
 		/// <summary>
 		/// Called when a client disconnects from |server|. |connection_id| uniquely
@@ -221,8 +229,10 @@ namespace CefNet
 			instance.OnClientDisconnected(CefServer.Wrap(CefServer.Create, server), connection_id);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnHttpRequest();
+		bool ICefServerHandlerPrivate.AvoidOnHttpRequest()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnHttpRequest));
+		}
 
 		/// <summary>
 		/// Called when |server| receives an HTTP request. |connection_id| uniquely
@@ -257,8 +267,10 @@ namespace CefNet
 			instance.OnHttpRequest(CefServer.Wrap(CefServer.Create, server), connection_id, CefString.Read(client_address), CefRequest.Wrap(CefRequest.Create, request));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnWebSocketRequest();
+		bool ICefServerHandlerPrivate.AvoidOnWebSocketRequest()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnWebSocketRequest));
+		}
 
 		/// <summary>
 		/// Called when |server| receives a WebSocket request. |connection_id|
@@ -300,8 +312,10 @@ namespace CefNet
 			instance.OnWebSocketRequest(CefServer.Wrap(CefServer.Create, server), connection_id, CefString.Read(client_address), CefRequest.Wrap(CefRequest.Create, request), CefCallback.Wrap(CefCallback.Create, callback));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnWebSocketConnected();
+		bool ICefServerHandlerPrivate.AvoidOnWebSocketConnected()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnWebSocketConnected));
+		}
 
 		/// <summary>
 		/// Called after the client has accepted the WebSocket connection for |server|
@@ -332,8 +346,10 @@ namespace CefNet
 			instance.OnWebSocketConnected(CefServer.Wrap(CefServer.Create, server), connection_id);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefServerHandlerPrivate.AvoidOnWebSocketMessage();
+		bool ICefServerHandlerPrivate.AvoidOnWebSocketMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefServerHandler), nameof(OnWebSocketMessage));
+		}
 
 		/// <summary>
 		/// Called when |server| receives an WebSocket message. |connection_id|

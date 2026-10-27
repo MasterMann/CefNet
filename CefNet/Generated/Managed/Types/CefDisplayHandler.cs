@@ -102,8 +102,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnAddressChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnAddressChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnAddressChange));
+		}
 
 		/// <summary>
 		/// Called when a frame&apos;s address has changed.
@@ -133,8 +135,10 @@ namespace CefNet
 			instance.OnAddressChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefString.Read(url));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnTitleChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnTitleChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnTitleChange));
+		}
 
 		/// <summary>
 		/// Called when the page title changes.
@@ -163,8 +167,10 @@ namespace CefNet
 			instance.OnTitleChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(title));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnFaviconUrlChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnFaviconUrlChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnFaviconUrlChange));
+		}
 
 		/// <summary>
 		/// Called when the page icon changes.
@@ -193,8 +199,10 @@ namespace CefNet
 			instance.OnFaviconUrlChange(CefBrowser.Wrap(CefBrowser.Create, browser), CefStringList.Wrap(icon_urls));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnFullscreenModeChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnFullscreenModeChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnFullscreenModeChange));
+		}
 
 		/// <summary>
 		/// Called when web content in the page has toggled fullscreen mode. If
@@ -231,8 +239,10 @@ namespace CefNet
 			instance.OnFullscreenModeChange(CefBrowser.Wrap(CefBrowser.Create, browser), fullscreen != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnTooltip();
+		bool ICefDisplayHandlerPrivate.AvoidOnTooltip()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnTooltip));
+		}
 
 		/// <summary>
 		/// Called when the browser is about to display a tooltip. |text| contains the
@@ -272,8 +282,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnStatusMessage();
+		bool ICefDisplayHandlerPrivate.AvoidOnStatusMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnStatusMessage));
+		}
 
 		/// <summary>
 		/// Called when the browser receives a status message. |value| contains the
@@ -303,8 +315,10 @@ namespace CefNet
 			instance.OnStatusMessage(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(value));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnConsoleMessage();
+		bool ICefDisplayHandlerPrivate.AvoidOnConsoleMessage()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnConsoleMessage));
+		}
 
 		/// <summary>
 		/// Called to display a console message. Return true (1) to stop the message
@@ -335,8 +349,10 @@ namespace CefNet
 			return instance.OnConsoleMessage(CefBrowser.Wrap(CefBrowser.Create, browser), level, CefString.Read(message), CefString.Read(source), line) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnAutoResize();
+		bool ICefDisplayHandlerPrivate.AvoidOnAutoResize()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnAutoResize));
+		}
 
 		/// <summary>
 		/// Called when auto-resize is enabled via
@@ -369,8 +385,10 @@ namespace CefNet
 			return instance.OnAutoResize(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefSize*)new_size) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnLoadingProgressChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnLoadingProgressChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnLoadingProgressChange));
+		}
 
 		/// <summary>
 		/// Called when the overall page loading progress has changed. |progress|
@@ -400,8 +418,10 @@ namespace CefNet
 			instance.OnLoadingProgressChange(CefBrowser.Wrap(CefBrowser.Create, browser), progress);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnCursorChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnCursorChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnCursorChange));
+		}
 
 		/// <summary>
 		/// Called when the browser&apos;s cursor has changed. If |type| is CT_CUSTOM then
@@ -434,8 +454,10 @@ namespace CefNet
 			return instance.OnCursorChange(CefBrowser.Wrap(CefBrowser.Create, browser), cursor, type, *(CefCursorInfo*)custom_cursor_info) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnMediaAccessChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnMediaAccessChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnMediaAccessChange));
+		}
 
 		/// <summary>
 		/// Called when the browser&apos;s access to an audio and/or video source has
@@ -465,8 +487,10 @@ namespace CefNet
 			instance.OnMediaAccessChange(CefBrowser.Wrap(CefBrowser.Create, browser), has_video_access != 0, has_audio_access != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidOnContentsBoundsChange();
+		bool ICefDisplayHandlerPrivate.AvoidOnContentsBoundsChange()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(OnContentsBoundsChange));
+		}
 
 		/// <summary>
 		/// Called when JavaScript is requesting new bounds via window.moveTo/By() or
@@ -510,8 +534,10 @@ namespace CefNet
 			return instance.OnContentsBoundsChange(CefBrowser.Wrap(CefBrowser.Create, browser), *(CefRect*)new_bounds) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDisplayHandlerPrivate.AvoidGetRootWindowScreenRect();
+		bool ICefDisplayHandlerPrivate.AvoidGetRootWindowScreenRect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDisplayHandler), nameof(GetRootWindowScreenRect));
+		}
 
 		/// <summary>
 		/// Called to retrieve the external (client-provided) root window rectangle in

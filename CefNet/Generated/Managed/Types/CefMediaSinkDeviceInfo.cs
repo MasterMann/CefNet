@@ -125,8 +125,9 @@ namespace CefNet
 			{
 				IpAddress = null;
 				ModelName = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefMediaSinkDeviceInfo()

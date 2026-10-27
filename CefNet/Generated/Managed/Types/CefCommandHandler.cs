@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidOnChromeCommand();
+		bool ICefCommandHandlerPrivate.AvoidOnChromeCommand()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(OnChromeCommand));
+		}
 
 		/// <summary>
 		/// Called to execute a Chrome command triggered via menu selection or
@@ -109,8 +111,10 @@ namespace CefNet
 			return instance.OnChromeCommand(CefBrowser.Wrap(CefBrowser.Create, browser), command_id, disposition) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible();
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeAppMenuItemVisible));
+		}
 
 		/// <summary>
 		/// Called to check if a Chrome app menu item should be visible. Use the
@@ -119,7 +123,7 @@ namespace CefNet
 		/// |command_id| values. Only called for menu items that would be visible by
 		/// default. Only used with Chrome style.
 		/// </summary>
-		protected internal unsafe virtual int IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
+		protected internal unsafe virtual bool IsChromeAppMenuItemVisible(CefBrowser browser, int commandId)
 		{
 			return default;
 		}
@@ -141,11 +145,13 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return default;
 			}
-			return instance.IsChromeAppMenuItemVisible(CefBrowser.Wrap(CefBrowser.Create, browser), command_id);
+			return instance.IsChromeAppMenuItemVisible(CefBrowser.Wrap(CefBrowser.Create, browser), command_id) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled();
+		bool ICefCommandHandlerPrivate.AvoidIsChromeAppMenuItemEnabled()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeAppMenuItemEnabled));
+		}
 
 		/// <summary>
 		/// Called to check if a Chrome app menu item should be enabled. Use the
@@ -154,7 +160,7 @@ namespace CefNet
 		/// |command_id| values. Only called for menu items that would be enabled by
 		/// default. Only used with Chrome style.
 		/// </summary>
-		protected internal unsafe virtual int IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
+		protected internal unsafe virtual bool IsChromeAppMenuItemEnabled(CefBrowser browser, int commandId)
 		{
 			return default;
 		}
@@ -176,18 +182,20 @@ namespace CefNet
 				ReleaseIfNonNull((cef_base_ref_counted_t*)browser);
 				return default;
 			}
-			return instance.IsChromeAppMenuItemEnabled(CefBrowser.Wrap(CefBrowser.Create, browser), command_id);
+			return instance.IsChromeAppMenuItemEnabled(CefBrowser.Wrap(CefBrowser.Create, browser), command_id) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidIsChromePageActionIconVisible();
+		bool ICefCommandHandlerPrivate.AvoidIsChromePageActionIconVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromePageActionIconVisible));
+		}
 
 		/// <summary>
 		/// Called during browser creation to check if a Chrome page action icon
 		/// should be visible. Only called for icons that would be visible by default.
 		/// Only used with Chrome style.
 		/// </summary>
-		protected internal unsafe virtual int IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
+		protected internal unsafe virtual bool IsChromePageActionIconVisible(CefChromePageActionIconType iconType)
 		{
 			return default;
 		}
@@ -208,18 +216,20 @@ namespace CefNet
 			{
 				return default;
 			}
-			return instance.IsChromePageActionIconVisible(icon_type);
+			return instance.IsChromePageActionIconVisible(icon_type) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefCommandHandlerPrivate.AvoidIsChromeToolbarButtonVisible();
+		bool ICefCommandHandlerPrivate.AvoidIsChromeToolbarButtonVisible()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefCommandHandler), nameof(IsChromeToolbarButtonVisible));
+		}
 
 		/// <summary>
 		/// Called during browser creation to check if a Chrome toolbar button should
 		/// be visible. Only called for buttons that would be visible by default. Only
 		/// used with Chrome style.
 		/// </summary>
-		protected internal unsafe virtual int IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
+		protected internal unsafe virtual bool IsChromeToolbarButtonVisible(CefChromeToolbarButtonType buttonType)
 		{
 			return default;
 		}
@@ -240,7 +250,7 @@ namespace CefNet
 			{
 				return default;
 			}
-			return instance.IsChromeToolbarButtonVisible(button_type);
+			return instance.IsChromeToolbarButtonVisible(button_type) ? 1 : 0;
 		}
 	}
 }

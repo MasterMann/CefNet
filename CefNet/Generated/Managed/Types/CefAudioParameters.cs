@@ -27,7 +27,7 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefAudioParameters
+	public unsafe partial class CefAudioParameters : IDisposable
 	{
 		private cef_audio_parameters_t* _instance;
 
@@ -121,6 +121,26 @@ namespace CefNet
 			{
 				_instance->frames_per_buffer = value;
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefAudioParameters()
+		{
+			Dispose(false);
 		}
 	}
 }

@@ -36,6 +36,21 @@ namespace CefNet.Internal
 			return _application.GetDefaultClient();
 		}
 
+		public CefRequestContextHandler GetDefaultRequestContextHandler()
+		{
+			return _application.GetDefaultRequestContextHandler();
+		}
+
+		internal bool AvoidOnAlreadyRunningAppRelaunch()
+		{
+			return !VirtualMethods.IsOverridden(_application, typeof(CefNetApplication), nameof(CefNetApplication.OnAlreadyRunningAppRelaunch));
+		}
+
+		public bool OnAlreadyRunningAppRelaunch(CefCommandLine commandLine, string currentDirectory)
+		{
+			return _application.OnAlreadyRunningAppRelaunch(commandLine, currentDirectory);
+		}
+
 		internal bool AvoidOnRegisterCustomPreferences()
 		{
 			return false;

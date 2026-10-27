@@ -68,18 +68,16 @@ namespace CefNet
 
 #endif // USESAFECACHE
 
-		public long[] GetFrameIdentifiers()
+		/// <summary>
+		/// Returns the identifiers of all existing frames.
+		/// </summary>
+		public string[] GetFrameIdentifiers()
 		{
-			long count = FrameCount << 1;
-			long[] identifiers = new long[count];
-			GetFrameIdentifiers(ref count, ref identifiers);
-			return identifiers;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public CefFrame GetFrame(long identifier)
-		{
-			return GetFrameByIdent(identifier);
+			using (var identifiers = new CefStringList())
+			{
+				GetFrameIdentifiers(identifiers);
+				return identifiers.ToArray();
+			}
 		}
 
 	}

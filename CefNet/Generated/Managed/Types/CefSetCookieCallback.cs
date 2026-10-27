@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefSetCookieCallbackPrivate.AvoidOnComplete();
+		bool ICefSetCookieCallbackPrivate.AvoidOnComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefSetCookieCallback), nameof(OnComplete));
+		}
 
 		/// <summary>
 		/// Method that will be called upon completion. |success| will be true (1) if

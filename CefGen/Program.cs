@@ -107,10 +107,6 @@ namespace CefGen
 				var managedTypes = new ManagedCefApiTypes(outDirPath);
 				managedTypes.Build();
 
-				Console.WriteLine("Generate MSIL for wrappers...");
-				var msilGen = new ManagedCefApiMsilCodeGen(outDirPath);
-				msilGen.GenerateFrom(managedTypes);
-
 				Console.WriteLine("Complete.");
 			}
 			catch(SEHException e)
@@ -228,6 +224,7 @@ namespace CefGen
 			files.Add(Path.Combine(basePath, "include", "cef_version.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_api_hash.h"));
 			files.Add(Path.Combine(basePath, "include", "cef_api_versions.h"));
+			files.Add(Path.Combine(basePath, "include", "cef_version_info.h"));
 			string hotPatchPath = ApplyHotPatch(basePath, files);
 			options.IncludeFolders.Add(hotPatchPath);
 			options.IncludeFolders.Add(basePath);
@@ -311,8 +308,7 @@ namespace CefGen
 
 			foreach (CppClass @class in compilation.Classes)
 			{
-				string source = @class.Span.Start.File;
-				if (source?.Contains("capi") != true && source?.Contains("internal") != true)
+				if (!IsCefDeclaration(@class))
 					continue;
 
 				if (IgnoreClasses.Contains(@class.Name))
@@ -409,12 +405,10 @@ namespace CefGen
 			Directory.CreateDirectory(path);
 			Thread.Sleep(1000);
 			Directory.CreateDirectory(Path.Combine(path, "Managed"));
-			Directory.CreateDirectory(Path.Combine(path, "Managed", "MSIL"));
 			Directory.CreateDirectory(Path.Combine(path, "Managed", "Types"));
 			Directory.CreateDirectory(Path.Combine(path, "Managed", "Enums"));
 			Directory.CreateDirectory(Path.Combine(path, "Managed", "Internal"));
 			Directory.CreateDirectory(Path.Combine(path, "Native"));
-			Directory.CreateDirectory(Path.Combine(path, "Native", "MSIL"));
 			Directory.CreateDirectory(Path.Combine(path, "Native", "Types"));
 			Directory.CreateDirectory(Path.Combine(path, "Native", "Typedefs"));
 		}

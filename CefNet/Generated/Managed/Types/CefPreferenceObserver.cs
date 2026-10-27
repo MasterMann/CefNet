@@ -55,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPreferenceObserverPrivate.AvoidOnPreferenceChanged();
+		bool ICefPreferenceObserverPrivate.AvoidOnPreferenceChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPreferenceObserver), nameof(OnPreferenceChanged));
+		}
 
 		/// <summary>
 		/// Called when a preference has changed. The new value can be retrieved using

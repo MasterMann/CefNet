@@ -12,7 +12,7 @@ namespace CefNet
 		/// </param>
 		public CefV8StackTrace GetCurrent(int frameLimit)
 		{
-			return CefV8StackTrace.Wrap(CefV8StackTrace.Create, CefNativeApi.cef_v8stack_trace_get_current(frameLimit));
+			return CefV8StackTrace.Wrap(CefV8StackTrace.Create, CefNativeApi.cef_v8_stack_trace_get_current(frameLimit));
 		}
 
 	}

@@ -28,7 +28,7 @@ namespace CefNet
 	/// <remarks>
 	/// Role: Proxy
 	/// </remarks>
-	public unsafe partial class CefScreenInfo
+	public unsafe partial class CefScreenInfo : IDisposable
 	{
 		private cef_screen_info_t* _instance;
 
@@ -184,6 +184,26 @@ namespace CefNet
 			{
 				_instance->available_rect = value;
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposable && _instance != null)
+			{
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
+		}
+
+		~CefScreenInfo()
+		{
+			Dispose(false);
 		}
 	}
 }

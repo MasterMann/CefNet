@@ -154,8 +154,9 @@ namespace CefNet
 				WmClassClass = null;
 				WmClassName = null;
 				WmRoleName = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefLinuxWindowProperties()

@@ -63,8 +63,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPermissionHandlerPrivate.AvoidOnRequestMediaAccessPermission();
+		bool ICefPermissionHandlerPrivate.AvoidOnRequestMediaAccessPermission()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPermissionHandler), nameof(OnRequestMediaAccessPermission));
+		}
 
 		/// <summary>
 		/// Called when a page requests permission to access media.
@@ -106,8 +108,10 @@ namespace CefNet
 			return instance.OnRequestMediaAccessPermission(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefString.Read(requesting_origin), requested_permissions, CefMediaAccessCallback.Wrap(CefMediaAccessCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPermissionHandlerPrivate.AvoidOnShowPermissionPrompt();
+		bool ICefPermissionHandlerPrivate.AvoidOnShowPermissionPrompt()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPermissionHandler), nameof(OnShowPermissionPrompt));
+		}
 
 		/// <summary>
 		/// Called when a page should show a permission prompt. |prompt_id| uniquely
@@ -146,8 +150,10 @@ namespace CefNet
 			return instance.OnShowPermissionPrompt(CefBrowser.Wrap(CefBrowser.Create, browser), prompt_id, CefString.Read(requesting_origin), requested_permissions, CefPermissionPromptCallback.Wrap(CefPermissionPromptCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefPermissionHandlerPrivate.AvoidOnDismissPermissionPrompt();
+		bool ICefPermissionHandlerPrivate.AvoidOnDismissPermissionPrompt()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefPermissionHandler), nameof(OnDismissPermissionPrompt));
+		}
 
 		/// <summary>
 		/// Called when a permission prompt handled via OnShowPermissionPrompt is

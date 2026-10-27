@@ -55,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefV8HandlerPrivate.AvoidExecute();
+		bool ICefV8HandlerPrivate.AvoidExecute()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefV8Handler), nameof(Execute));
+		}
 
 		/// <summary>
 		/// Handle execution of the function identified by |name|. |object| is the

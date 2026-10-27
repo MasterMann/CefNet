@@ -55,8 +55,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefSchemeHandlerFactoryPrivate.AvoidCreate();
+		bool ICefSchemeHandlerFactoryPrivate.AvoidCreate()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefSchemeHandlerFactory), nameof(Create));
+		}
 
 		/// <summary>
 		/// Return a new resource handler instance to handle the request or an NULL

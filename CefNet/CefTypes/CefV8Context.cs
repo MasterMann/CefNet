@@ -1,4 +1,4 @@
-﻿using CefNet.CApi;
+using CefNet.CApi;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +15,7 @@ namespace CefNet
 		/// </summary>
 		public static CefV8Context GetCurrentContext()
 		{
-			return CefV8Context.Wrap(CefV8Context.Create, CefNativeApi.cef_v8context_get_current_context());
+			return CefV8Context.Wrap(CefV8Context.Create, CefNativeApi.cef_v8_context_get_current_context());
 		}
 
 		/// <summary>
@@ -23,10 +23,10 @@ namespace CefNet
 		/// </summary>
 		public static CefV8Context GetEnteredContext()
 		{
-			return CefV8Context.Wrap(CefV8Context.Create, CefNativeApi.cef_v8context_get_entered_context());
+			return CefV8Context.Wrap(CefV8Context.Create, CefNativeApi.cef_v8_context_get_entered_context());
 		}
 
-		public unsafe static CefV8Context Wrap(Func<IntPtr, CefV8Context> create, cef_v8context_t* instance)
+		public unsafe static CefV8Context Wrap(Func<IntPtr, CefV8Context> create, cef_v8_context_t* instance)
 		{
 			if (instance == null)
 				return null;
@@ -47,7 +47,7 @@ namespace CefNet
 						}
 					}
 				}
-				wrapper = CefBaseRefCounted<cef_v8context_t>.Wrap(create, instance);
+				wrapper = CefBaseRefCounted<cef_v8_context_t>.Wrap(create, instance);
 				WeakRefs.Add(wrapper.WeakRef);
 				return wrapper;
 			}
@@ -83,7 +83,7 @@ namespace CefNet
 		/// </summary>
 		public static bool InContext
 		{
-			get { return CefNativeApi.cef_v8context_in_context() != 0; }
+			get { return CefNativeApi.cef_v8_context_in_context() != 0; }
 		}
 
 		/// <summary>
@@ -110,10 +110,10 @@ namespace CefNet
 				var cstr1 = new cef_string_t { Str = s1, Length = scriptUrl != null ? scriptUrl.Length : 0 };
 
 
-				cef_v8value_t* rv = null;
-				cef_v8value_t** pRv = &rv;
-				cef_v8exception_t* jsex = null;
-				cef_v8exception_t** pJsex = &jsex;
+				cef_v8_value_t* rv = null;
+				cef_v8_value_t** pRv = &rv;
+				cef_v8_exception_t* jsex = null;
+				cef_v8_exception_t** pJsex = &jsex;
 				if (NativeInstance->Eval(&cstr0, &cstr1, line, pRv, pJsex) != 0)
 				{
 					return CefV8Value.Wrap(CefV8Value.Create, rv);

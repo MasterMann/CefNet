@@ -83,8 +83,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidGetCookieAccessFilter();
+		bool ICefResourceRequestHandlerPrivate.AvoidGetCookieAccessFilter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(GetCookieAccessFilter));
+		}
 
 		/// <summary>
 		/// Called on the IO thread before a resource request is loaded. The |browser|
@@ -124,8 +126,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidOnBeforeResourceLoad();
+		bool ICefResourceRequestHandlerPrivate.AvoidOnBeforeResourceLoad()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(OnBeforeResourceLoad));
+		}
 
 		/// <summary>
 		/// Called on the IO thread before a resource request is loaded. The |browser|
@@ -166,8 +170,10 @@ namespace CefNet
 			return instance.OnBeforeResourceLoad(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefCallback.Wrap(CefCallback.Create, callback));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidGetResourceHandler();
+		bool ICefResourceRequestHandlerPrivate.AvoidGetResourceHandler()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(GetResourceHandler));
+		}
 
 		/// <summary>
 		/// Called on the IO thread before a resource is loaded. The |browser| and
@@ -207,8 +213,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidOnResourceRedirect();
+		bool ICefResourceRequestHandlerPrivate.AvoidOnResourceRedirect()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(OnResourceRedirect));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource load is redirected. The |browser|
@@ -249,8 +257,10 @@ namespace CefNet
 			instance.OnResourceRedirect(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response), ref s_new_url);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidOnResourceResponse();
+		bool ICefResourceRequestHandlerPrivate.AvoidOnResourceResponse()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(OnResourceResponse));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource response is received. The
@@ -293,8 +303,10 @@ namespace CefNet
 			return instance.OnResourceResponse(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidGetResourceResponseFilter();
+		bool ICefResourceRequestHandlerPrivate.AvoidGetResourceResponseFilter()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(GetResourceResponseFilter));
+		}
 
 		/// <summary>
 		/// Called on the IO thread to optionally filter resource response content.
@@ -334,8 +346,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidOnResourceLoadComplete();
+		bool ICefResourceRequestHandlerPrivate.AvoidOnResourceLoadComplete()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(OnResourceLoadComplete));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when a resource load has completed. The |browser|
@@ -380,8 +394,10 @@ namespace CefNet
 			instance.OnResourceLoadComplete(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), CefResponse.Wrap(CefResponse.Create, response), status, received_content_length);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceRequestHandlerPrivate.AvoidOnProtocolExecution();
+		bool ICefResourceRequestHandlerPrivate.AvoidOnProtocolExecution()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceRequestHandler), nameof(OnProtocolExecution));
+		}
 
 		/// <summary>
 		/// Called on the IO thread to handle requests for URLs with an unknown

@@ -23,8 +23,10 @@ namespace CefNet.Internal
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidGetAudioParameters();
+		internal bool AvoidGetAudioParameters()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.GetAudioParameters));
+		}
 
 		/// <summary>
 		/// Called on the UI thread to allow configuration of audio stream parameters.
@@ -35,13 +37,15 @@ namespace CefNet.Internal
 		/// they are also pre-filled with some sensible defaults.
 		/// </param>
 		/// <returns>Return true to proceed with audio stream capture, or false to cancel it. </returns>
-		internal protected virtual bool GetAudioParameters(CefBrowser browser, ref CefAudioParameters @params)
+		internal protected virtual bool GetAudioParameters(CefBrowser browser, CefAudioParameters @params)
 		{
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnAudioStreamStarted();
+		internal bool AvoidOnAudioStreamStarted()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnAudioStreamStarted));
+		}
 
 		/// <summary>
 		/// Called on a browser audio capture thread when the browser starts streaming
@@ -61,8 +65,10 @@ namespace CefNet.Internal
 			
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnAudioStreamPacket();
+		internal bool AvoidOnAudioStreamPacket()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnAudioStreamPacket));
+		}
 
 		/// <summary>
 		/// Called on the audio stream thread when a PCM packet is received for the
@@ -86,8 +92,10 @@ namespace CefNet.Internal
 			
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnAudioStreamStopped();
+		internal bool AvoidOnAudioStreamStopped()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnAudioStreamStopped));
+		}
 
 		/// <summary>
 		/// Called on the UI thread when the stream has stopped. OnAudioSteamStopped
@@ -100,8 +108,10 @@ namespace CefNet.Internal
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnAudioStreamError();
+		internal bool AvoidOnAudioStreamError()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnAudioStreamError));
+		}
 
 		/// <summary>
 		/// Called on the UI or audio stream thread when an error occurred. During the

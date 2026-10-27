@@ -79,8 +79,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnRegisterCustomPreferences();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnRegisterCustomPreferences()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnRegisterCustomPreferences));
+		}
 
 		/// <summary>
 		/// Provides an opportunity to register custom preferences prior to global and
@@ -150,8 +152,10 @@ namespace CefNet
 			instance.OnContextInitialized();
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnBeforeChildProcessLaunch();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnBeforeChildProcessLaunch()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnBeforeChildProcessLaunch));
+		}
 
 		/// <summary>
 		/// Called before a child process is launched. Will be called on the browser
@@ -184,8 +188,10 @@ namespace CefNet
 			instance.OnBeforeChildProcessLaunch(CefCommandLine.Wrap(CefCommandLine.Create, command_line));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnAlreadyRunningAppRelaunch();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnAlreadyRunningAppRelaunch()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnAlreadyRunningAppRelaunch));
+		}
 
 		/// <summary>
 		/// Implement this function to provide app-specific behavior when an already
@@ -228,8 +234,10 @@ namespace CefNet
 			return instance.OnAlreadyRunningAppRelaunch(CefCommandLine.Wrap(CefCommandLine.Create, command_line), CefString.Read(current_directory)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork();
+		bool ICefBrowserProcessHandlerPrivate.AvoidOnScheduleMessagePumpWork()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefBrowserProcessHandler), nameof(OnScheduleMessagePumpWork));
+		}
 
 		/// <summary>
 		/// Called from any thread when work has been scheduled for the browser

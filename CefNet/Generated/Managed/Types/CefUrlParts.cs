@@ -251,8 +251,9 @@ namespace CefNet
 				Path = null;
 				Query = null;
 				Fragment = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefUrlParts()

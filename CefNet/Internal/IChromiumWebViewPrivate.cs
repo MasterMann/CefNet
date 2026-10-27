@@ -13,7 +13,7 @@ namespace CefNet.Internal
 		float GetDevicePixelRatio();
 		CefRect GetCefViewBounds();
 		CefRect GetCefRootBounds();
-		bool GetCefScreenInfo(ref CefScreenInfo screenInfo);
+		bool GetCefScreenInfo(CefScreenInfo screenInfo);
 		bool CefPointToScreen(ref CefPoint point);
 		void RaiseCefBrowserCreated();
 		bool RaiseClosing();

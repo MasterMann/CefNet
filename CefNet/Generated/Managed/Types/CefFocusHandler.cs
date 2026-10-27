@@ -62,8 +62,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnTakeFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnTakeFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnTakeFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component is about to loose focus. For instance,
@@ -96,8 +98,10 @@ namespace CefNet
 			instance.OnTakeFocus(CefBrowser.Wrap(CefBrowser.Create, browser), next != 0);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnSetFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnSetFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnSetFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component is requesting focus. |source| indicates
@@ -129,8 +133,10 @@ namespace CefNet
 			return instance.OnSetFocus(CefBrowser.Wrap(CefBrowser.Create, browser), source) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefFocusHandlerPrivate.AvoidOnGotFocus();
+		bool ICefFocusHandlerPrivate.AvoidOnGotFocus()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefFocusHandler), nameof(OnGotFocus));
+		}
 
 		/// <summary>
 		/// Called when the browser component has received focus.

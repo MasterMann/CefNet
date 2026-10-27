@@ -8,8 +8,10 @@ namespace CefNet.Internal
 		public static object FrameAttachedEvent = new object();
 		public static object FrameDetachedEvent = new object();
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		private extern bool AvoidOnFrameCreatedImpl();
+		private bool AvoidOnFrameCreatedImpl()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFrameCreated));
+		}
 
 		internal bool AvoidOnFrameCreated()
 		{
@@ -29,8 +31,24 @@ namespace CefNet.Internal
 			WebView.RaiseCefFrameCreated(new FrameEventArgs(frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		private extern bool AvoidOnFrameAttachedImpl();
+		internal bool AvoidOnFrameDestroyed()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFrameDestroyed));
+		}
+
+		/// <summary>
+		/// Called when a frame is destroyed. This will be the last notification that
+		/// references <paramref name="frame"/>, and <see cref="CefFrame.IsValid"/> will now return false.
+		/// </summary>
+		internal protected virtual void OnFrameDestroyed(CefBrowser browser, CefFrame frame)
+		{
+
+		}
+
+		private bool AvoidOnFrameAttachedImpl()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFrameAttached));
+		}
 
 		internal bool AvoidOnFrameAttached()
 		{
@@ -46,8 +64,10 @@ namespace CefNet.Internal
 			WebView.RaiseCefFrameAttached(new FrameEventArgs(frame, reattached));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		private extern bool AvoidOnFrameDetachedImpl();
+		private bool AvoidOnFrameDetachedImpl()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnFrameDetached));
+		}
 
 		internal bool AvoidOnFrameDetached()
 		{
@@ -71,8 +91,10 @@ namespace CefNet.Internal
 			WebView.RaiseCefFrameDetached(new FrameEventArgs(frame));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnMainFrameChanged();
+		internal bool AvoidOnMainFrameChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnMainFrameChanged));
+		}
 
 		/// <summary>
 		/// Called when the main frame changes due to

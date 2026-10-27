@@ -79,8 +79,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidOpen();
+		bool ICefResourceHandlerPrivate.AvoidOpen()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(Open));
+		}
 
 		/// <summary>
 		/// Open the response stream. To handle the request immediately set
@@ -118,8 +120,10 @@ namespace CefNet
 			return instance.Open(CefRequest.Wrap(CefRequest.Create, request), ref *handle_request, CefCallback.Wrap(CefCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidProcessRequest();
+		bool ICefResourceHandlerPrivate.AvoidProcessRequest()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(ProcessRequest));
+		}
 
 		/// <summary>
 		/// Begin processing the request. To handle the request return true (1) and
@@ -155,8 +159,10 @@ namespace CefNet
 			return instance.ProcessRequest(CefRequest.Wrap(CefRequest.Create, request), CefCallback.Wrap(CefCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidGetResponseHeaders();
+		bool ICefResourceHandlerPrivate.AvoidGetResponseHeaders()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(GetResponseHeaders));
+		}
 
 		/// <summary>
 		/// Retrieve response header information. If the response length is not known
@@ -199,8 +205,10 @@ namespace CefNet
 			instance.GetResponseHeaders(CefResponse.Wrap(CefResponse.Create, response), ref *response_length, ref s_redirectUrl);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidSkip();
+		bool ICefResourceHandlerPrivate.AvoidSkip()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(Skip));
+		}
 
 		/// <summary>
 		/// Skip response data when requested by a Range header. Skip over and discard
@@ -238,8 +246,10 @@ namespace CefNet
 			return instance.Skip(bytes_to_skip, ref *bytes_skipped, CefResourceSkipCallback.Wrap(CefResourceSkipCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidRead();
+		bool ICefResourceHandlerPrivate.AvoidRead()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(Read));
+		}
 
 		/// <summary>
 		/// Read response data. If data is available immediately copy up to
@@ -281,8 +291,10 @@ namespace CefNet
 			return instance.Read(unchecked((IntPtr)data_out), bytes_to_read, ref *bytes_read, CefResourceReadCallback.Wrap(CefResourceReadCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefResourceHandlerPrivate.AvoidReadResponse();
+		bool ICefResourceHandlerPrivate.AvoidReadResponse()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefResourceHandler), nameof(ReadResponse));
+		}
 
 		/// <summary>
 		/// Read response data. If data is available immediately copy up to

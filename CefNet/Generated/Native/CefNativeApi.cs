@@ -2079,6 +2079,47 @@ namespace CefNet.CApi
 		public static unsafe extern cef_value_t* cef_value_create();
 
 		/// <summary>
+		/// Return the full CEF version string for the libcef library (e.g.,
+		/// &quot;143.0.3+gcbafc77+chromium-143.0.7499.0&quot;). The returned pointer is valid
+		/// for the lifetime of the process.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_version_info.h as
+		/// char const * cef_version_full()
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern IntPtr cef_version_full();
+
+		/// <summary>
+		/// Returns CEF version information for the libcef library. The |entry|
+		/// parameter describes which version component will be returned:
+		/// 0 - CEF_VERSION_MAJOR
+		/// 1 - CEF_VERSION_MINOR
+		/// 2 - CEF_VERSION_PATCH
+		/// 3 - CEF_COMMIT_NUMBER
+		/// 4 - CHROME_VERSION_MAJOR
+		/// 5 - CHROME_VERSION_MINOR
+		/// 6 - CHROME_VERSION_BUILD
+		/// 7 - CHROME_VERSION_PATCH
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_version_info.h as
+		/// int cef_version_info(int entry)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern int cef_version_info(int entry);
+
+		/// <summary>
+		/// Return all CEF version information for the libcef library.
+		/// </summary>
+		/// <remarks>
+		/// Defined in include/cef_version_info.h as
+		/// void cef_version_info_all(cef_version_info_t * info)
+		/// </remarks>
+		[DllImport("libcef", CallingConvention = CallingConvention.Cdecl)]
+		public static unsafe extern void cef_version_info_all(cef_version_info_t* info);
+
+		/// <summary>
 		/// Create a new waitable event. If |automatic_reset| is true (1) then the event
 		/// state is automatically reset to un-signaled after a single waiting thread
 		/// has been released; otherwise, the state remains signaled until reset() is

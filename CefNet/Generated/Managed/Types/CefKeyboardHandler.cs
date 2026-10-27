@@ -58,8 +58,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefKeyboardHandlerPrivate.AvoidOnPreKeyEvent();
+		bool ICefKeyboardHandlerPrivate.AvoidOnPreKeyEvent()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefKeyboardHandler), nameof(OnPreKeyEvent));
+		}
 
 		/// <summary>
 		/// Called before a keyboard event is sent to the renderer. |event| contains
@@ -94,8 +96,10 @@ namespace CefNet
 			return instance.OnPreKeyEvent(CefBrowser.Wrap(CefBrowser.Create, browser), new CefKeyEvent(@event), os_event, ref *is_keyboard_shortcut) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefKeyboardHandlerPrivate.AvoidOnKeyEvent();
+		bool ICefKeyboardHandlerPrivate.AvoidOnKeyEvent()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefKeyboardHandler), nameof(OnKeyEvent));
+		}
 
 		/// <summary>
 		/// Called after the renderer and JavaScript in the page has had a chance to

@@ -67,8 +67,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnSinks();
+		bool ICefMediaObserverPrivate.AvoidOnSinks()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnSinks));
+		}
 
 		/// <summary>
 		/// The list of available media sinks has changed or
@@ -104,8 +106,10 @@ namespace CefNet
 			instance.OnSinks(obj_sinks);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRoutes();
+		bool ICefMediaObserverPrivate.AvoidOnRoutes()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRoutes));
+		}
 
 		/// <summary>
 		/// The list of available media routes has changed or
@@ -141,8 +145,10 @@ namespace CefNet
 			instance.OnRoutes(obj_routes);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRouteStateChanged();
+		bool ICefMediaObserverPrivate.AvoidOnRouteStateChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRouteStateChanged));
+		}
 
 		/// <summary>
 		/// The connection state of |route| has changed.
@@ -171,8 +177,10 @@ namespace CefNet
 			instance.OnRouteStateChanged(CefMediaRoute.Wrap(CefMediaRoute.Create, route), state);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefMediaObserverPrivate.AvoidOnRouteMessageReceived();
+		bool ICefMediaObserverPrivate.AvoidOnRouteMessageReceived()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefMediaObserver), nameof(OnRouteMessageReceived));
+		}
 
 		/// <summary>
 		/// A message was received over |route|. |message| is only valid for the scope

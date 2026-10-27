@@ -62,8 +62,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDownloadHandlerPrivate.AvoidCanDownload();
+		bool ICefDownloadHandlerPrivate.AvoidCanDownload()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDownloadHandler), nameof(CanDownload));
+		}
 
 		/// <summary>
 		/// Called before a download begins in response to a user-initiated action
@@ -99,8 +101,10 @@ namespace CefNet
 			return instance.CanDownload(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(url), CefString.Read(request_method)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDownloadHandlerPrivate.AvoidOnBeforeDownload();
+		bool ICefDownloadHandlerPrivate.AvoidOnBeforeDownload()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDownloadHandler), nameof(OnBeforeDownload));
+		}
 
 		/// <summary>
 		/// Called before a download begins. |suggested_name| is the suggested name
@@ -140,8 +144,10 @@ namespace CefNet
 			return instance.OnBeforeDownload(CefBrowser.Wrap(CefBrowser.Create, browser), CefDownloadItem.Wrap(CefDownloadItem.Create, download_item), CefString.Read(suggested_name), CefBeforeDownloadCallback.Wrap(CefBeforeDownloadCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDownloadHandlerPrivate.AvoidOnDownloadUpdated();
+		bool ICefDownloadHandlerPrivate.AvoidOnDownloadUpdated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDownloadHandler), nameof(OnDownloadUpdated));
+		}
 
 		/// <summary>
 		/// Called when a download&apos;s status or progress information has been updated.

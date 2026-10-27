@@ -94,8 +94,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnBeforeBrowse();
+		bool ICefRequestHandlerPrivate.AvoidOnBeforeBrowse()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnBeforeBrowse));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before browser navigation. Return true (1) to
@@ -137,8 +139,10 @@ namespace CefNet
 			return instance.OnBeforeBrowse(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefRequest.Wrap(CefRequest.Create, request), user_gesture != 0, is_redirect != 0) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnOpenUrlFromTab();
+		bool ICefRequestHandlerPrivate.AvoidOnOpenUrlFromTab()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnOpenUrlFromTab));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before OnBeforeBrowse in certain limited cases
@@ -182,8 +186,10 @@ namespace CefNet
 			return instance.OnOpenUrlFromTab(CefBrowser.Wrap(CefBrowser.Create, browser), CefFrame.Wrap(CefFrame.Create, frame), CefString.Read(target_url), target_disposition, user_gesture != 0) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidGetResourceRequestHandler();
+		bool ICefRequestHandlerPrivate.AvoidGetResourceRequestHandler()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(GetResourceRequestHandler));
+		}
 
 		/// <summary>
 		/// Called on the browser process IO thread before a resource request is
@@ -231,8 +237,10 @@ namespace CefNet
 			return (rv != null) ? rv.GetNativeInstance() : null;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidGetAuthCredentials();
+		bool ICefRequestHandlerPrivate.AvoidGetAuthCredentials()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(GetAuthCredentials));
+		}
 
 		/// <summary>
 		/// Called on the IO thread when the browser needs credentials from the user.
@@ -272,8 +280,10 @@ namespace CefNet
 			return instance.GetAuthCredentials(CefBrowser.Wrap(CefBrowser.Create, browser), CefString.Read(origin_url), isProxy != 0, CefString.Read(host), port, CefString.Read(realm), CefString.Read(scheme), CefAuthCallback.Wrap(CefAuthCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnCertificateError();
+		bool ICefRequestHandlerPrivate.AvoidOnCertificateError()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnCertificateError));
+		}
 
 		/// <summary>
 		/// Called on the UI thread to handle requests for URLs with an invalid SSL
@@ -310,8 +320,10 @@ namespace CefNet
 			return instance.OnCertificateError(CefBrowser.Wrap(CefBrowser.Create, browser), cert_error, CefString.Read(request_url), CefSSLInfo.Wrap(CefSSLInfo.Create, ssl_info), CefCallback.Wrap(CefCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnSelectClientCertificate();
+		bool ICefRequestHandlerPrivate.AvoidOnSelectClientCertificate()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnSelectClientCertificate));
+		}
 
 		/// <summary>
 		/// Called on the UI thread when a client certificate is being requested for
@@ -362,8 +374,10 @@ namespace CefNet
 			return instance.OnSelectClientCertificate(CefBrowser.Wrap(CefBrowser.Create, browser), isProxy != 0, CefString.Read(host), port, obj_certificates, CefSelectClientCertificateCallback.Wrap(CefSelectClientCertificateCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderViewReady();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderViewReady()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderViewReady));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render view associated
@@ -394,8 +408,10 @@ namespace CefNet
 			instance.OnRenderViewReady(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderProcessUnresponsive();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessUnresponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessUnresponsive));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render process is
@@ -441,8 +457,10 @@ namespace CefNet
 			return instance.OnRenderProcessUnresponsive(CefBrowser.Wrap(CefBrowser.Create, browser), CefUnresponsiveProcessCallback.Wrap(CefUnresponsiveProcessCallback.Create, callback)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderProcessResponsive();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessResponsive()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessResponsive));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render process becomes
@@ -473,8 +491,10 @@ namespace CefNet
 			instance.OnRenderProcessResponsive(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated();
+		bool ICefRequestHandlerPrivate.AvoidOnRenderProcessTerminated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnRenderProcessTerminated));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the render process terminates
@@ -508,8 +528,10 @@ namespace CefNet
 			instance.OnRenderProcessTerminated(CefBrowser.Wrap(CefBrowser.Create, browser), status, error_code, CefString.Read(error_string));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefRequestHandlerPrivate.AvoidOnDocumentAvailableInMainFrame();
+		bool ICefRequestHandlerPrivate.AvoidOnDocumentAvailableInMainFrame()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefRequestHandler), nameof(OnDocumentAvailableInMainFrame));
+		}
 
 		/// <summary>
 		/// Called on the browser process UI thread when the window.document object of

@@ -54,8 +54,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefDialogHandlerPrivate.AvoidOnFileDialog();
+		bool ICefDialogHandlerPrivate.AvoidOnFileDialog()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefDialogHandler), nameof(OnFileDialog));
+		}
 
 		/// <summary>
 		/// Called to run a file chooser dialog. |mode| represents the type of dialog

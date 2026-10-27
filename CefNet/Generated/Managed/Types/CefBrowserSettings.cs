@@ -506,8 +506,9 @@ namespace CefNet
 				CursiveFontFamily = null;
 				FantasyFontFamily = null;
 				DefaultEncoding = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefBrowserSettings()

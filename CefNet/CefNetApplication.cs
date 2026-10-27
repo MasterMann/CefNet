@@ -105,7 +105,7 @@ namespace CefNet
 
 		private static void AssertApiVersion()
 		{
-			string hash = CefApi.CefApiHash(CefApiHashType.Universal);
+			string hash = CefApi.CefApiHash(CefApiHashType.Platform);
 			if (CefApi.ApiHash.Equals(hash, StringComparison.OrdinalIgnoreCase))
 				return;
 
@@ -480,8 +480,8 @@ namespace CefNet
 				if (args.GetType(0) != CefValueType.Binary)
 					return;
 				XrayHandle handle = XrayHandle.FromCfxBinaryValue(args.GetBinary(0));
-				if ((int)(handle.frame >> 32) != (int)(e.Frame.Identifier >> 32))
-					return; // Mismatch process IDs
+				if (handle.frame != XrayHandle.GetFrameKey(e.Frame.Identifier))
+					return; // The handle belongs to another frame
 				handle.Release();
 			}
 		}
@@ -745,6 +745,27 @@ namespace CefNet
 		protected internal virtual CefClient GetDefaultClient()
 		{
 			return null;
+		}
+
+		/// <summary>
+		/// Returns the default handler for use with a new user or incognito profile,
+		/// or null to use no handler. Only used with Chrome style.
+		/// </summary>
+		protected internal virtual CefRequestContextHandler GetDefaultRequestContextHandler()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Called when an application relaunch is requested while an instance already runs with
+		/// the same root cache path. Return true if the relaunch was handled, or false for the
+		/// default behavior (create a new default-styled Chrome window).
+		/// </summary>
+		/// <param name="commandLine">The command line of the relaunched process.</param>
+		/// <param name="currentDirectory">The working directory of the relaunched process.</param>
+		protected internal virtual bool OnAlreadyRunningAppRelaunch(CefCommandLine commandLine, string currentDirectory)
+		{
+			return false;
 		}
 
 		/// <summary>

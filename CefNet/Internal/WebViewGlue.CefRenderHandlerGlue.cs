@@ -58,13 +58,16 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		internal protected virtual bool GetScreenInfo(CefBrowser browser, ref CefScreenInfo screenInfo)
+		internal protected virtual bool GetScreenInfo(CefBrowser browser, CefScreenInfo screenInfo)
 		{
-			if (WebView.GetCefScreenInfo(ref screenInfo))
+			if (WebView.GetCefScreenInfo(screenInfo))
 				return true;
 
 			float devicePixelRatio = WebView.GetDevicePixelRatio();
-			screenInfo = CefScreenInfo.GetPrimaryScreenInfo();
+			using (CefScreenInfo primaryScreen = CefScreenInfo.GetPrimaryScreenInfo())
+			{
+				primaryScreen.CopyTo(screenInfo);
+			}
 
 			if (devicePixelRatio != screenInfo.DeviceScaleFactor)
 			{
@@ -117,21 +120,25 @@ namespace CefNet.Internal
 			return false;
 		}
 
-		internal protected virtual void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, IntPtr sharedHandle)
+		internal protected virtual void OnAcceleratedPaint(CefBrowser browser, CefPaintElementType type, CefRect[] dirtyRects, CefAcceleratedPaintInfo info)
 		{
 
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidStartDragging();
+		internal bool AvoidStartDragging()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.StartDragging));
+		}
 
 		internal protected virtual bool StartDragging(CefBrowser browser, CefDragData dragData, CefDragOperationsMask allowedOps, int x, int y)
 		{
 			return false;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidUpdateDragCursor();
+		internal bool AvoidUpdateDragCursor()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.UpdateDragCursor));
+		}
 
 		internal protected virtual void UpdateDragCursor(CefBrowser browser, CefDragOperationsMask operation)
 		{
@@ -195,8 +202,10 @@ namespace CefNet.Internal
 			size = default;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal extern bool AvoidOnTouchHandleStateChanged();
+		internal bool AvoidOnTouchHandleStateChanged()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(WebViewGlue), nameof(WebViewGlue.OnTouchHandleStateChanged));
+		}
 
 		/// <summary>
 		/// Called when touch handle state is updated. The client is responsible for

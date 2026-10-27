@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefWriteHandlerPrivate.AvoidWrite();
+		bool ICefWriteHandlerPrivate.AvoidWrite()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefWriteHandler), nameof(Write));
+		}
 
 		/// <summary>
 		/// Write raw binary data.
@@ -100,8 +102,10 @@ namespace CefNet
 			return new UIntPtr((ulong)instance.Write(unchecked((IntPtr)ptr), (long)size, (long)n));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefWriteHandlerPrivate.AvoidSeek();
+		bool ICefWriteHandlerPrivate.AvoidSeek()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefWriteHandler), nameof(Seek));
+		}
 
 		/// <summary>
 		/// Seek to the specified offset position. |whence| may be any one of

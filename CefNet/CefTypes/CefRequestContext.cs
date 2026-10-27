@@ -89,7 +89,7 @@ namespace CefNet
 		/// Creates a new context object that shares storage with |other| and uses an optional |handler|.
 		/// </summary>
 		public unsafe CefRequestContext(CefRequestContext other, CefRequestContextHandler handler)
-			: this(CefNativeApi.cef_create_context_shared(
+			: this(CefNativeApi.cef_request_context_cef_create_context_shared(
 				(other ?? throw new ArgumentNullException(nameof(other))).GetNativeInstance(),
 				handler != null ? handler.GetNativeInstance() : null))
 		{

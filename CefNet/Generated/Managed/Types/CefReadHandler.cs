@@ -70,8 +70,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefReadHandlerPrivate.AvoidRead();
+		bool ICefReadHandlerPrivate.AvoidRead()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefReadHandler), nameof(Read));
+		}
 
 		/// <summary>
 		/// Read raw binary data.
@@ -100,8 +102,10 @@ namespace CefNet
 			return new UIntPtr((ulong)instance.Read(unchecked((IntPtr)ptr), (long)size, (long)n));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefReadHandlerPrivate.AvoidSeek();
+		bool ICefReadHandlerPrivate.AvoidSeek()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefReadHandler), nameof(Seek));
+		}
 
 		/// <summary>
 		/// Seek to the specified offset position. |whence| may be any one of

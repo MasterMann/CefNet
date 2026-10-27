@@ -75,8 +75,10 @@ namespace CefNet
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidOnBeforePopup();
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforePopup()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(OnBeforePopup));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before a new popup browser is created. The
@@ -150,8 +152,10 @@ namespace CefNet
 			return rv;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidOnBeforePopupAborted();
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforePopupAborted()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(OnBeforePopupAborted));
+		}
 
 		/// <summary>
 		/// Called on the UI thread if a new popup browser is aborted. This only
@@ -191,8 +195,10 @@ namespace CefNet
 			instance.OnBeforePopupAborted(CefBrowser.Wrap(CefBrowser.Create, browser), popup_id);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidOnBeforeDevToolsPopup();
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforeDevToolsPopup()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(OnBeforeDevToolsPopup));
+		}
 
 		/// <summary>
 		/// Called on the UI thread before a new DevTools popup browser is created.
@@ -237,8 +243,10 @@ namespace CefNet
 			instance.OnBeforeDevToolsPopup(CefBrowser.Wrap(CefBrowser.Create, browser), CefWindowInfo.Wrap(windowInfo), ref obj_client, new CefBrowserSettings(settings), ref obj_extra_info, ref *use_default_window);
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidOnAfterCreated();
+		bool ICefLifeSpanHandlerPrivate.AvoidOnAfterCreated()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(OnAfterCreated));
+		}
 
 		/// <summary>
 		/// Called after a new browser is created. It is now safe to begin performing
@@ -270,8 +278,10 @@ namespace CefNet
 			instance.OnAfterCreated(CefBrowser.Wrap(CefBrowser.Create, browser));
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidDoClose();
+		bool ICefLifeSpanHandlerPrivate.AvoidDoClose()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(DoClose));
+		}
 
 		/// <summary>
 		/// Called when an Alloy style browser is ready to be closed, meaning that the
@@ -397,8 +407,10 @@ namespace CefNet
 			return instance.DoClose(CefBrowser.Wrap(CefBrowser.Create, browser)) ? 1 : 0;
 		}
 
-		[MethodImpl(MethodImplOptions.ForwardRef)]
-		extern bool ICefLifeSpanHandlerPrivate.AvoidOnBeforeClose();
+		bool ICefLifeSpanHandlerPrivate.AvoidOnBeforeClose()
+		{
+			return !VirtualMethods.IsOverridden(this, typeof(CefLifeSpanHandler), nameof(OnBeforeClose));
+		}
 
 		/// <summary>
 		/// Called just before a browser is destroyed. Release all references to the

@@ -359,8 +359,9 @@ namespace CefNet
 				PageRanges = null;
 				HeaderTemplate = null;
 				FooterTemplate = null;
-				Marshal.FreeHGlobal((IntPtr)_instance);
-				_instance = null;}
+				CefStructure.Free((IntPtr)_instance);
+				_instance = null;
+			}
 		}
 
 		~CefPdfPrintSettings()
