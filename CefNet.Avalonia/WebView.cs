@@ -402,6 +402,8 @@ namespace CefNet.Avalonia
 		public override void Render(DrawingContext drawingContext)
 		{
 			base.Render(drawingContext);
+			// Hit testing needs drawn content; with shared textures the page is in a composition visual.
+			drawingContext.FillRectangle(Brushes.Transparent, new Rect(Bounds.Size));
 			if (OffscreenGraphics != null)
 			{
 				OffscreenGraphics.Render(drawingContext);
