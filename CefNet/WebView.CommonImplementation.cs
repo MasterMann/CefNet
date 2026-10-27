@@ -1398,14 +1398,14 @@ namespace CefNet
 			if (metaKey)
 				modifiers |= CefEventFlags.CommandDown;
 
-			VirtualKeys key = KeycodeConverter.CharacterToVirtualKey(c);
+			bool hasKey = KeycodeConverter.TryCharacterToVirtualKey(c, out VirtualKeys key);
 
 			var k = new CefKeyEvent();
 			k.Type = CefKeyEventType.Char;
 			k.Modifiers = (uint)modifiers;
 			k.IsSystemKey = altKey;
 			k.WindowsKeyCode = PlatformInfo.IsLinux ? (int)key : c;
-			k.NativeKeyCode = KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, extendedKey);
+			k.NativeKeyCode = hasKey ? KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, extendedKey) : 0;
 			k.Character = c;
 			k.UnmodifiedCharacter = c;
 			this.BrowserObject?.Host?.SendKeyEvent(k);

@@ -955,7 +955,8 @@ namespace CefNet.Avalonia
 			{
 				CefEventFlags modifiers = CefNet.Input.KeycodeConverter.IsShiftRequired(symbol) ? CefEventFlags.ShiftDown : CefEventFlags.None;
 
-				VirtualKeys key = KeycodeConverter.CharacterToVirtualKey(symbol);
+				// Characters without a key on the current layout (IME, other layouts) are sent without a native code.
+				bool hasKey = KeycodeConverter.TryCharacterToVirtualKey(symbol, out VirtualKeys key);
 
 				var k = new CefKeyEvent();
 				k.Type = CefKeyEventType.Char;
@@ -963,7 +964,7 @@ namespace CefNet.Avalonia
 				k.Character = symbol;
 				k.UnmodifiedCharacter = symbol;
 				k.Modifiers = (uint)modifiers;
-				k.NativeKeyCode = KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, false);
+				k.NativeKeyCode = hasKey ? KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, false) : 0;
 				this.BrowserObject?.Host.SendKeyEvent(k);
 			}
 			e.Handled = true;

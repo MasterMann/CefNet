@@ -775,7 +775,9 @@ namespace CefNet.Wpf
 				var k = new CefKeyEvent();
 				k.Type = CefKeyEventType.Char;
 				k.WindowsKeyCode = symbol;
-				k.NativeKeyCode = KeycodeConverter.VirtualKeyToNativeKeyCode(KeycodeConverter.CharacterToVirtualKey(symbol), modifiers, _lastKeydownIsExtendedKey);
+				k.NativeKeyCode = KeycodeConverter.TryCharacterToVirtualKey(symbol, out VirtualKeys key)
+					? KeycodeConverter.VirtualKeyToNativeKeyCode(key, modifiers, _lastKeydownIsExtendedKey)
+					: 0;
 				k.Modifiers = (uint)modifiers;
 				this.BrowserObject?.Host.SendKeyEvent(k);
 			}
