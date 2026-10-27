@@ -32,6 +32,12 @@ settings.ResourcesDirPath = "path_to_cef";
 var app = new CefNetApplication();
 app.Initialize("path_to_cef", settings);
 ```
+*Note: CEF allows one running process per profile directory (`CefSettings.RootCachePath`). If you
+set neither `RootCachePath` nor `CachePath`, CefNet uses `CefNet/<application name>` under the local
+application data folder (`%LOCALAPPDATA%` on Windows, `~/.local/share` on Linux), so your application
+doesn't collide with other CEF applications. A second instance of the same application fails to
+initialize with an explanatory `CefRuntimeException`; override `OnAlreadyRunningAppRelaunch` to handle
+it in the running instance.*
 
 (3) Add a WebView control to the form of your application.
 

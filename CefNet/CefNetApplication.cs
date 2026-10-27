@@ -137,6 +137,35 @@ namespace CefNet
 			}
 		}
 
+		/// <summary>
+		/// Gives the application its own CEF profile directory when the settings leave both cache
+		/// paths empty. CEF otherwise shares one default directory among all CEF applications, and its
+		/// process singleton then hands the launch to whichever CEF application already uses it.
+		/// </summary>
+		/// <remarks>
+		/// The directory is <c>CefNet/&lt;entry assembly name&gt;</c> under the local application data
+		/// folder: <c>%LOCALAPPDATA%</c> on Windows, <c>$XDG_DATA_HOME</c> or <c>~/.local/share</c> on
+		/// Linux, <c>~/Library/Application Support</c> on macOS. CEF requires an absolute path, so the
+		/// CEF default stays in effect when that folder is unavailable (for example, without <c>HOME</c>).
+		/// </remarks>
+		private static void ApplyDefaultRootCachePath(CefSettings settings)
+		{
+			if (!string.IsNullOrEmpty(settings.RootCachePath) || !string.IsNullOrEmpty(settings.CachePath))
+				return;
+
+			string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			if (string.IsNullOrEmpty(baseDir) || !Path.IsPathFullyQualified(baseDir))
+				return;
+
+			string appName = Assembly.GetEntryAssembly()?.GetName().Name;
+			if (string.IsNullOrEmpty(appName))
+				appName = Process.GetCurrentProcess().ProcessName;
+			foreach (char c in Path.GetInvalidFileNameChars())
+				appName = appName.Replace(c, '_');
+
+			settings.RootCachePath = Path.Combine(baseDir, "CefNet", appName);
+		}
+
 		private static string InitializeDllPath(string cefPath)
 		{
 			if (!string.IsNullOrWhiteSpace(cefPath))
@@ -248,8 +277,19 @@ namespace CefNet
 				Environment.Exit(retval);
 
 			UsesExternalMessageLoop = settings.ExternalMessagePump;
+			ApplyDefaultRootCachePath(settings);
 			if (!CefApi.Initialize(main_args, settings, this, IntPtr.Zero))
-				throw new CefRuntimeException("Failed to initialize the CEF browser process.");
+			{
+				var exitCode = (CefResultcode)CApi.CefNativeApi.cef_get_exit_code();
+				if (exitCode == CefResultcode.NormalExitProcessNotified)
+				{
+					throw new CefRuntimeException(string.Format("Another process already uses the CEF root cache path '{0}' "
+						+ "and has received this launch. If that process is a different application, give each application its own "
+						+ "CefSettings.RootCachePath; to handle a second instance, override OnAlreadyRunningAppRelaunch.",
+						settings.RootCachePath));
+				}
+				throw new CefRuntimeException(string.Format("Failed to initialize the CEF browser process (exit code {0}).", exitCode));
+			}
 
 			GC.KeepAlive(settings);
 		}
