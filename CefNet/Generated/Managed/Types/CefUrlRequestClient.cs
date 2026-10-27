@@ -60,7 +60,7 @@ namespace CefNet
 			self->on_request_complete = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, cef_urlrequest_t*, void>)&OnRequestCompleteImpl;
 			self->on_upload_progress = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, cef_urlrequest_t*, long, long, void>)&OnUploadProgressImpl;
 			self->on_download_progress = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, cef_urlrequest_t*, long, long, void>)&OnDownloadProgressImpl;
-			self->on_download_data = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, cef_urlrequest_t*, void*, nuint, void>)&OnDownloadDataImpl;
+			self->on_download_data = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, cef_urlrequest_t*, void*, UIntPtr, void>)&OnDownloadDataImpl;
 			self->get_auth_credentials = (delegate* unmanaged[Stdcall]<cef_urlrequest_client_t*, int, cef_string_t*, int, cef_string_t*, cef_string_t*, cef_auth_callback_t*, int>)&GetAuthCredentialsImpl;
 			#endif
 		}
@@ -181,14 +181,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnDownloadDataDelegate(cef_urlrequest_client_t* self, cef_urlrequest_t* request, void* data, nuint data_length);
+		private unsafe delegate void OnDownloadDataDelegate(cef_urlrequest_client_t* self, cef_urlrequest_t* request, void* data, UIntPtr data_length);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_urlrequest_client_t* self, _cef_urlrequest_t* request, const void* data, size_t data_length)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnDownloadDataImpl(cef_urlrequest_client_t* self, cef_urlrequest_t* request, void* data, nuint data_length)
+		private static unsafe void OnDownloadDataImpl(cef_urlrequest_client_t* self, cef_urlrequest_t* request, void* data, UIntPtr data_length)
 		{
 			var instance = GetInstance((IntPtr)self) as CefUrlRequestClient;
 			if (instance == null || ((ICefUrlRequestClientPrivate)instance).AvoidOnDownloadData())

@@ -24,9 +24,9 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe partial struct cef_range_t
 	{
-		public int from;
+		public UInt32 from;
 
-		public int to;
+		public UInt32 to;
 	}
 }
 

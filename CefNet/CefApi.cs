@@ -357,15 +357,15 @@ namespace CefNet
 			CefNativeApi.cef_set_osmodal_loop(osModalLoop ? 1 : 0);
 		}
 
-		/// <summary>
-		/// Call during process startup to enable High-DPI support on Windows 7 or newer.
-		/// Older versions of Windows should be left DPI-unaware because they do not
-		/// support DirectWrite and GDI fonts are kerned very badly.
-		/// </summary>
-		public static void EnableHighDPISupport()
-		{
-			CefNativeApi.cef_enable_highdpi_support();
-		}
+		///// <summary>
+		///// Call during process startup to enable High-DPI support on Windows 7 or newer.
+		///// Older versions of Windows should be left DPI-unaware because they do not
+		///// support DirectWrite and GDI fonts are kerned very badly.
+		///// </summary>
+		//public static void EnableHighDPISupport()
+		//{
+		//	CefNativeApi.cef_enable_highdpi_support();
+		//}
 
 		/// <summary>
 		/// Returns true if the certificate status has any error, major or minor.

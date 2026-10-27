@@ -68,24 +68,6 @@ namespace CefNet.CApi
 		}
 
 		/// <summary>
-		/// cef_string_userfree_t (*)(_cef_media_sink_t* self)*
-		/// </summary>
-		public void* get_description;
-
-		/// <summary>
-		/// Returns the description of this sink.
-		/// The resulting string must be freed by calling cef_string_userfree_free().
-		/// </summary>
-		[NativeName("get_description")]
-		public unsafe cef_string_userfree_t GetDescription()
-		{
-			fixed (cef_media_sink_t* self = &this)
-			{
-				return ((delegate* unmanaged[Stdcall]<cef_media_sink_t*, cef_string_userfree_t>)get_description)(self);
-			}
-		}
-
-		/// <summary>
 		/// cef_media_sink_icon_type_t (*)(_cef_media_sink_t* self)*
 		/// </summary>
 		public void* get_icon_type;

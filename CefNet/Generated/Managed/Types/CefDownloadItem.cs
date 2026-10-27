@@ -73,13 +73,35 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the download has been canceled or interrupted.
+		/// Gets a value indicating whether the download has been canceled.
 		/// </summary>
 		public unsafe virtual bool IsCanceled
 		{
 			get
 			{
 				return SafeCall(NativeInstance->IsCanceled() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the download has been interrupted.
+		/// </summary>
+		public unsafe virtual bool IsInterrupted
+		{
+			get
+			{
+				return SafeCall(NativeInstance->IsInterrupted() != 0);
+			}
+		}
+
+		/// <summary>
+		/// Gets the most recent interrupt reason.
+		/// </summary>
+		public unsafe virtual CefDownloadInterruptReason InterruptReason
+		{
+			get
+			{
+				return SafeCall(NativeInstance->GetInterruptReason());
 			}
 		}
 

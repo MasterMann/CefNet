@@ -121,21 +121,26 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate CefResponseFilterStatus FilterDelegate(cef_response_filter_t* self, void* data_in, nuint data_in_size, nuint* data_in_read, void* data_out, nuint data_out_size, nuint* data_out_written);
+		private unsafe delegate CefResponseFilterStatus FilterDelegate(cef_response_filter_t* self, void* data_in, UIntPtr data_in_size, UIntPtr* data_in_read, void* data_out, UIntPtr data_out_size, UIntPtr* data_out_written);
 
 #endif // NET_LESS_5_0
 		// cef_response_filter_status_t (*)(_cef_response_filter_t* self, void* data_in, size_t data_in_size, size_t* data_in_read, void* data_out, size_t data_out_size, size_t* data_out_written)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe CefResponseFilterStatus FilterImpl(cef_response_filter_t* self, void* data_in, long data_in_size, long* data_in_read, void* data_out, long data_out_size, long* data_out_written)
+		private static unsafe CefResponseFilterStatus FilterImpl(cef_response_filter_t* self, void* data_in, UIntPtr data_in_size, UIntPtr* data_in_read, void* data_out, UIntPtr data_out_size, UIntPtr* data_out_written)
 		{
 			var instance = GetInstance((IntPtr)self) as CefResponseFilter;
 			if (instance == null || ((ICefResponseFilterPrivate)instance).AvoidFilter())
 			{
 				return default;
 			}
-			return instance.Filter(unchecked((IntPtr)data_in), (long)data_in_size, ref *data_in_read, unchecked((IntPtr)data_out), (long)data_out_size, ref *data_out_written);
+			long c3 = (long)(*data_in_read);
+			long c6 = (long)(*data_out_written);
+			CefResponseFilterStatus rv = instance.Filter(unchecked((IntPtr)data_in), (long)data_in_size, ref c3, unchecked((IntPtr)data_out), (long)data_out_size, ref c6);
+			*data_in_read = new UIntPtr((ulong)c3);
+			*data_out_written = new UIntPtr((ulong)c6);
+			return rv;
 		}
 	}
 }

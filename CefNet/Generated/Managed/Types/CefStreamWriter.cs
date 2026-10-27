@@ -42,9 +42,9 @@ namespace CefNet
 		/// <summary>
 		/// Write raw binary data.
 		/// </summary>
-		public unsafe virtual long Write(IntPtr ptr, UIntPtr size, UIntPtr n)
+		public unsafe virtual long Write(IntPtr ptr, long size, long n)
 		{
-			return SafeCall((long)NativeInstance->Write((void*)ptr, size, n));
+			return SafeCall((long)NativeInstance->Write((void*)ptr, new UIntPtr((ulong)size), new UIntPtr((ulong)n)));
 		}
 
 		/// <summary>

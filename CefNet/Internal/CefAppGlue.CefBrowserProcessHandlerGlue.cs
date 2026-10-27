@@ -36,5 +36,14 @@ namespace CefNet.Internal
 			return _application.GetDefaultClient();
 		}
 
+		internal bool AvoidOnRegisterCustomPreferences()
+		{
+			return false;
+		}
+
+		public void OnRegisterCustomPreferences(CefPreferencesType type, CefPreferenceRegistrar registrar)
+		{
+			_application.OnRegisterCustomPreferences(type, registrar);
+		}
 	}
 }

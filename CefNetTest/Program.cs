@@ -17,7 +17,7 @@ namespace CefNetTest
 		[STAThread]
 		public unsafe static void Main(string[] args)
 		{
-			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef");
+			string cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef/windows");
 			var path = Environment.GetEnvironmentVariable("PATH");
 			Environment.SetEnvironmentVariable("PATH", Path.Combine(cefPath, "Release") + ";" + path);
 			string libname = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "libcef.dll" : "libcef.so";
@@ -126,7 +126,7 @@ namespace CefNetTest
 			// Create browser asynchronously. There is also a
 			// synchronous version of this function available.
 			Console.WriteLine("cef_browser_host_create_browser");
-			bool cbok = CefApi.CreateBrowser(windowInfo, client, "https://yandex.com/", browserSettings, null, null);
+			bool cbok = CefApi.CreateBrowser(windowInfo, client, "https://google.com/", browserSettings, null, null);
 			Console.WriteLine("CreateBrowser: {0}", cbok);
 			windowInfo.Dispose();
 

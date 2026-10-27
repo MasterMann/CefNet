@@ -294,8 +294,7 @@ namespace CefNet.CApi
 		public void* append_switch;
 
 		/// <summary>
-		/// Add a switch to the end of the command line. If the switch has no value
-		/// pass an NULL value string.
+		/// Add a switch to the end of the command line.
 		/// </summary>
 		[NativeName("append_switch")]
 		public unsafe void AppendSwitch([Immutable]cef_string_t* name)
@@ -312,7 +311,8 @@ namespace CefNet.CApi
 		public void* append_switch_with_value;
 
 		/// <summary>
-		/// Add a switch with the specified value to the end of the command line.
+		/// Add a switch with the specified value to the end of the command line. If
+		/// the switch has no value pass an NULL value string.
 		/// </summary>
 		[NativeName("append_switch_with_value")]
 		public unsafe void AppendSwitchWithValue([Immutable]cef_string_t* name, [Immutable]cef_string_t* value)

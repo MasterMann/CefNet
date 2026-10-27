@@ -76,7 +76,7 @@ namespace CefNet
 			self->on_http_request = (delegate* unmanaged[Stdcall]<cef_server_handler_t*, cef_server_t*, int, cef_string_t*, cef_request_t*, void>)&OnHttpRequestImpl;
 			self->on_web_socket_request = (delegate* unmanaged[Stdcall]<cef_server_handler_t*, cef_server_t*, int, cef_string_t*, cef_request_t*, cef_callback_t*, void>)&OnWebSocketRequestImpl;
 			self->on_web_socket_connected = (delegate* unmanaged[Stdcall]<cef_server_handler_t*, cef_server_t*, int, void>)&OnWebSocketConnectedImpl;
-			self->on_web_socket_message = (delegate* unmanaged[Stdcall]<cef_server_handler_t*, cef_server_t*, int, void*, nuint, void>)&OnWebSocketMessageImpl;
+			self->on_web_socket_message = (delegate* unmanaged[Stdcall]<cef_server_handler_t*, cef_server_t*, int, void*, UIntPtr, void>)&OnWebSocketMessageImpl;
 			#endif
 		}
 
@@ -347,14 +347,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnWebSocketMessageDelegate(cef_server_handler_t* self, cef_server_t* server, int connection_id, void* data, nuint data_size);
+		private unsafe delegate void OnWebSocketMessageDelegate(cef_server_handler_t* self, cef_server_t* server, int connection_id, void* data, UIntPtr data_size);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_server_handler_t* self, _cef_server_t* server, int connection_id, const void* data, size_t data_size)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnWebSocketMessageImpl(cef_server_handler_t* self, cef_server_t* server, int connection_id, void* data, nuint data_size)
+		private static unsafe void OnWebSocketMessageImpl(cef_server_handler_t* self, cef_server_t* server, int connection_id, void* data, UIntPtr data_size)
 		{
 			var instance = GetInstance((IntPtr)self) as CefServerHandler;
 			if (instance == null || ((ICefServerHandlerPrivate)instance).AvoidOnWebSocketMessage())

@@ -42,9 +42,9 @@ namespace CefNet
 		/// <summary>
 		/// Read raw binary data.
 		/// </summary>
-		public unsafe virtual long Read(IntPtr ptr, UIntPtr size, UIntPtr n)
+		public unsafe virtual long Read(IntPtr ptr, long size, long n)
 		{
-			return SafeCall((long)NativeInstance->Read((void*)ptr, size, n));
+			return SafeCall((long)NativeInstance->Read((void*)ptr, new UIntPtr((ulong)size), new UIntPtr((ulong)n)));
 		}
 
 		/// <summary>

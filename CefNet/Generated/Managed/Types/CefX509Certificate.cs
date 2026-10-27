@@ -137,15 +137,23 @@ namespace CefNet
 		/// failed to encode a certificate in the chain it is still present in the
 		/// array but is an NULL string.
 		/// </summary>
-		public unsafe virtual void GetDEREncodedIssuerChain(ref UIntPtr chainCount, ref CefBinaryValue chain)
+		public unsafe virtual void GetDEREncodedIssuerChain(ref long chainCount, ref CefBinaryValue[] chain)
 		{
-			fixed (UIntPtr* p0 = &chainCount)
+			
+			var c1 = new UIntPtr((uint)chain.Length);
+			cef_binary_value_t** arr1 = (cef_binary_value_t**)Marshal.AllocHGlobal(sizeof(cef_binary_value_t*) * chain.Length);
+			for (int i = 0; i < chain.Length; i++)
 			{
-				cef_binary_value_t* p1 = (chain != null) ? chain.GetNativeInstance() : null;
-				cef_binary_value_t** pp1 = &p1;
-				NativeInstance->GetDEREncodedIssuerChain(p0, pp1);
-				chain = CefBinaryValue.Wrap(CefBinaryValue.Create, p1);
+				var e1 = chain[i];
+				*(arr1 + i) = e1 != null ? e1.GetNativeInstance() : null;
 			}
+			NativeInstance->GetDEREncodedIssuerChain(&c1, arr1);
+			chainCount = (long)c1;
+			for (int i = (int)c1; i >= 0; i--)
+			{
+				chain[i] = CefBinaryValue.Wrap(CefBinaryValue.Create, *(arr1 + i)); 
+			}
+			Marshal.FreeHGlobal((IntPtr)arr1);
 			GC.KeepAlive(this);
 		}
 
@@ -154,15 +162,23 @@ namespace CefNet
 		/// failed to encode a certificate in the chain it is still present in the
 		/// array but is an NULL string.
 		/// </summary>
-		public unsafe virtual void GetPEMEncodedIssuerChain(ref UIntPtr chainCount, ref CefBinaryValue chain)
+		public unsafe virtual void GetPEMEncodedIssuerChain(ref long chainCount, ref CefBinaryValue[] chain)
 		{
-			fixed (UIntPtr* p0 = &chainCount)
+			
+			var c1 = new UIntPtr((uint)chain.Length);
+			cef_binary_value_t** arr1 = (cef_binary_value_t**)Marshal.AllocHGlobal(sizeof(cef_binary_value_t*) * chain.Length);
+			for (int i = 0; i < chain.Length; i++)
 			{
-				cef_binary_value_t* p1 = (chain != null) ? chain.GetNativeInstance() : null;
-				cef_binary_value_t** pp1 = &p1;
-				NativeInstance->GetPEMEncodedIssuerChain(p0, pp1);
-				chain = CefBinaryValue.Wrap(CefBinaryValue.Create, p1);
+				var e1 = chain[i];
+				*(arr1 + i) = e1 != null ? e1.GetNativeInstance() : null;
 			}
+			NativeInstance->GetPEMEncodedIssuerChain(&c1, arr1);
+			chainCount = (long)c1;
+			for (int i = (int)c1; i >= 0; i--)
+			{
+				chain[i] = CefBinaryValue.Wrap(CefBinaryValue.Create, *(arr1 + i)); 
+			}
+			Marshal.FreeHGlobal((IntPtr)arr1);
 			GC.KeepAlive(this);
 		}
 	}

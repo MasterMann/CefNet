@@ -546,6 +546,10 @@ namespace CefGen
 				case "const char*":
 				case "XDisplay*":
 					return "IntPtr";
+				case "uint32_t":
+					return "UInt32";
+				case "uint16_t":
+					return "UInt16";
 
 			}
 			if (type.EndsWith('*'))

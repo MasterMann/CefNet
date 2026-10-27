@@ -28,6 +28,7 @@ namespace CefNet
 					throw new ArgumentOutOfRangeException(nameof(args));
 
 				var mainArgs = new CefMainArgs();
+
 				mainArgs._instance.posix.argc = args.Length;
 				mainArgs._instance.posix.argv = CreateArgv(encoding, args);
 				return mainArgs;

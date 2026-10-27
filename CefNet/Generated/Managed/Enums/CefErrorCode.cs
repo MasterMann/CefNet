@@ -75,8 +75,6 @@ namespace CefNet
 
 		SocketIsConnected = -23,
 
-		BlockedEnrollmentCheckPending = -24,
-
 		UploadStreamRewindNotSupported = -25,
 
 		ContextShutDown = -26,
@@ -399,7 +397,7 @@ namespace CefNet
 
 		InconsistentIpAddressSpace = -383,
 
-		CachedIpAddressSpaceBlockedByPrivateNetworkAccessPolicy = -384,
+		CachedIpAddressSpaceBlockedByLocalNetworkAccessPolicy = -384,
 
 		CacheMiss = -400,
 
@@ -483,6 +481,8 @@ namespace CefNet
 
 		CertDatabaseChanged = -714,
 
+		CertVerifierChanged = -716,
+
 		DnsMalformedResponse = -800,
 
 		DnsServerRequiresTcp = -801,
@@ -503,7 +503,7 @@ namespace CefNet
 
 		DnsRequestCancelled = -810,
 
-		DnsNoMachingSupportedAlpn = -811,
+		DnsNoMatchingSupportedAlpn = -811,
 	}
 }
 

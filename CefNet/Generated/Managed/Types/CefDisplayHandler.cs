@@ -83,7 +83,7 @@ namespace CefNet
 			self->on_console_message = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, CefLogSeverity, cef_string_t*, cef_string_t*, int, int>)&OnConsoleMessageImpl;
 			self->on_auto_resize = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, cef_size_t*, int>)&OnAutoResizeImpl;
 			self->on_loading_progress_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, double, void>)&OnLoadingProgressChangeImpl;
-			self->on_cursor_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, nint, CefCursorType, cef_cursor_info_t*, int>)&OnCursorChangeImpl;
+			self->on_cursor_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, IntPtr, CefCursorType, cef_cursor_info_t*, int>)&OnCursorChangeImpl;
 			self->on_media_access_change = (delegate* unmanaged[Stdcall]<cef_display_handler_t*, cef_browser_t*, int, int, void>)&OnMediaAccessChangeImpl;
 			#endif
 		}
@@ -403,14 +403,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate int OnCursorChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, nint cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info);
+		private unsafe delegate int OnCursorChangeDelegate(cef_display_handler_t* self, cef_browser_t* browser, IntPtr cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info);
 
 #endif // NET_LESS_5_0
 		// int (*)(_cef_display_handler_t* self, _cef_browser_t* browser, HCURSOR cursor, cef_cursor_type_t type, const cef_cursor_info_t* custom_cursor_info)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe int OnCursorChangeImpl(cef_display_handler_t* self, cef_browser_t* browser, nint cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info)
+		private static unsafe int OnCursorChangeImpl(cef_display_handler_t* self, cef_browser_t* browser, IntPtr cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info)
 		{
 			var instance = GetInstance((IntPtr)self) as CefDisplayHandler;
 			if (instance == null || ((ICefDisplayHandlerPrivate)instance).AvoidOnCursorChange())

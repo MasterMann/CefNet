@@ -73,7 +73,7 @@ namespace CefNet
 			self->get_resource_request_handler = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_frame_t*, cef_request_t*, int, int, cef_string_t*, int*, cef_resource_request_handler_t*>)&GetResourceRequestHandlerImpl;
 			self->get_auth_credentials = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, cef_string_t*, int, cef_string_t*, int, cef_string_t*, cef_string_t*, cef_auth_callback_t*, int>)&GetAuthCredentialsImpl;
 			self->on_certificate_error = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefErrorCode, cef_string_t*, cef_sslinfo_t*, cef_callback_t*, int>)&OnCertificateErrorImpl;
-			self->on_select_client_certificate = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, nuint, cef_x509certificate_t**, cef_select_client_certificate_callback_t*, int>)&OnSelectClientCertificateImpl;
+			self->on_select_client_certificate = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, int, cef_string_t*, int, UIntPtr, cef_x509certificate_t**, cef_select_client_certificate_callback_t*, int>)&OnSelectClientCertificateImpl;
 			self->on_render_view_ready = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)&OnRenderViewReadyImpl;
 			self->on_render_process_terminated = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, CefTerminationStatus, void>)&OnRenderProcessTerminatedImpl;
 			self->on_document_available_in_main_frame = (delegate* unmanaged[Stdcall]<cef_request_handler_t*, cef_browser_t*, void>)&OnDocumentAvailableInMainFrameImpl;
@@ -324,14 +324,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate int OnSelectClientCertificateDelegate(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, nuint certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback);
+		private unsafe delegate int OnSelectClientCertificateDelegate(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback);
 
 #endif // NET_LESS_5_0
 		// int (*)(_cef_request_handler_t* self, _cef_browser_t* browser, int isProxy, const cef_string_t* host, int port, size_t certificatesCount, const _cef_x509certificate_t** certificates, _cef_select_client_certificate_callback_t* callback)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe int OnSelectClientCertificateImpl(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, nuint certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
+		private static unsafe int OnSelectClientCertificateImpl(cef_request_handler_t* self, cef_browser_t* browser, int isProxy, cef_string_t* host, int port, UIntPtr certificatesCount, cef_x509certificate_t** certificates, cef_select_client_certificate_callback_t* callback)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRequestHandler;
 			if (instance == null || ((ICefRequestHandlerPrivate)instance).AvoidOnSelectClientCertificate())

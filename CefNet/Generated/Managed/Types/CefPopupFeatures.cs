@@ -126,51 +126,18 @@ namespace CefNet
 			}
 		}
 
-		public int MenuBarVisible
+		/// <summary>
+		/// True (1) if browser interface elements should be hidden.
+		/// </summary>
+		public bool IsPopup
 		{
 			get
 			{
-				return _instance.menuBarVisible;
+				return _instance.isPopup != 0;
 			}
 			set
 			{
-				_instance.menuBarVisible = value;
-			}
-		}
-
-		public int StatusBarVisible
-		{
-			get
-			{
-				return _instance.statusBarVisible;
-			}
-			set
-			{
-				_instance.statusBarVisible = value;
-			}
-		}
-
-		public int ToolBarVisible
-		{
-			get
-			{
-				return _instance.toolBarVisible;
-			}
-			set
-			{
-				_instance.toolBarVisible = value;
-			}
-		}
-
-		public int ScrollbarsVisible
-		{
-			get
-			{
-				return _instance.scrollbarsVisible;
-			}
-			set
-			{
-				_instance.scrollbarsVisible = value;
+				_instance.isPopup = value ? 1 : 0;
 			}
 		}
 

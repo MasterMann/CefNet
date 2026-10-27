@@ -248,12 +248,14 @@ namespace CefNet
 		/// <summary>
 		/// Returns the identifiers of all existing frames.
 		/// </summary>
-		public unsafe virtual void GetFrameIdentifiers(ref UIntPtr identifiersCount, ref long identifiers)
+		public unsafe virtual void GetFrameIdentifiers(ref long identifiersCount, ref long[] identifiers)
 		{
-			fixed (UIntPtr* p0 = &identifiersCount)
-			fixed (long* p1 = &identifiers)
+			fixed (long* p1 = identifiers)
 			{
-				NativeInstance->GetFrameIdentifiers(p0, p1);
+				UIntPtr c1 = new UIntPtr((uint)identifiers.Length);
+				NativeInstance->GetFrameIdentifiers(&c1, p1);
+				identifiersCount = (long)c1;
+				Array.Resize(ref identifiers, (int)c1);
 			}
 			GC.KeepAlive(this);
 		}

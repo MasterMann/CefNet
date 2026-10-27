@@ -18,5 +18,7 @@ namespace CefNet.Internal
 		internal CefRenderProcessHandler RenderProcessGlue { get; private set; }
 
 		internal CefBrowserProcessHandler BrowserProcessGlue { get; private set; }
+
+
 	}
 }

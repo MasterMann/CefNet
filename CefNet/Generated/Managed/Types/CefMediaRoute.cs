@@ -81,7 +81,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual void SendRouteMessage(IntPtr message, long messageSize)
 		{
-			NativeInstance->SendRouteMessage((void*)message, messageSize);
+			NativeInstance->SendRouteMessage((void*)message, new UIntPtr((ulong)messageSize));
 			GC.KeepAlive(this);
 		}
 

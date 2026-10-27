@@ -432,7 +432,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual bool SendDevToolsMessage(IntPtr message, long messageSize)
 		{
-			return SafeCall(NativeInstance->SendDevToolsMessage((void*)message, messageSize) != 0);
+			return SafeCall(NativeInstance->SendDevToolsMessage((void*)message, new UIntPtr((ulong)messageSize)) != 0);
 		}
 
 		/// <summary>
@@ -658,12 +658,13 @@ namespace CefNet
 		/// 3. insertText of NSTextInput is called (on Mac).
 		/// This function is only used when window rendering is disabled.
 		/// </summary>
-		public unsafe virtual void ImeSetComposition(string text, long underlinesCount, CefCompositionUnderline underlines, CefRange replacementRange, CefRange selectionRange)
+		public unsafe virtual void ImeSetComposition(string text, CefCompositionUnderline[] underlines, CefRange replacementRange, CefRange selectionRange)
 		{
 			fixed (char* s0 = text)
+			fixed (CefCompositionUnderline* p2 = underlines)
 			{
 				var cstr0 = new cef_string_t { Str = s0, Length = text != null ? text.Length : 0 };
-				NativeInstance->ImeSetComposition(&cstr0, underlinesCount, (cef_composition_underline_t*)&underlines, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
+				NativeInstance->ImeSetComposition(&cstr0, new UIntPtr((uint)underlines.Length), (cef_composition_underline_t*)p2, (cef_range_t*)&replacementRange, (cef_range_t*)&selectionRange);
 			}
 			GC.KeepAlive(this);
 		}

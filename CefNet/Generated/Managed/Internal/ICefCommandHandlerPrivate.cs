@@ -23,5 +23,9 @@ namespace CefNet.Internal
 	public interface ICefCommandHandlerPrivate
 	{
 		bool AvoidOnChromeCommand();
+		bool AvoidIsChromeAppMenuItemVisible();
+		bool AvoidIsChromeAppMenuItemEnabled();
+		bool AvoidIsChromePageActionIconVisible();
+		bool AvoidIsChromeToolbarButtonVisible();
 	}
 }

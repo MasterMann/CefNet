@@ -99,14 +99,14 @@ namespace CefNet
 			self->get_screen_info = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_screen_info_t*, int>)&GetScreenInfoImpl;
 			self->on_popup_show = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, int, void>)&OnPopupShowImpl;
 			self->on_popup_size = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_rect_t*, void>)&OnPopupSizeImpl;
-			self->on_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, nuint, cef_rect_t*, void*, int, int, void>)&OnPaintImpl;
-			self->on_accelerated_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, nuint, cef_rect_t*, void*, void>)&OnAcceleratedPaintImpl;
+			self->on_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, void*, int, int, void>)&OnPaintImpl;
+			self->on_accelerated_paint = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefPaintElementType, UIntPtr, cef_rect_t*, void*, void>)&OnAcceleratedPaintImpl;
 			self->get_touch_handle_size = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefHorizontalAlignment, cef_size_t*, void>)&GetTouchHandleSizeImpl;
 			self->on_touch_handle_state_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_touch_handle_state_t*, void>)&OnTouchHandleStateChangedImpl;
 			self->start_dragging = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_drag_data_t*, CefDragOperationsMask, int, int, int>)&StartDraggingImpl;
 			self->update_drag_cursor = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefDragOperationsMask, void>)&UpdateDragCursorImpl;
 			self->on_scroll_offset_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, double, double, void>)&OnScrollOffsetChangedImpl;
-			self->on_ime_composition_range_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_range_t*, nuint, cef_rect_t*, void>)&OnImeCompositionRangeChangedImpl;
+			self->on_ime_composition_range_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_range_t*, UIntPtr, cef_rect_t*, void>)&OnImeCompositionRangeChangedImpl;
 			self->on_text_selection_changed = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, cef_string_t*, cef_range_t*, void>)&OnTextSelectionChangedImpl;
 			self->on_virtual_keyboard_requested = (delegate* unmanaged[Stdcall]<cef_render_handler_t*, cef_browser_t*, CefTextInputMode, void>)&OnVirtualKeyboardRequestedImpl;
 			#endif
@@ -364,14 +364,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, nuint dirtyRectsCount, cef_rect_t* dirtyRects, void* buffer, int width, int height);
+		private unsafe delegate void OnPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* buffer, int width, int height);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, const void* buffer, int width, int height)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, nuint dirtyRectsCount, cef_rect_t* dirtyRects, void* buffer, int width, int height)
+		private static unsafe void OnPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* buffer, int width, int height)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderHandler;
 			if (instance == null || ((ICefRenderHandlerPrivate)instance).AvoidOnPaint())
@@ -405,14 +405,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnAcceleratedPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, nuint dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle);
+		private unsafe delegate void OnAcceleratedPaintDelegate(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, cef_paint_element_type_t type, size_t dirtyRectsCount, const cef_rect_t* dirtyRects, void* shared_handle)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnAcceleratedPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, nuint dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle)
+		private static unsafe void OnAcceleratedPaintImpl(cef_render_handler_t* self, cef_browser_t* browser, CefPaintElementType type, UIntPtr dirtyRectsCount, cef_rect_t* dirtyRects, void* shared_handle)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderHandler;
 			if (instance == null || ((ICefRenderHandlerPrivate)instance).AvoidOnAcceleratedPaint())
@@ -608,14 +608,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnImeCompositionRangeChangedDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_range_t* selected_range, nuint character_boundsCount, cef_rect_t* character_bounds);
+		private unsafe delegate void OnImeCompositionRangeChangedDelegate(cef_render_handler_t* self, cef_browser_t* browser, cef_range_t* selected_range, UIntPtr character_boundsCount, cef_rect_t* character_bounds);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_render_handler_t* self, _cef_browser_t* browser, const cef_range_t* selected_range, size_t character_boundsCount, const cef_rect_t* character_bounds)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnImeCompositionRangeChangedImpl(cef_render_handler_t* self, cef_browser_t* browser, cef_range_t* selected_range, nuint character_boundsCount, cef_rect_t* character_bounds)
+		private static unsafe void OnImeCompositionRangeChangedImpl(cef_render_handler_t* self, cef_browser_t* browser, cef_range_t* selected_range, UIntPtr character_boundsCount, cef_rect_t* character_bounds)
 		{
 			var instance = GetInstance((IntPtr)self) as CefRenderHandler;
 			if (instance == null || ((ICefRenderHandlerPrivate)instance).AvoidOnImeCompositionRangeChanged())

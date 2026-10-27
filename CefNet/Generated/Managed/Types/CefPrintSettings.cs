@@ -199,21 +199,26 @@ namespace CefNet
 		/// <summary>
 		/// Set the page ranges.
 		/// </summary>
-		public unsafe virtual void SetPageRanges(UIntPtr rangesCount, CefRange ranges)
+		public unsafe virtual void SetPageRanges(CefRange[] ranges)
 		{
-			NativeInstance->SetPageRanges(rangesCount, (cef_range_t*)&ranges);
+			fixed (CefRange* p1 = ranges)
+			{
+				NativeInstance->SetPageRanges(new UIntPtr((uint)ranges.Length), (cef_range_t*)p1);
+			}
 			GC.KeepAlive(this);
 		}
 
 		/// <summary>
 		/// Retrieve the page ranges.
 		/// </summary>
-		public unsafe virtual void GetPageRanges(ref UIntPtr rangesCount, ref CefRange ranges)
+		public unsafe virtual void GetPageRanges(ref long rangesCount, ref CefRange[] ranges)
 		{
-			fixed (UIntPtr* p0 = &rangesCount)
-			fixed (CefRange* p1 = &ranges)
+			fixed (CefRange* p1 = ranges)
 			{
-				NativeInstance->GetPageRanges(p0, (cef_range_t*)p1);
+				UIntPtr c1 = new UIntPtr((uint)ranges.Length);
+				NativeInstance->GetPageRanges(&c1, (cef_range_t*)p1);
+				rangesCount = (long)c1;
+				Array.Resize(ref ranges, (int)c1);
 			}
 			GC.KeepAlive(this);
 		}

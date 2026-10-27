@@ -56,7 +56,7 @@ namespace CefNet
 			self->flush = (void*)Marshal.GetFunctionPointerForDelegate(fnFlush);
 			self->may_block = (void*)Marshal.GetFunctionPointerForDelegate(fnMayBlock);
 			#else
-			self->write = (delegate* unmanaged[Stdcall]<cef_write_handler_t*, void*, nuint, nuint, nuint>)&WriteImpl;
+			self->write = (delegate* unmanaged[Stdcall]<cef_write_handler_t*, void*, UIntPtr, UIntPtr, UIntPtr>)&WriteImpl;
 			self->seek = (delegate* unmanaged[Stdcall]<cef_write_handler_t*, long, int, int>)&SeekImpl;
 			self->tell = (delegate* unmanaged[Stdcall]<cef_write_handler_t*, long>)&TellImpl;
 			self->flush = (delegate* unmanaged[Stdcall]<cef_write_handler_t*, int>)&FlushImpl;
@@ -82,14 +82,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate nuint WriteDelegate(cef_write_handler_t* self, void* ptr, nuint size, nuint n);
+		private unsafe delegate UIntPtr WriteDelegate(cef_write_handler_t* self, void* ptr, UIntPtr size, UIntPtr n);
 
 #endif // NET_LESS_5_0
 		// size_t (*)(_cef_write_handler_t* self, const void* ptr, size_t size, size_t n)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe nuint WriteImpl(cef_write_handler_t* self, void* ptr, nuint size, nuint n)
+		private static unsafe UIntPtr WriteImpl(cef_write_handler_t* self, void* ptr, UIntPtr size, UIntPtr n)
 		{
 			var instance = GetInstance((IntPtr)self) as CefWriteHandler;
 			if (instance == null || ((ICefWriteHandlerPrivate)instance).AvoidWrite())

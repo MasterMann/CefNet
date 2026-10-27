@@ -118,12 +118,12 @@ namespace CefNet
 		/// of |data| in bytes. The contents of |data| will be copied. The connection
 		/// will be closed automatically after the response is sent.
 		/// </summary>
-		public unsafe virtual void SendHttp200response(int connectionId, string contentType, IntPtr data, UIntPtr dataSize)
+		public unsafe virtual void SendHttp200response(int connectionId, string contentType, IntPtr data, long dataSize)
 		{
 			fixed (char* s1 = contentType)
 			{
 				var cstr1 = new cef_string_t { Str = s1, Length = contentType != null ? contentType.Length : 0 };
-				NativeInstance->SendHttp200response(connectionId, &cstr1, (void*)data, dataSize);
+				NativeInstance->SendHttp200response(connectionId, &cstr1, (void*)data, new UIntPtr((ulong)dataSize));
 			}
 			GC.KeepAlive(this);
 		}
@@ -189,9 +189,9 @@ namespace CefNet
 		/// the &quot;Content-Length&quot; header, if specified. See SendHttpResponse
 		/// documentation for intended usage.
 		/// </summary>
-		public unsafe virtual void SendRawData(int connectionId, IntPtr data, UIntPtr dataSize)
+		public unsafe virtual void SendRawData(int connectionId, IntPtr data, long dataSize)
 		{
-			NativeInstance->SendRawData(connectionId, (void*)data, dataSize);
+			NativeInstance->SendRawData(connectionId, (void*)data, new UIntPtr((ulong)dataSize));
 			GC.KeepAlive(this);
 		}
 
@@ -211,9 +211,9 @@ namespace CefNet
 		/// bytes. The contents of |data| will be copied. See
 		/// cef_server_handler_t::OnWebSocketRequest documentation for intended usage.
 		/// </summary>
-		public unsafe virtual void SendWebSocketMessage(int connectionId, IntPtr data, UIntPtr dataSize)
+		public unsafe virtual void SendWebSocketMessage(int connectionId, IntPtr data, long dataSize)
 		{
-			NativeInstance->SendWebSocketMessage(connectionId, (void*)data, dataSize);
+			NativeInstance->SendWebSocketMessage(connectionId, (void*)data, new UIntPtr((ulong)dataSize));
 			GC.KeepAlive(this);
 		}
 	}

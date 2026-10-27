@@ -69,7 +69,7 @@ namespace ModernFormsApp
 
 		private static void App_BeforeInitialize(object sender, EventArgs e)
 		{
-			CefApi.EnableHighDPISupport();
+			//CefApi.EnableHighDPISupport();
 		}
 
 		private static async void OnScheduleMessagePumpWork(long delayMs)

@@ -52,6 +52,84 @@ namespace CefNet.CApi
 				return ((delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, CefWindowOpenDisposition, int>)on_chrome_command)(self, browser, command_id, disposition);
 			}
 		}
+
+		/// <summary>
+		/// int (*)(_cef_command_handler_t* self, _cef_browser_t* browser, int command_id)*
+		/// </summary>
+		public void* is_chrome_app_menu_item_visible;
+
+		/// <summary>
+		/// Called to check if a Chrome app menu item should be visible. Values for
+		/// |command_id| can be found in the cef_command_ids.h file. Only called for
+		/// menu items that would be visible by default. Only used with the Chrome
+		/// runtime.
+		/// </summary>
+		[NativeName("is_chrome_app_menu_item_visible")]
+		public unsafe int IsChromeAppMenuItemVisible(cef_browser_t* browser, int command_id)
+		{
+			fixed (cef_command_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, int>)is_chrome_app_menu_item_visible)(self, browser, command_id);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_command_handler_t* self, _cef_browser_t* browser, int command_id)*
+		/// </summary>
+		public void* is_chrome_app_menu_item_enabled;
+
+		/// <summary>
+		/// Called to check if a Chrome app menu item should be enabled. Values for
+		/// |command_id| can be found in the cef_command_ids.h file. Only called for
+		/// menu items that would be enabled by default. Only used with the Chrome
+		/// runtime.
+		/// </summary>
+		[NativeName("is_chrome_app_menu_item_enabled")]
+		public unsafe int IsChromeAppMenuItemEnabled(cef_browser_t* browser, int command_id)
+		{
+			fixed (cef_command_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_command_handler_t*, cef_browser_t*, int, int>)is_chrome_app_menu_item_enabled)(self, browser, command_id);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_command_handler_t* self, cef_chrome_page_action_icon_type_t icon_type)*
+		/// </summary>
+		public void* is_chrome_page_action_icon_visible;
+
+		/// <summary>
+		/// Called during browser creation to check if a Chrome page action icon
+		/// should be visible. Only called for icons that would be visible by default.
+		/// Only used with the Chrome runtime.
+		/// </summary>
+		[NativeName("is_chrome_page_action_icon_visible")]
+		public unsafe int IsChromePageActionIconVisible(CefChromePageActionIconType icon_type)
+		{
+			fixed (cef_command_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_command_handler_t*, CefChromePageActionIconType, int>)is_chrome_page_action_icon_visible)(self, icon_type);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_command_handler_t* self, cef_chrome_toolbar_button_type_t button_type)*
+		/// </summary>
+		public void* is_chrome_toolbar_button_visible;
+
+		/// <summary>
+		/// Called during browser creation to check if a Chrome toolbar button should
+		/// be visible. Only called for buttons that would be visible by default. Only
+		/// used with the Chrome runtime.
+		/// </summary>
+		[NativeName("is_chrome_toolbar_button_visible")]
+		public unsafe int IsChromeToolbarButtonVisible(CefChromeToolbarButtonType button_type)
+		{
+			fixed (cef_command_handler_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_command_handler_t*, CefChromeToolbarButtonType, int>)is_chrome_toolbar_button_visible)(self, button_type);
+			}
+		}
 	}
 }
 

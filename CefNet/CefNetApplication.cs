@@ -192,11 +192,11 @@ namespace CefNet
 		/// <exception cref="InvalidOperationException"></exception>
 		public void Initialize(string path, CefSettings settings)
 		{
-			if (PlatformInfo.IsWindows)
-			{
-				if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
-					throw new InvalidOperationException("The calling thread must be STA");
-			}
+			//if (PlatformInfo.IsWindows)
+			//{
+			//	if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+			//		throw new InvalidOperationException("The calling thread must be STA");
+			//}
 
 			if (IsInitialized)
 				throw new InvalidOperationException("CEF already initialized. You must call Initialize once per application process.");
@@ -745,6 +745,30 @@ namespace CefNet
 		protected internal virtual CefClient GetDefaultClient()
 		{
 			return null;
+		}
+
+		/// <summary>
+		/// Provides an opportunity to register custom preferences prior to global and
+		/// request context initialization.
+		/// If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be
+		/// accessed via CefPreferenceManager::GetGlobalPreferences after
+		/// OnContextInitialized is called. Global preferences are registered a single
+		/// time at application startup. See related cef_settings_t.cache_path and
+		/// cef_settings_t.persist_user_preferences configuration.
+		/// If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be
+		/// accessed via the CefRequestContext after
+		/// cef_request_context_handler_t::OnRequestContextInitialized is called.
+		/// Request context preferences are registered each time a new
+		/// cef_request_context_t is created. It is intended but not required that all
+		/// request contexts have the same registered preferences. See related
+		/// CefRequestContextSettings.cache_path and
+		/// CefRequestContextSettings.persist_user_preferences configuration.
+		/// Do not keep a reference to the |registrar| object. This function is called
+		/// on the browser process UI thread.
+		/// </summary>
+		protected internal virtual void OnRegisterCustomPreferences(CefPreferencesType type, CefPreferenceRegistrar registrar)
+		{
+			
 		}
 	}
 }

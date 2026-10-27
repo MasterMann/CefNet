@@ -78,15 +78,23 @@ namespace CefNet
 		/// <summary>
 		/// Retrieve the post data elements.
 		/// </summary>
-		public unsafe virtual void GetElements(ref UIntPtr elementsCount, ref CefPostDataElement elements)
+		public unsafe virtual void GetElements(ref long elementsCount, ref CefPostDataElement[] elements)
 		{
-			fixed (UIntPtr* p0 = &elementsCount)
+			
+			var c1 = new UIntPtr((uint)elements.Length);
+			cef_post_data_element_t** arr1 = (cef_post_data_element_t**)Marshal.AllocHGlobal(sizeof(cef_post_data_element_t*) * elements.Length);
+			for (int i = 0; i < elements.Length; i++)
 			{
-				cef_post_data_element_t* p1 = (elements != null) ? elements.GetNativeInstance() : null;
-				cef_post_data_element_t** pp1 = &p1;
-				NativeInstance->GetElements(p0, pp1);
-				elements = CefPostDataElement.Wrap(CefPostDataElement.Create, p1);
+				var e1 = elements[i];
+				*(arr1 + i) = e1 != null ? e1.GetNativeInstance() : null;
 			}
+			NativeInstance->GetElements(&c1, arr1);
+			elementsCount = (long)c1;
+			for (int i = (int)c1; i >= 0; i--)
+			{
+				elements[i] = CefPostDataElement.Wrap(CefPostDataElement.Create, *(arr1 + i)); 
+			}
+			Marshal.FreeHGlobal((IntPtr)arr1);
 			GC.KeepAlive(this);
 		}
 

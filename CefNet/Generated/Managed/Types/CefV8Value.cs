@@ -536,13 +536,17 @@ namespace CefNet
 		/// Returns NULL if this function is called incorrectly or an exception is
 		/// thrown.
 		/// </summary>
-		public unsafe virtual CefV8Value ExecuteFunction(CefV8Value @object, UIntPtr argumentsCount, ref CefV8Value arguments)
+		public unsafe virtual CefV8Value ExecuteFunction(CefV8Value @object, CefV8Value[] arguments)
 		{
 			
-			cef_v8value_t* p2 = (arguments != null) ? arguments.GetNativeInstance() : null;
-			cef_v8value_t** pp2 = &p2;
-			var rv = CefV8Value.Wrap(CefV8Value.Create, NativeInstance->ExecuteFunction((@object != null) ? @object.GetNativeInstance() : null, argumentsCount, pp2));
-			arguments = CefV8Value.Wrap(CefV8Value.Create, p2);
+			cef_v8value_t** arr2 = (cef_v8value_t**)Marshal.AllocHGlobal(sizeof(cef_v8value_t*) * arguments.Length);
+			for (int i = 0; i < arguments.Length; i++)
+			{
+				var e2 = arguments[i];
+				*(arr2 + i) = e2 != null ? e2.GetNativeInstance() : null;
+			}
+			var rv = CefV8Value.Wrap(CefV8Value.Create, NativeInstance->ExecuteFunction((@object != null) ? @object.GetNativeInstance() : null, new UIntPtr((uint)arguments.Length), arr2));
+			Marshal.FreeHGlobal((IntPtr)arr2);
 			GC.KeepAlive(this);
 			return rv;
 		}
@@ -555,13 +559,17 @@ namespace CefNet
 		/// value on success. Returns NULL if this function is called incorrectly or
 		/// an exception is thrown.
 		/// </summary>
-		public unsafe virtual CefV8Value ExecuteFunctionWithContext(CefV8Context context, CefV8Value @object, UIntPtr argumentsCount, ref CefV8Value arguments)
+		public unsafe virtual CefV8Value ExecuteFunctionWithContext(CefV8Context context, CefV8Value @object, CefV8Value[] arguments)
 		{
 			
-			cef_v8value_t* p3 = (arguments != null) ? arguments.GetNativeInstance() : null;
-			cef_v8value_t** pp3 = &p3;
-			var rv = CefV8Value.Wrap(CefV8Value.Create, NativeInstance->ExecuteFunctionWithContext((context != null) ? context.GetNativeInstance() : null, (@object != null) ? @object.GetNativeInstance() : null, argumentsCount, pp3));
-			arguments = CefV8Value.Wrap(CefV8Value.Create, p3);
+			cef_v8value_t** arr3 = (cef_v8value_t**)Marshal.AllocHGlobal(sizeof(cef_v8value_t*) * arguments.Length);
+			for (int i = 0; i < arguments.Length; i++)
+			{
+				var e3 = arguments[i];
+				*(arr3 + i) = e3 != null ? e3.GetNativeInstance() : null;
+			}
+			var rv = CefV8Value.Wrap(CefV8Value.Create, NativeInstance->ExecuteFunctionWithContext((context != null) ? context.GetNativeInstance() : null, (@object != null) ? @object.GetNativeInstance() : null, new UIntPtr((uint)arguments.Length), arr3));
+			Marshal.FreeHGlobal((IntPtr)arr3);
 			GC.KeepAlive(this);
 			return rv;
 		}

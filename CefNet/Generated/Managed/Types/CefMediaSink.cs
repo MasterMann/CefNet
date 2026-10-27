@@ -65,18 +65,6 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Gets the description of this sink.
-		/// The resulting string must be freed by calling cef_string_userfree_free().
-		/// </summary>
-		public unsafe virtual string Description
-		{
-			get
-			{
-				return SafeCall(CefString.ReadAndFree(NativeInstance->GetDescription()));
-			}
-		}
-
-		/// <summary>
 		/// Gets the icon type for this sink.
 		/// </summary>
 		public unsafe virtual CefMediaSinkIconType IconType

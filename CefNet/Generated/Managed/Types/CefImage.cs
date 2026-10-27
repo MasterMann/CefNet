@@ -92,9 +92,9 @@ namespace CefNet
 		/// of pixel data and should be |pixel_width| x |pixel_height| x 4 bytes in
 		/// size. |color_type| and |alpha_type| values specify the pixel format.
 		/// </summary>
-		public unsafe virtual int AddBitmap(float scaleFactor, int pixelWidth, int pixelHeight, CefColorType colorType, CefAlphaType alphaType, IntPtr pixelData, UIntPtr pixelDataSize)
+		public unsafe virtual int AddBitmap(float scaleFactor, int pixelWidth, int pixelHeight, CefColorType colorType, CefAlphaType alphaType, IntPtr pixelData, long pixelDataSize)
 		{
-			return SafeCall(NativeInstance->AddBitmap(scaleFactor, pixelWidth, pixelHeight, colorType, alphaType, (void*)pixelData, pixelDataSize));
+			return SafeCall(NativeInstance->AddBitmap(scaleFactor, pixelWidth, pixelHeight, colorType, alphaType, (void*)pixelData, new UIntPtr((ulong)pixelDataSize)));
 		}
 
 		/// <summary>
@@ -104,7 +104,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual int AddPng(float scaleFactor, IntPtr pngData, long pngDataSize)
 		{
-			return SafeCall(NativeInstance->AddPng(scaleFactor, (void*)pngData, pngDataSize));
+			return SafeCall(NativeInstance->AddPng(scaleFactor, (void*)pngData, new UIntPtr((ulong)pngDataSize)));
 		}
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace CefNet
 		/// </summary>
 		public unsafe virtual int AddJpeg(float scaleFactor, IntPtr jpegData, long jpegDataSize)
 		{
-			return SafeCall(NativeInstance->AddJpeg(scaleFactor, (void*)jpegData, jpegDataSize));
+			return SafeCall(NativeInstance->AddJpeg(scaleFactor, (void*)jpegData, new UIntPtr((ulong)jpegDataSize)));
 		}
 
 		/// <summary>

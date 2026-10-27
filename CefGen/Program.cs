@@ -28,8 +28,7 @@ namespace CefGen
 			"_cef_main_args_t",
 			"_cef_window_info_t",
 			"_XEvent",
-			"_XDisplay",
-
+			"_XDisplay"
 		};
 
 		static void Main(string[] args)

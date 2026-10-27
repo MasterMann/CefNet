@@ -87,7 +87,7 @@ namespace CefNet.CApi
 		public void* is_canceled;
 
 		/// <summary>
-		/// Returns true (1) if the download has been canceled or interrupted.
+		/// Returns true (1) if the download has been canceled.
 		/// </summary>
 		[NativeName("is_canceled")]
 		public unsafe int IsCanceled()
@@ -95,6 +95,40 @@ namespace CefNet.CApi
 			fixed (cef_download_item_t* self = &this)
 			{
 				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, int>)is_canceled)(self);
+			}
+		}
+
+		/// <summary>
+		/// int (*)(_cef_download_item_t* self)*
+		/// </summary>
+		public void* is_interrupted;
+
+		/// <summary>
+		/// Returns true (1) if the download has been interrupted.
+		/// </summary>
+		[NativeName("is_interrupted")]
+		public unsafe int IsInterrupted()
+		{
+			fixed (cef_download_item_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, int>)is_interrupted)(self);
+			}
+		}
+
+		/// <summary>
+		/// cef_download_interrupt_reason_t (*)(_cef_download_item_t* self)*
+		/// </summary>
+		public void* get_interrupt_reason;
+
+		/// <summary>
+		/// Returns the most recent interrupt reason.
+		/// </summary>
+		[NativeName("get_interrupt_reason")]
+		public unsafe CefDownloadInterruptReason GetInterruptReason()
+		{
+			fixed (cef_download_item_t* self = &this)
+			{
+				return ((delegate* unmanaged[Stdcall]<cef_download_item_t*, CefDownloadInterruptReason>)get_interrupt_reason)(self);
 			}
 		}
 

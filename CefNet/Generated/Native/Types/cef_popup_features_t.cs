@@ -40,13 +40,10 @@ namespace CefNet.CApi
 
 		public int heightSet;
 
-		public int menuBarVisible;
-
-		public int statusBarVisible;
-
-		public int toolBarVisible;
-
-		public int scrollbarsVisible;
+		/// <summary>
+		/// True (1) if browser interface elements should be hidden.
+		/// </summary>
+		public int isPopup;
 	}
 }
 

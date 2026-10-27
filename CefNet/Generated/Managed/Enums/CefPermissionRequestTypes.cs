@@ -38,35 +38,37 @@ namespace CefNet
 
 		Clipboard = 1 << 4,
 
-		DiskQuota = 1 << 5,
+		TopLevelStorageAccess = 1 << 5,
 
-		LocalFonts = 1 << 6,
+		DiskQuota = 1 << 6,
 
-		Geolocation = 1 << 7,
+		LocalFonts = 1 << 7,
 
-		IdleDetection = 1 << 8,
+		Geolocation = 1 << 8,
 
-		MicStream = 1 << 9,
+		IdleDetection = 1 << 9,
 
-		MidiSysex = 1 << 10,
+		MicStream = 1 << 10,
 
-		MultipleDownloads = 1 << 11,
+		MidiSysex = 1 << 11,
 
-		Notifications = 1 << 12,
+		MultipleDownloads = 1 << 12,
 
-		ProtectedMediaIdentifier = 1 << 13,
+		Notifications = 1 << 13,
 
-		RegisterProtocolHandler = 1 << 14,
+		ProtectedMediaIdentifier = 1 << 14,
 
-		SecurityAttestation = 1 << 15,
+		RegisterProtocolHandler = 1 << 15,
 
-		StorageAccess = 1 << 16,
+		SecurityAttestation = 1 << 16,
 
-		U2fApiRequest = 1 << 17,
+		StorageAccess = 1 << 17,
 
-		VrSession = 1 << 18,
+		U2fApiRequest = 1 << 18,
 
-		WindowManagement = 1 << 19,
+		VrSession = 1 << 19,
+
+		WindowManagement = 1 << 20,
 	}
 }
 

@@ -20,7 +20,7 @@ namespace CefNet.CApi
 {
 	public static partial class CefNativeApi
 	{
-		public static readonly string ApiHash = "80dc2ef26a1ac3a35c798a01adc88240759ac85a";
+		public static readonly string ApiHash = "eb6257d3e4894dd51617d20588b7f0c3c8717301";
 
 		/// <summary>
 		/// Add an entry to the cross-origin access whitelist.
@@ -43,7 +43,7 @@ namespace CefNet.CApi
 		/// qualified |source_origin| URL (like http://www.example.com) will be allowed
 		/// access to all resources hosted on the specified |target_protocol| and
 		/// |target_domain|. If |target_domain| is non-NULL and
-		/// |allow_target_subdomains| if false (0) only exact domain matches will be
+		/// |allow_target_subdomains| is false (0) only exact domain matches will be
 		/// allowed. If |target_domain| contains a top- level domain component (like
 		/// &quot;example.com&quot;) and |allow_target_subdomains| is true (1) sub-domain matches
 		/// will be allowed. If |target_domain| is NULL and |allow_target_subdomains| if
@@ -1224,7 +1224,8 @@ namespace CefNet.CApi
 		public static unsafe extern cef_string_map_t cef_string_map_alloc();
 
 		/// <summary>
-		/// Append a new key/value pair at the end of the string map.
+		/// Append a new key/value pair at the end of the string map. If the key exists,
+		/// overwrite the existing value with a new value w/o changing the pair order.
 		/// </summary>
 		/// <remarks>
 		/// Defined in include/internal/cef_string_map.h as

@@ -48,7 +48,7 @@ namespace CefNet
 			self->on_draggable_regions_changed = (void*)Marshal.GetFunctionPointerForDelegate(fnOnDraggableRegionsChanged);
 			#else
 			self->on_drag_enter = (delegate* unmanaged[Stdcall]<cef_drag_handler_t*, cef_browser_t*, cef_drag_data_t*, CefDragOperationsMask, int>)&OnDragEnterImpl;
-			self->on_draggable_regions_changed = (delegate* unmanaged[Stdcall]<cef_drag_handler_t*, cef_browser_t*, cef_frame_t*, nuint, cef_draggable_region_t*, void>)&OnDraggableRegionsChangedImpl;
+			self->on_draggable_regions_changed = (delegate* unmanaged[Stdcall]<cef_drag_handler_t*, cef_browser_t*, cef_frame_t*, UIntPtr, cef_draggable_region_t*, void>)&OnDraggableRegionsChangedImpl;
 			#endif
 		}
 
@@ -108,14 +108,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate void OnDraggableRegionsChangedDelegate(cef_drag_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, nuint regionsCount, cef_draggable_region_t* regions);
+		private unsafe delegate void OnDraggableRegionsChangedDelegate(cef_drag_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, UIntPtr regionsCount, cef_draggable_region_t* regions);
 
 #endif // NET_LESS_5_0
 		// void (*)(_cef_drag_handler_t* self, _cef_browser_t* browser, _cef_frame_t* frame, size_t regionsCount, const cef_draggable_region_t* regions)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe void OnDraggableRegionsChangedImpl(cef_drag_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, nuint regionsCount, cef_draggable_region_t* regions)
+		private static unsafe void OnDraggableRegionsChangedImpl(cef_drag_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, UIntPtr regionsCount, cef_draggable_region_t* regions)
 		{
 			var instance = GetInstance((IntPtr)self) as CefDragHandler;
 			if (instance == null || ((ICefDragHandlerPrivate)instance).AvoidOnDraggableRegionsChanged())

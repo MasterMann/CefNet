@@ -79,7 +79,7 @@ namespace CefNet
 				fixed (byte* buffer = ms.GetBuffer())
 				{
 					// copy (ms.Length - 1) bytes to ignore last ampersand
-					dataElt.SetToBytes((UIntPtr)ms.Length > 0 ? ms.Length - 1 : 0, new IntPtr(buffer));
+					dataElt.SetToBytes(ms.Length > 0 ? ms.Length - 1 : 0, new IntPtr(buffer));
 				}
 				AddElement(dataElt);
 			}

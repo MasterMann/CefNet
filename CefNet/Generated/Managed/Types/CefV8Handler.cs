@@ -45,7 +45,7 @@ namespace CefNet
 			#if NET_LESS_5_0
 			self->execute = (void*)Marshal.GetFunctionPointerForDelegate(fnExecute);
 			#else
-			self->execute = (delegate* unmanaged[Stdcall]<cef_v8handler_t*, cef_string_t*, cef_v8value_t*, nuint, cef_v8value_t**, cef_v8value_t**, cef_string_t*, int>)&ExecuteImpl;
+			self->execute = (delegate* unmanaged[Stdcall]<cef_v8handler_t*, cef_string_t*, cef_v8value_t*, UIntPtr, cef_v8value_t**, cef_v8value_t**, cef_string_t*, int>)&ExecuteImpl;
 			#endif
 		}
 
@@ -71,14 +71,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate int ExecuteDelegate(cef_v8handler_t* self, cef_string_t* name, cef_v8value_t* @object, nuint argumentsCount, cef_v8value_t** arguments, cef_v8value_t** retval, cef_string_t* exception);
+		private unsafe delegate int ExecuteDelegate(cef_v8handler_t* self, cef_string_t* name, cef_v8value_t* @object, UIntPtr argumentsCount, cef_v8value_t** arguments, cef_v8value_t** retval, cef_string_t* exception);
 
 #endif // NET_LESS_5_0
 		// int (*)(_cef_v8handler_t* self, const cef_string_t* name, _cef_v8value_t* object, size_t argumentsCount, const _cef_v8value_t** arguments, _cef_v8value_t** retval, cef_string_t* exception)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe int ExecuteImpl(cef_v8handler_t* self, cef_string_t* name, cef_v8value_t* @object, nuint argumentsCount, cef_v8value_t** arguments, cef_v8value_t** retval, cef_string_t* exception)
+		private static unsafe int ExecuteImpl(cef_v8handler_t* self, cef_string_t* name, cef_v8value_t* @object, UIntPtr argumentsCount, cef_v8value_t** arguments, cef_v8value_t** retval, cef_string_t* exception)
 		{
 			var instance = GetInstance((IntPtr)self) as CefV8Handler;
 			if (instance == null || ((ICefV8HandlerPrivate)instance).AvoidExecute())

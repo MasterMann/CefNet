@@ -145,6 +145,10 @@ namespace CefGen
 				case "wchar":
 				case "char16":
 					return "char";
+				case "uint32_t":
+					return "UInt32";
+				case "uint16_t":
+					return "UInt16";
 			}
 			if (type.EndsWith("*"))
 			{

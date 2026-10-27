@@ -215,6 +215,8 @@ namespace CefGen
 
 		private void GenerateSimpleStruct(INamedTypeSymbol symbol, string baseType)
 		{
+			if (symbol.Name.StartsWith('_')) return;
+
 			string filePath = symbol.Locations[0].SourceTree.FilePath;
 			CodeFile fileDecl = CreateCodeFile(filePath.Substring(filePath.IndexOf("Generated")).Replace('\\', '/'));
 			var ns = new CodeNamespace("CefNet");

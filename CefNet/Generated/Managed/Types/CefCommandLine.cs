@@ -216,8 +216,7 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add a switch to the end of the command line. If the switch has no value
-		/// pass an NULL value string.
+		/// Add a switch to the end of the command line.
 		/// </summary>
 		public unsafe virtual void AppendSwitch(string name)
 		{
@@ -230,7 +229,8 @@ namespace CefNet
 		}
 
 		/// <summary>
-		/// Add a switch with the specified value to the end of the command line.
+		/// Add a switch with the specified value to the end of the command line. If
+		/// the switch has no value pass an NULL value string.
 		/// </summary>
 		public unsafe virtual void AppendSwitchWithValue(string name, string value)
 		{

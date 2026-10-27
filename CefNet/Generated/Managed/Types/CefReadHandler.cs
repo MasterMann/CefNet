@@ -56,7 +56,7 @@ namespace CefNet
 			self->eof = (void*)Marshal.GetFunctionPointerForDelegate(fnEof);
 			self->may_block = (void*)Marshal.GetFunctionPointerForDelegate(fnMayBlock);
 			#else
-			self->read = (delegate* unmanaged[Stdcall]<cef_read_handler_t*, void*, nuint, nuint, nuint>)&ReadImpl;
+			self->read = (delegate* unmanaged[Stdcall]<cef_read_handler_t*, void*, UIntPtr, UIntPtr, UIntPtr>)&ReadImpl;
 			self->seek = (delegate* unmanaged[Stdcall]<cef_read_handler_t*, long, int, int>)&SeekImpl;
 			self->tell = (delegate* unmanaged[Stdcall]<cef_read_handler_t*, long>)&TellImpl;
 			self->eof = (delegate* unmanaged[Stdcall]<cef_read_handler_t*, int>)&EofImpl;
@@ -82,14 +82,14 @@ namespace CefNet
 
 #if NET_LESS_5_0
 		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		private unsafe delegate nuint ReadDelegate(cef_read_handler_t* self, void* ptr, nuint size, nuint n);
+		private unsafe delegate UIntPtr ReadDelegate(cef_read_handler_t* self, void* ptr, UIntPtr size, UIntPtr n);
 
 #endif // NET_LESS_5_0
 		// size_t (*)(_cef_read_handler_t* self, void* ptr, size_t size, size_t n)*
 #if !NET_LESS_5_0
 		[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
 #endif
-		private static unsafe nuint ReadImpl(cef_read_handler_t* self, void* ptr, nuint size, nuint n)
+		private static unsafe UIntPtr ReadImpl(cef_read_handler_t* self, void* ptr, UIntPtr size, UIntPtr n)
 		{
 			var instance = GetInstance((IntPtr)self) as CefReadHandler;
 			if (instance == null || ((ICefReadHandlerPrivate)instance).AvoidRead())
