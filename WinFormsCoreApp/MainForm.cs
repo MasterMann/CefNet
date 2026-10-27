@@ -122,7 +122,7 @@ namespace WinFormsCoreApp
 			{
 				var settings = new CefPdfPrintSettings
 				{
-					HeaderFooterUrl = SelectedView.GetMainFrame().Url
+					DisplayHeaderFooter = true
 				};
 				try
 				{
@@ -376,9 +376,9 @@ namespace WinFormsCoreApp
 			}
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
+		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			base.OnClosing(e);
+			base.OnFormClosing(e);
 			if(!e.Cancel)
 			{
 				e.Cancel = !tabs.CloseAllTabs(false);

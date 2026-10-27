@@ -29,6 +29,11 @@ namespace CefNet.CApi
 	public struct cef_window_info_windows_t
 	{
 		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
+		/// <summary>
 		/// The extended window style of the window being created.<para/>
 		/// Standard parameter required by <see href="https://docs.microsoft.com/windows/win32/api/winuser/nf-winuser-createwindowexw">CreateWindowEx()</see>.
 		/// See the Microsoft Docs for more information.
@@ -121,6 +126,12 @@ namespace CefNet.CApi
 		/// Handle for the new browser window. Only used with windowed rendering.
 		/// </summary>
 		public IntPtr window;
+
+		/// <summary>
+		/// Optionally change the runtime style. Alloy style will always be used if
+		/// <see cref="windowless_rendering_enabled"/> is true.
+		/// </summary>
+		public CefRuntimeStyle runtime_style;
 	}
 
 	/// <summary>
@@ -129,6 +140,11 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public struct cef_window_info_linux_t
 	{
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
 		/// <summary>
 		/// The initial title of the window, to be set when the window is created.<para/>
 		/// Some layout managers (e.g., Compiz) can look at the window title
@@ -195,6 +211,12 @@ namespace CefNet.CApi
 		/// Pointer for the new browser window. Only used with windowed rendering.
 		/// </summary>
 		public IntPtr window;
+
+		/// <summary>
+		/// Optionally change the runtime style. Alloy style will always be used if
+		/// <see cref="windowless_rendering_enabled"/> is true.
+		/// </summary>
+		public CefRuntimeStyle runtime_style;
 	}
 
 
@@ -204,6 +226,11 @@ namespace CefNet.CApi
 	[StructLayout(LayoutKind.Sequential)]
 	public struct cef_window_info_mac_t
 	{
+		/// <summary>
+		/// Size of this structure.
+		/// </summary>
+		public UIntPtr size;
+
 		/// <summary>
 		/// The initial title of the view, to be set when the view is created.
 		/// </summary>
@@ -270,6 +297,12 @@ namespace CefNet.CApi
 		/// NSView pointer for the new browser view. Only used with windowed rendering.
 		/// </summary>
 		public IntPtr view;
+
+		/// <summary>
+		/// Optionally change the runtime style. Alloy style will always be used if
+		/// <see cref="windowless_rendering_enabled"/> is true.
+		/// </summary>
+		public CefRuntimeStyle runtime_style;
 	}
 
 

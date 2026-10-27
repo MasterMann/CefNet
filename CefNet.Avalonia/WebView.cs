@@ -70,7 +70,6 @@ namespace CefNet.Avalonia
 			}
 			Initialize();
 
-			this.GetPropertyChangedObservable(Control.BoundsProperty).Subscribe(OnBoundsChanged);
 
 			AddHandler(InputElement.KeyDownEvent, HandlePreviewKeyDown, RoutingStrategies.Tunnel, true);
 			AddHandler(InputElement.KeyUpEvent, HandlePreviewKeyUp, RoutingStrategies.Tunnel, true);
@@ -83,14 +82,14 @@ namespace CefNet.Avalonia
 		/// <summary>
 		/// Identifies the <see cref="TextFound"/> routed event.
 		/// </summary>
-		public static readonly RoutedEvent TextFoundEvent = RoutedEvent.Register<WebView, TextFoundRoutedEventArgs>(nameof(TextFound), RoutingStrategies.Bubble);
+		public static readonly RoutedEvent<TextFoundRoutedEventArgs> TextFoundEvent = RoutedEvent.Register<WebView, TextFoundRoutedEventArgs>(nameof(TextFound), RoutingStrategies.Bubble);
 
 		/// <summary>
 		/// Adds a handler for the <see cref="TextFound"/> attached event.
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="TextFound"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void AddTextFoundHandler(IInteractive element, EventHandler<TextFoundRoutedEventArgs> handler)
+		public static void AddTextFoundHandler(Interactive element, EventHandler<TextFoundRoutedEventArgs> handler)
 		{
 			element?.AddHandler(TextFoundEvent, handler);
 		}
@@ -100,7 +99,7 @@ namespace CefNet.Avalonia
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="TextFound"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void RemoveTextFoundHandler(IInteractive element, EventHandler<TextFoundRoutedEventArgs> handler)
+		public static void RemoveTextFoundHandler(Interactive element, EventHandler<TextFoundRoutedEventArgs> handler)
 		{
 			element?.RemoveHandler(TextFoundEvent, handler);
 		}
@@ -108,14 +107,14 @@ namespace CefNet.Avalonia
 		/// <summary>
 		/// Identifies the <see cref="PdfPrintFinished"/> routed event.
 		/// </summary>
-		public static readonly RoutedEvent PdfPrintFinishedEvent = RoutedEvent.Register<WebView, PdfPrintFinishedRoutedEventArgs>(nameof(PdfPrintFinished), RoutingStrategies.Bubble);
+		public static readonly RoutedEvent<PdfPrintFinishedRoutedEventArgs> PdfPrintFinishedEvent = RoutedEvent.Register<WebView, PdfPrintFinishedRoutedEventArgs>(nameof(PdfPrintFinished), RoutingStrategies.Bubble);
 
 		/// <summary>
 		/// Adds a handler for the <see cref="PdfPrintFinished"/> attached event.
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="PdfPrintFinished"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void AddPdfPrintFinishedHandler(IInteractive element, EventHandler<PdfPrintFinishedRoutedEventArgs> handler)
+		public static void AddPdfPrintFinishedHandler(Interactive element, EventHandler<PdfPrintFinishedRoutedEventArgs> handler)
 		{
 			element?.AddHandler(PdfPrintFinishedEvent, handler);
 		}
@@ -125,7 +124,7 @@ namespace CefNet.Avalonia
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="PdfPrintFinished"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void RemovePdfPrintFinishedHandler(IInteractive element, EventHandler<PdfPrintFinishedRoutedEventArgs> handler)
+		public static void RemovePdfPrintFinishedHandler(Interactive element, EventHandler<PdfPrintFinishedRoutedEventArgs> handler)
 		{
 			element?.RemoveHandler(PdfPrintFinishedEvent, handler);
 		}
@@ -133,14 +132,14 @@ namespace CefNet.Avalonia
 		/// <summary>
 		/// Identifies the <see cref="StatusTextChanged"/> routed event.
 		/// </summary>
-		public static readonly RoutedEvent StatusTextChangedEvent = RoutedEvent.Register<WebView, RoutedEventArgs>(nameof(StatusTextChanged), RoutingStrategies.Bubble);
+		public static readonly RoutedEvent<RoutedEventArgs> StatusTextChangedEvent = RoutedEvent.Register<WebView, RoutedEventArgs>(nameof(StatusTextChanged), RoutingStrategies.Bubble);
 
 		/// <summary>
 		/// Adds a handler for the <see cref="StatusTextChanged"/> attached event.
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="StatusTextChanged"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void AddStatusTextChangedHandler(IInteractive element, EventHandler<EventArgs> handler)
+		public static void AddStatusTextChangedHandler(Interactive element, EventHandler<RoutedEventArgs> handler)
 		{
 			element?.AddHandler(StatusTextChangedEvent, handler);
 		}
@@ -150,7 +149,7 @@ namespace CefNet.Avalonia
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="StatusTextChanged"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void RemoveStatusTextChangedHandler(IInteractive element, EventHandler<EventArgs> handler)
+		public static void RemoveStatusTextChangedHandler(Interactive element, EventHandler<RoutedEventArgs> handler)
 		{
 			element?.RemoveHandler(StatusTextChangedEvent, handler);
 		}
@@ -158,14 +157,14 @@ namespace CefNet.Avalonia
 		/// <summary>
 		/// Identifies the <see cref="ScriptDialogOpening"/> routed event.
 		/// </summary>
-		public static readonly RoutedEvent ScriptDialogOpeningEvent = RoutedEvent.Register<WebView, ScriptDialogOpeningRoutedEventArgs>(nameof(ScriptDialogOpening), RoutingStrategies.Bubble);
+		public static readonly RoutedEvent<ScriptDialogOpeningRoutedEventArgs> ScriptDialogOpeningEvent = RoutedEvent.Register<WebView, ScriptDialogOpeningRoutedEventArgs>(nameof(ScriptDialogOpening), RoutingStrategies.Bubble);
 
 		/// <summary>
 		/// Adds a handler for the <see cref="ScriptDialogOpening"/> attached event.
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="ScriptDialogOpening"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void AddScriptDialogOpeningHandler(IInteractive element, EventHandler<ScriptDialogOpeningRoutedEventArgs> handler)
+		public static void AddScriptDialogOpeningHandler(Interactive element, EventHandler<ScriptDialogOpeningRoutedEventArgs> handler)
 		{
 			element?.AddHandler(ScriptDialogOpeningEvent, handler);
 		}
@@ -175,7 +174,7 @@ namespace CefNet.Avalonia
 		/// </summary>
 		/// <param name="element">An object that raise the <see cref="ScriptDialogOpening"/> routed event.</param>
 		/// <param name="handler">The handler.</param>
-		public static void RemoveScriptDialogOpeningHandler(IInteractive element, EventHandler<ScriptDialogOpeningRoutedEventArgs> handler)
+		public static void RemoveScriptDialogOpeningHandler(Interactive element, EventHandler<ScriptDialogOpeningRoutedEventArgs> handler)
 		{
 			element?.RemoveHandler(ScriptDialogOpeningEvent, handler);
 		}
@@ -226,7 +225,7 @@ namespace CefNet.Avalonia
 
 			using (var windowInfo = new CefWindowInfo())
 			{
-				IPlatformHandle platformHandle = window.PlatformImpl.Handle;
+				IPlatformHandle platformHandle = window.TryGetPlatformHandle();
 				if (platformHandle is IMacOSTopLevelPlatformHandle macOSHandle)
 					windowInfo.SetAsWindowless(macOSHandle.GetNSWindowRetained());
 				else
@@ -362,6 +361,14 @@ namespace CefNet.Avalonia
 			BrowserObject?.Host.Invalidate(CefPaintElementType.View);
 		}
 
+		/// <inheritdoc />
+		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == BoundsProperty)
+				OnBoundsChanged(EventArgs.Empty);
+		}
+
 		protected virtual void OnBoundsChanged(EventArgs e)
 		{
 			if (_allowResizeNotifications)
@@ -372,7 +379,7 @@ namespace CefNet.Avalonia
 					Rect bounds = this.Bounds;
 					if (OffscreenGraphics.SetSize((int)bounds.Width, (int)bounds.Height))
 					{
-						double scaling = this.VisualRoot?.RenderScaling ?? 1.0;
+						double scaling = TopLevel.GetTopLevel(this)?.RenderScaling ?? 1.0;
 						OffscreenGraphics.DpiScale = new DpiScale(scaling, scaling);
 						BrowserObject?.Host.WasResized();
 
@@ -386,14 +393,14 @@ namespace CefNet.Avalonia
 
 		protected internal virtual unsafe void OnUpdateRootBounds()
 		{
-			var window = this.GetVisualRoot() as Window;
+			var window = TopLevel.GetTopLevel(this) as Window;
 			if (window != null)
 			{
 				RECT windowBounds;
 				DpiScale scale = OffscreenGraphics.DpiScale;
 
 				if (PlatformInfo.IsWindows && NativeMethods.DwmIsCompositionEnabled()
-					&& NativeMethods.DwmGetWindowAttribute(window.PlatformImpl.Handle.Handle, DWMWINDOWATTRIBUTE.ExtendedFrameBounds, &windowBounds, sizeof(RECT)) == 0)
+					&& NativeMethods.DwmGetWindowAttribute(window.TryGetPlatformHandle().Handle, DWMWINDOWATTRIBUTE.ExtendedFrameBounds, &windowBounds, sizeof(RECT)) == 0)
 				{
 					windowBounds = new RECT
 					{
@@ -518,9 +525,10 @@ namespace CefNet.Avalonia
 		/// <param name="routedEvent">An identifier for the routed event to be handled.</param>
 		/// <param name="handler">A reference to the handler implementation.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void AddHandler(in RoutedEvent routedEvent, Delegate handler)
+		private void AddHandler<TEventArgs>(in RoutedEvent<TEventArgs> routedEvent, Delegate handler)
+			where TEventArgs : RoutedEventArgs
 		{
-			AddHandler(routedEvent, handler);
+			AddHandler((RoutedEvent)routedEvent, handler);
 		}
 
 		/// <summary>
@@ -529,9 +537,10 @@ namespace CefNet.Avalonia
 		/// <param name="routedEvent">The identifier of the routed event for which the handler is attached.</param>
 		/// <param name="handler">The specific handler implementation to remove from the event handler collection on this element.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void RemoveHandler(in RoutedEvent routedEvent, Delegate handler)
+		private void RemoveHandler<TEventArgs>(in RoutedEvent<TEventArgs> routedEvent, Delegate handler)
+			where TEventArgs : RoutedEventArgs
 		{
-			RemoveHandler(routedEvent, handler);
+			RemoveHandler((RoutedEvent)routedEvent, handler);
 		}
 
 		protected virtual void OnBrowserCreated(EventArgs e)
@@ -563,7 +572,7 @@ namespace CefNet.Avalonia
 
 		public PixelPoint PointToScreen(Point point)
 		{
-			if (((IVisual)this).IsAttachedToVisualTree)
+			if (this.IsAttachedToVisualTree())
 			{
 				PixelPoint pixelPoint = global::Avalonia.VisualExtensions.PointToScreen(this, point);
 				DpiScale dpi = OffscreenGraphics.DpiScale;
@@ -581,7 +590,7 @@ namespace CefNet.Avalonia
 			InitialPropertyBag = null;
 		}
 
-		bool IChromiumWebViewPrivate.GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		bool IChromiumWebViewPrivate.GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
 			return false;
 		}
@@ -731,17 +740,20 @@ namespace CefNet.Avalonia
 
 			e.Handled = true;
 
-			await DragDrop.DoDragDrop(_lastPointerPressedEventArgs, new CefNetDragData(this, e.Data), e.AllowedEffects.ToDragDropEffects());
+			using (DataTransfer dataTransfer = new CefNetDragData(this, e.Data).ToDataTransfer())
+			{
+				await DragDrop.DoDragDropAsync(_lastPointerPressedEventArgs, dataTransfer, e.AllowedEffects.ToDragDropEffects());
+			}
 			DragSourceSystemDragEnded();
 		}
 
-		protected override void OnGotFocus(GotFocusEventArgs e)
+		protected override void OnGotFocus(FocusChangedEventArgs e)
 		{
 			BrowserObject?.Host.SetFocus(true);
 			base.OnGotFocus(e);
 		}
 
-		protected override void OnLostFocus(RoutedEventArgs e)
+		protected override void OnLostFocus(FocusChangedEventArgs e)
 		{
 			if (Volatile.Read(ref _suppressLostFocusEvent) == 0)
 				BrowserObject?.Host.SetFocus(false);
@@ -998,13 +1010,10 @@ namespace CefNet.Avalonia
 			Point mousePos = e.GetPosition(this);
 			SendDragDropEvent((int)mousePos.X, (int)mousePos.Y, e.GetKeyModifiers());
 
-			if (e.Data.Contains(nameof(CefNetDragData)))
+			CefNetDragData data = e.DataTransfer.TryGetValue(CefNetDragData.Format);
+			if (data != null && data.Source == this)
 			{
-				CefNetDragData data = (CefNetDragData)e.Data.Get(nameof(CefNetDragData));
-				if (data != null && data.Source == this)
-				{
-					DragSourceEndedAt((int)mousePos.X, (int)mousePos.Y, e.DragEffects.ToCefDragOperationsMask());
-				}
+				DragSourceEndedAt((int)mousePos.X, (int)mousePos.Y, e.DragEffects.ToCefDragOperationsMask());
 			}
 			e.Handled = true;
 		}

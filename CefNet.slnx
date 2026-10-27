@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Generator/">
+    <Project Path="CefGen/CefGen.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="CefNet/CefNet.csproj" />
+    <Project Path="CefNet.Avalonia/CefNet.Avalonia.csproj" />
+    <Project Path="CefNet.Windows.Forms/CefNet.Windows.Forms.csproj" />
+    <Project Path="CefNet.Wpf/CefNet.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="AvaloniaApp/AvaloniaApp.csproj" />
+    <Project Path="WinFormsCoreApp/WinFormsCoreApp.csproj" />
+    <Project Path="WpfCoreApp/WpfCoreApp.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="CefNetTest/CefNetTest.csproj" />
+    <Project Path="RCWTest/RCWTest.csproj" />
+  </Folder>
+</Solution>

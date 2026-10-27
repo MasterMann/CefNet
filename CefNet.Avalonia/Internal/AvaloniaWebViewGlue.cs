@@ -20,7 +20,7 @@ namespace CefNet.Internal
 		/// <inheritdoc />
 		protected override bool OnCursorChange(CefBrowser browser, IntPtr cursorHandle, CefCursorType type, CefCursorInfo customCursorInfo)
 		{
-			var ea = new CursorChangeEventArgs(type != CefCursorType.Custom ? CursorInteropHelper.Create(cursorHandle) : CustomCursor.Create(ref customCursorInfo), type);
+			var ea = new CursorChangeEventArgs(type != CefCursorType.Custom ? CursorInteropHelper.Create(type) : CustomCursor.Create(ref customCursorInfo), type);
 			WebView.RaiseCefCursorChange(ea);
 			return ea.Handled;
 		}

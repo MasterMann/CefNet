@@ -10,7 +10,12 @@ somewhere on your development system (and redistribute it with your application)
 (1) Download the Chromium Embedded Framework from:
 	https://cef-builds.spotifycdn.com/index.html
 
-*Note: The major and minor version numbers of CEF and CefNet must match.*
+*Note: CefNet is generated for one CEF API version (currently CEF 156, API version 15600; see
+[Directory.Build.props](Directory.Build.props)). Use a CEF build that supports that API version,
+ideally the same CEF major version.*
+
+Place the CEF resources next to the CEF library: copy or link the contents of
+`Resources/` (`icudtl.dat`, `*.pak`, `locales/`) into `Release/`.
 
 (2) Create an instance of the CefNetApplication and initialize it with your settings:
 ```C#
@@ -40,6 +45,10 @@ app.Shutdown();
 app.Dispose();
 ```
 
+For Avalonia applications, start the application with
+`StartWithCefNetApplicationLifetime(args)` instead of `StartWithClassicDesktopLifetime(args)`.
+It postpones the shutdown until all browsers have closed and then shuts down CEF.
+
 For more information, see the sample applications.
 
 ## Features
@@ -52,19 +61,26 @@ The API of this project is not frozen and is subject to change.
 
 ## Develop
 
-1. Install [.NET Core SDK](https://www.microsoft.com/net/download)
-2. Install the [DotAsm](https://www.nuget.org/packages/DotAsm/) tool: `dotnet tool install -g DotAsm`
-3. Run `git clone https://github.com/CefNet/CefNet.git`
-4. Download a [CEF package](https://cef-builds.spotifycdn.com/index.html). See [Directory.Build.props](Directory.Build.props) for the required CEF version.
-5. Extract all files into the cef/ directory.
-6. Copy cef/Resources/icudtl.dat into cef/Release/.
+1. Install the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+2. Clone the repository.
+3. Download a [CEF package (standard or minimal)](https://cef-builds.spotifycdn.com/index.html) for your platform.
+   See [Directory.Build.props](Directory.Build.props) for the required CEF version.
+4. Extract it into `cef/windows/` or `cef/linux/` (a symbolic link to an extracted package also works).
+5. Copy or link the contents of `cef/<os>/Resources/` into `cef/<os>/Release/`.
+6. Build `CefNet.slnx`. On Linux, the WinForms and WPF projects compile through Windows targeting
+   but run only on Windows.
+7. Run the Avalonia sample: `dotnet run --project AvaloniaApp -- --url=https://example.com`.
 
 ## Migration to other CEF build
-1. Download a [CEF package (standard or minimal)](https://cef-builds.spotifycdn.com/index.html).
-2. Extract all header files into the cef/include directory.
-3. Build and run CefGen.sln in debug mode to generate the generated files. Watch the output for errors.
-4. Build CefNet.sln
-5. If the build fails, make the necessary changes.
+1. Download a [CEF package (standard or minimal)](https://cef-builds.spotifycdn.com/index.html)
+   and extract it as described above.
+2. Run the generator: `dotnet run --project CefGen`. It parses the C API headers in `cef/<os>/include`,
+   pins the newest stable API version from `cef_api_versions.h`, and rewrites `CefNet/Generated`.
+   Watch the output for errors.
+3. Update `CefVersion` in [Directory.Build.props](Directory.Build.props).
+4. Build `CefNet.slnx` and update the handwritten code for API changes.
+5. Compare the handwritten native structures in `CefNet/CefTypes/CApi` (such as `cef_window_info_t`)
+   with the platform headers; the generator does not produce them.
 
 ## Similar projects and links
 

@@ -58,7 +58,7 @@ namespace CefNet.Internal
 				};
 
 				CefColor color = default;
-				item.Colors = new CefColor[(int)CefMenuColorType.Count];
+				item.Colors = new CefColor[(int)CefMenuColorType.NumValues];
 				for (int j = 0; j < item.Colors.Length; j++)
 				{
 					item.Colors[j] = model.GetColorAt(i, (CefMenuColorType)j, ref color) ? color : default;

@@ -251,6 +251,7 @@ namespace CefNet
 		/// <remarks>
 		/// This property cannot be used after the browser is created.
 		/// </remarks>
+		[DefaultValue(null)]
 		public string InitialUrl
 		{
 			get
@@ -308,6 +309,7 @@ namespace CefNet
 		/// opened by being linked to or created by another, returns null.
 		/// </summary>
 		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IChromiumWebView Opener
 		{
 			get

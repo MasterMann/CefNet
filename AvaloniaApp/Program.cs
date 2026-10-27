@@ -18,6 +18,11 @@ namespace AvaloniaApp
 		private static DispatcherTimer messagePump;
 		private const int messagePumpDelay = 10;
 
+		/// <summary>
+		/// Gets the address the first tab opens, set with <c>--url=&lt;address&gt;</c>.
+		/// </summary>
+		public static string StartUrl { get; private set; } = "https://google.com";
+
 		// Initialization code. Don't use any Avalonia, third-party APIs or any
 		// SynchronizationContext-reliant code before AppMain is called: things aren't initialized
 		// yet and stuff might break.
@@ -26,6 +31,9 @@ namespace AvaloniaApp
 		{
 			string cefPath;
 			bool externalMessagePump = args.Contains("--external-message-pump");
+			string urlArg = args.FirstOrDefault(arg => arg.StartsWith("--url=", StringComparison.Ordinal));
+			if (urlArg != null)
+				StartUrl = urlArg.Substring("--url=".Length);
 
 			if (PlatformInfo.IsMacOS)
 			{
@@ -34,7 +42,7 @@ namespace AvaloniaApp
 			}
 			else
 			{
-				cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef/windows");
+				cefPath = Path.Combine(Path.GetDirectoryName(GetProjectPath()), "cef", PlatformInfo.IsWindows ? "windows" : "linux");
 			}
 
 			var settings = new CefSettings();

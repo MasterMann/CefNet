@@ -24,7 +24,7 @@ namespace AvaloniaApp
 		private TabControl tabs = null;
 		private Menu menu = null;
 		private DockPanel controlsPanel = null;
-		private SystemDecorations _systemDecorations;
+		private WindowDecorations _windowDecorations;
 
 		public MainWindow()
 		{
@@ -55,7 +55,7 @@ namespace AvaloniaApp
 				menu.IsVisible = false;
 				controlsPanel.IsVisible = false;
 				tabHeaders.IsVisible = false;
-				_systemDecorations = this.SystemDecorations;
+				_windowDecorations = this.WindowDecorations;
 				WindowState = WindowState.Maximized;
 				Topmost = true;
 			}
@@ -64,7 +64,7 @@ namespace AvaloniaApp
 				menu.IsVisible = true;
 				controlsPanel.IsVisible = true;
 				tabHeaders.IsVisible = true;
-				this.SystemDecorations = _systemDecorations;
+				this.WindowDecorations = _windowDecorations;
 				WindowState = WindowState.Normal;
 				Topmost = false;
 			}
@@ -87,18 +87,8 @@ namespace AvaloniaApp
 
 			AddTab(true);
 
-			// note: Below demonstrates that WebView cannot navigate immediately after creation.
-			// Trying this may cause an InvalidOperationException to be thrown (reproduces on macOS at least).
-			// Navigation (and other tasks) require waiting until the BrowserCreated event has fired.
-			try
-			{
-				SelectedView?.Navigate("https://google.com");
-			}
-			catch (InvalidOperationException ioe)
-			{
-				Console.WriteLine("Cannot navgiate before browser is initialized:");
-				Console.WriteLine(ioe.Message);
-			}			
+			// Navigation requires a browser instance, which exists once BrowserCreated has fired.
+			SelectedView.BrowserCreated += (s, args) => ((IChromiumWebView)s).Navigate(Program.StartUrl);
 		}
 
 		private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -122,7 +112,7 @@ namespace AvaloniaApp
 			{
 				viewTab = new WebViewTab();
 				viewTab.WebView.Navigated += WebView_Navigated;
-				((AvaloniaList<object>)tabs.Items).Add(viewTab);
+				tabs.Items.Add(viewTab);
 				viewTab.Title = "about:blank";
 
 				tabs.SelectedItem = viewTab;

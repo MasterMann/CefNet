@@ -27,10 +27,5 @@ namespace CefNet
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern IntPtr LoadLibraryEx(string fileName, IntPtr file, int flags);
-
-		[DllImport("libdl", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-		public static extern IntPtr dlopen(string path, int mode);
 	}
 }

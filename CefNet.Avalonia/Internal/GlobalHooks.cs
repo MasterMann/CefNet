@@ -133,7 +133,7 @@ namespace CefNet.Internal
 					WeakReference<WebView> viewRef = _Views[i];
 					if (viewRef.TryGetTarget(out WebView view))
 					{
-						if (view.GetVisualRoot() == window)
+						if (TopLevel.GetTopLevel(view) == window)
 						{
 							yield return new ValueTuple<WebView, Window>(view, window);
 						}
@@ -156,7 +156,9 @@ namespace CefNet.Internal
 			if (window == null)
 				return;
 
-			IntPtr hwnd = window.PlatformImpl.Handle.Handle;
+			IntPtr hwnd = window.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+			if (hwnd == IntPtr.Zero)
+				return;
 
 			if (_HookedWindows.ContainsKey(hwnd))
 				return;

@@ -232,9 +232,11 @@ namespace CefNet.Windows.Forms
 		/// <summary>
 		/// Gets or sets the tool-tip object that is displayed for this element in the user interface (UI).
 		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ToolTip ToolTip { get; set; }
 
 		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string StatusText { get; protected set; }
 
 		protected virtual void RaiseCrossThreadEvent<TEventArgs>(Action<TEventArgs> raiseEvent, TEventArgs e, bool synchronous)

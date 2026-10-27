@@ -52,6 +52,7 @@ namespace WinFormsCoreApp
 			this.ToolTipText = e.Title;
 		}
 
+		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		public IChromiumWebView WebView { get; protected set; }
 
 		private void Webview_CreateWindow(object sender, CreateWindowEventArgs e)

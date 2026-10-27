@@ -16,7 +16,7 @@ using System.Text;
 
 namespace AvaloniaApp
 {
-	public class WebViewTab : TabItem, IStyleable
+	public class WebViewTab : TabItem
 	{
 		private class WebViewTabTitle : TemplatedControl
 		{
@@ -152,7 +152,7 @@ namespace AvaloniaApp
 			this.Header = new WebViewTabTitle(this);
 		}
 
-		Type IStyleable.StyleKey
+		protected override Type StyleKeyOverride
 		{
 			get { return typeof(TabItem); }
 		}
@@ -182,7 +182,7 @@ namespace AvaloniaApp
 			var tabs = this.Parent as TabControl;
 			if (tabs == null)
 				return;
-			((AvaloniaList<object>)tabs.Items).Remove(this);
+			tabs.Items.Remove(this);
 		}
 
 		private void HandleDocumentTitleChanged(object sender, DocumentTitleChangedEventArgs e)
@@ -207,13 +207,13 @@ namespace AvaloniaApp
 				return;
 			}
 
-			var avaloniaWindow = this.GetVisualRoot() as Window;
+			var avaloniaWindow = TopLevel.GetTopLevel(this) as Window;
 			if (avaloniaWindow == null)
 				throw new InvalidOperationException("Window not found!");
 
 			var webview = new CustomWebView((WebView)this.WebView);
 
-			IPlatformHandle platformHandle = avaloniaWindow.PlatformImpl.Handle;
+			IPlatformHandle platformHandle = avaloniaWindow.TryGetPlatformHandle();
 			if (platformHandle is IMacOSTopLevelPlatformHandle macOSHandle)
 				e.WindowInfo.SetAsWindowless(macOSHandle.GetNSWindowRetained());
 			else
@@ -228,7 +228,7 @@ namespace AvaloniaApp
 		{
 			var tab = new WebViewTab(webview);
 			TabControl tabs = this.FindTabControl();
-			((AvaloniaList<object>)tabs.Items).Add(tab);
+			tabs.Items.Add(tab);
 			tabs.SelectedItem = tab;
 		}
 	}

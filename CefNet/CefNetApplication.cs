@@ -203,23 +203,13 @@ namespace CefNet
 
 			path = InitializeDllPath(path);
 
-			if (PlatformInfo.IsWindows)
+			try
 			{
-				const int LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
-				_cefLibHandle = NativeMethods.LoadLibraryEx(path, IntPtr.Zero, LOAD_WITH_ALTERED_SEARCH_PATH);
-				if (IntPtr.Zero == _cefLibHandle)
-					throw new DllNotFoundException(string.Format("Can't load '{0}' (error: {1}).", path, Marshal.GetLastWin32Error()));
+				_cefLibHandle = NativeLibrary.Load(path);
 			}
-			else if (PlatformInfo.IsLinux || PlatformInfo.IsMacOS)
+			catch (DllNotFoundException e)
 			{
-				const int RTLD_NOW = 2;
-				_cefLibHandle = NativeMethods.dlopen(path, RTLD_NOW);
-				if (IntPtr.Zero == _cefLibHandle)
-					throw new DllNotFoundException(string.Format("Can't load '{0}'.", path));
-			}
-			else
-			{
-				throw new PlatformNotSupportedException();
+				throw new DllNotFoundException(string.Format("Can't load '{0}'.", path), e);
 			}
 
 			if (!TryInitializeDllImportResolver(_cefLibHandle) && PlatformInfo.IsMacOS)

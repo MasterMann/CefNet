@@ -464,7 +464,7 @@ namespace CefNet.Wpf
 			InitialPropertyBag = null;
 		}
 
-		bool IChromiumWebViewPrivate.GetCefScreenInfo(ref CefScreenInfo screenInfo)
+		bool IChromiumWebViewPrivate.GetCefScreenInfo(CefScreenInfo screenInfo)
 		{
 			return false;
 		}

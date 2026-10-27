@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using CefNet.Input;
@@ -104,86 +105,62 @@ namespace CefNet.Avalonia
 		/// <param name="e">The <see cref="DragEventArgs"/> instance containing the event data.</param>
 		public static CefDragData GetCefDragData(this DragEventArgs e)
 		{
-			CefDragData dragData;
-			if (e.Data.Contains(nameof(CefDragData)))
+			IDataTransfer transfer = e.DataTransfer;
+			CefNetDragData ownData = transfer.TryGetValue(CefNetDragData.Format);
+			if (ownData != null)
 			{
-				dragData = (CefDragData)e.Data.Get(nameof(CefDragData));
-				if (dragData != null)
-				{
-					dragData.ResetFileContents();
-					return dragData;
-				}
+				ownData.Data.ResetFileContents();
+				return ownData.Data;
 			}
 
-			dragData = new CefDragData();
+			var dragData = new CefDragData();
 
-			string[] formats = e.Data.GetDataFormats().ToArray();
-
-			if (TryGetFileDropData(e.Data, out IEnumerable<string> fileNames))
+			IStorageItem[] files = transfer.TryGetFiles();
+			if (files != null)
 			{
-				foreach (string filePath in fileNames)
+				foreach (IStorageItem file in files)
 				{
-					dragData.AddFile(filePath.Replace("\\", "/"), Path.GetFileName(filePath));
+					string filePath = file.TryGetLocalPath();
+					if (filePath != null)
+						dragData.AddFile(filePath.Replace("\\", "/"), Path.GetFileName(filePath));
 				}
 			}
-			
 
 			bool isUrl = false;
-			string s = GetUrlString(e.Data, formats);
+			string s = GetFirstUri(transfer.TryGetValue(CefNetDragData.UriListFormat));
 			if (!string.IsNullOrWhiteSpace(s))
 			{
 				isUrl = true;
 				dragData.LinkUrl = s;
 			}
 
-			if (formats.Contains(CefNetDragData.DataFormatUnicodeText))
+			s = transfer.TryGetText();
+			if (s != null)
 			{
-				s = (string)e.Data.Get(CefNetDragData.DataFormatUnicodeText);
-
-				if (!isUrl && Uri.IsWellFormedUriString(s, UriKind.Absolute))
-					dragData.LinkUrl = s;
-				dragData.FragmentText = s;
-			}
-			else if (formats.Contains(DataFormats.Text))
-			{
-				s = (string)e.Data.Get(DataFormats.Text);
-
 				if (!isUrl && Uri.IsWellFormedUriString(s, UriKind.Absolute))
 					dragData.LinkUrl = s;
 				dragData.FragmentText = s;
 			}
 
-			if (formats.Contains(CefNetDragData.DataFormatHtml))
-			{
-				dragData.FragmentHtml = Encoding.UTF8.GetString((byte[])e.Data.Get(CefNetDragData.DataFormatHtml));
-			}
-			else if (formats.Contains(CefNetDragData.DataFormatTextHtml))
-			{
-				dragData.FragmentHtml = Encoding.UTF8.GetString((byte[])e.Data.Get(CefNetDragData.DataFormatTextHtml));
-			}
+			s = transfer.TryGetValue(CefNetDragData.HtmlFormat);
+			if (s != null)
+				dragData.FragmentHtml = s;
 
 			return dragData;
 		}
 
-		private static bool TryGetFileDropData(IDataObject data, out IEnumerable<string> fileNames)
+		/// <summary>
+		/// Returns the first URI of a text/uri-list value, skipping comment lines.
+		/// </summary>
+		private static string GetFirstUri(string uriList)
 		{
-			if (data.Contains(CefNetDragData.DataFormatFileDrop))
-				fileNames = (IEnumerable<string>)data.Get(CefNetDragData.DataFormatFileDrop);
-			else if (data.Contains(CefNetDragData.DataFormatFileNames))
-				fileNames = (IEnumerable<string>)data.Get(CefNetDragData.DataFormatFileNames);
-			else
-				fileNames = null;
-			return fileNames != null;
-		}
-
-		private static string GetUrlString(IDataObject data, string[] formats)
-		{
-			if (formats.Contains(CefNetDragData.DataFormatUnicodeUrl))
-				return Encoding.Unicode.GetString((byte[])data.Get(CefNetDragData.DataFormatUnicodeUrl));
-
-			if (formats.Contains(CefNetDragData.DataFormatUrl))
-				return Encoding.ASCII.GetString((byte[])data.Get(CefNetDragData.DataFormatUrl));
-
+			if (uriList is null)
+				return null;
+			foreach (string line in uriList.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				if (!line.StartsWith("#", StringComparison.Ordinal))
+					return line.Trim();
+			}
 			return null;
 		}
 

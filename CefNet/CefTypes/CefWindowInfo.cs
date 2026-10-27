@@ -40,6 +40,7 @@ namespace CefNet
 
 			IntPtr mem = Marshal.AllocHGlobal(size);
 			mem.InitBlock(0, size);
+			*(UIntPtr*)mem = (UIntPtr)size; // cef_window_info_t.size is the first field on every platform
 			_instance = (cef_window_info_t*)mem;
 		}
 
@@ -304,6 +305,30 @@ namespace CefNet
 		{
 			get { return WindowsInstance->menu; }
 			set { WindowsInstance->menu = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the runtime style. Alloy style is always used for windowless rendering.
+		/// </summary>
+		public CefRuntimeStyle RuntimeStyle
+		{
+			get
+			{
+				if (PlatformInfo.IsWindows)
+					return WindowsInstance->runtime_style;
+				if (PlatformInfo.IsLinux)
+					return LinuxInstance->runtime_style;
+				return MacInstance->runtime_style;
+			}
+			set
+			{
+				if (PlatformInfo.IsWindows)
+					WindowsInstance->runtime_style = value;
+				else if (PlatformInfo.IsLinux)
+					LinuxInstance->runtime_style = value;
+				else
+					MacInstance->runtime_style = value;
+			}
 		}
 
 		/// <summary>
