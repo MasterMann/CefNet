@@ -98,7 +98,9 @@ The API of this project is not frozen and is subject to change.
    See [Directory.Build.props](Directory.Build.props) for the required CEF version.
 4. Extract it into `cef/windows/` or `cef/linux/` (a symbolic link to an extracted package also works).
 5. Copy or link the contents of `cef/<os>/Resources/` into `cef/<os>/Release/`.
-6. Build `CefNet.slnx`. On Linux, the WinForms and WPF projects compile through Windows targeting
+6. Build `CefNet.slnx`. On Windows, executables that reference CefNet get a manifest declaring
+   Windows 10 compatibility, which Chromium requires (DevTools and Views windows fail without it).
+   A project with its own `ApplicationManifest` must include that declaration itself. On Linux, the WinForms and WPF projects compile through Windows targeting
    but run only on Windows.
 7. Run the Avalonia sample: `dotnet run --project AvaloniaApp -- --url=https://example.com`.
 
