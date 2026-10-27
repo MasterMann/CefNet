@@ -148,8 +148,18 @@ namespace AvaloniaApp
 		{
 			webview.CreateWindow += Webview_CreateWindow;
 			webview.DocumentTitleChanged += HandleDocumentTitleChanged;
+			webview.CefPaint += ReportRenderingMode;
+			webview.CefAcceleratedPaint += ReportRenderingMode;
 			this.WebView = webview;
 			this.Header = new WebViewTabTitle(this);
+		}
+
+		private void ReportRenderingMode(object sender, EventArgs e)
+		{
+			var webview = (WebView)sender;
+			webview.CefPaint -= ReportRenderingMode;
+			webview.CefAcceleratedPaint -= ReportRenderingMode;
+			Console.WriteLine(e is CefAcceleratedPaintEventArgs ? "Rendering mode: shared GPU texture" : "Rendering mode: CPU bitmap");
 		}
 
 		protected override Type StyleKeyOverride
