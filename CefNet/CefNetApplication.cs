@@ -119,6 +119,24 @@ namespace CefNet
 			));
 		}
 
+		/// <summary>
+		/// Chromium requires Windows 10 compatibility in the application manifest; without it,
+		/// the GPU process crashes when native Chromium windows (DevTools, CEF Views) are created.
+		/// </summary>
+		private static void WarnIfNotWindows10Compatible()
+		{
+			if (!PlatformInfo.IsWindows || Environment.OSVersion.Version.Major < 10)
+				return;
+
+			var versionInfo = new NativeMethods.OSVERSIONINFOW { dwOSVersionInfoSize = Marshal.SizeOf<NativeMethods.OSVERSIONINFOW>() };
+			if (NativeMethods.GetVersionExW(ref versionInfo) && versionInfo.dwMajorVersion < 10)
+			{
+				Trace.TraceWarning("The application manifest does not declare Windows 10 compatibility "
+					+ "(supportedOS {8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}). CEF requires it; native Chromium "
+					+ "windows such as DevTools may fail. CefNet adds a suitable manifest unless the project sets ApplicationManifest.");
+			}
+		}
+
 		private static string InitializeDllPath(string cefPath)
 		{
 			if (!string.IsNullOrWhiteSpace(cefPath))
@@ -216,6 +234,7 @@ namespace CefNet
 				throw new NotSupportedException("Requires .NET Core 3.0 or later.");
 
 			AssertApiVersion();
+			WarnIfNotWindows10Compatible();
 
 			OnBeforeInitalize(EventArgs.Empty);
 

@@ -31,6 +31,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="build\CefNet.targets;build\CefNet.app.manifest" Pack="true" PackagePath="build\;buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Generated\Managed\Types\" />
     <Folder Include="Generated\Managed\Enums\" />
     <Folder Include="Generated\Native\Types\" />

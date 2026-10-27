@@ -27,5 +27,25 @@ namespace CefNet
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern IntPtr GetModuleHandle(string lpModuleName);
 
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		public struct OSVERSIONINFOW
+		{
+			public int dwOSVersionInfoSize;
+			public int dwMajorVersion;
+			public int dwMinorVersion;
+			public int dwBuildNumber;
+			public int dwPlatformId;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+			public string szCSDVersion;
+		}
+
+		/// <summary>
+		/// Returns the Windows version as seen through the application manifest's compatibility
+		/// declarations (unlike <see cref="Environment.OSVersion"/>, which reports the real version).
+		/// </summary>
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetVersionExW(ref OSVERSIONINFOW versionInfo);
+
 	}
 }
